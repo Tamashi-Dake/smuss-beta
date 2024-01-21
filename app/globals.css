@@ -1,6 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+:root {
+  --content-max-width: 1955px;
+
+  --scrollbar-vertical-size: 16px;
+  --scrollbar-horizontal-size: 16px;
+}
 html,
 body,
 :root {
