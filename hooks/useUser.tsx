@@ -5,6 +5,7 @@ import {
   useSessionContext,
   useUser as useSupaUser,
 } from "@supabase/auth-helpers-react";
+import exp from "constants";
 import { get } from "http";
 import { createContext, use, useContext, useEffect, useState } from "react";
 
@@ -80,3 +81,14 @@ export const useUser = () => {
   }
   return context;
 };
+
+// // read user session
+// export const readUserSession = async (req:any) => {
+//   const { data: session, error } = await supabase.auth.api.getUserByCookie(
+//     req
+//   );
+//   if (error) {
+//     throw error;
+//   }
+//   return session;
+// }

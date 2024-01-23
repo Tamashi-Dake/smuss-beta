@@ -81,6 +81,12 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
           <>
             <HeaderButton
               className="bg-white text-black"
+              onClick={() => router.push("/dashboard")}
+            >
+              Dashboard
+            </HeaderButton>
+            <HeaderButton
+              className="bg-white text-black"
               onClick={handleLogout}
             >
               Logout
