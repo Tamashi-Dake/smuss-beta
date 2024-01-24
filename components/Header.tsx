@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { FaUserAlt } from "react-icons/fa";
@@ -12,7 +12,8 @@ import toast from "react-hot-toast";
 
 import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
-
+import useAdminStore from "@/hooks/useAdminStore";
+import supabase from "@/utils/supabaseClient";
 interface HeaderProps {
   children: React.ReactNode;
   className?: string;
@@ -23,7 +24,11 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
 
   const authModal = useAuthModal();
   const supabaseClient = useSupabaseClient();
+
+  const [account, setAccount] = useState<any>([]);
+
   const { user } = useUser();
+
   const handleLogout = async () => {
     const { error } = await supabaseClient.auth.signOut();
     // reset any playing audio
@@ -35,7 +40,20 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
       toast.success("Logged out successfully");
     }
   };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (user?.id) {
+        const { data } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+        setAccount(data);
+      }
+    };
 
+    fetchPosts();
+  }, [user]);
   return (
     <div
       className={twMerge(`
@@ -79,12 +97,14 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
       <div className="flex flex-row items-center justify-between gap-x-2 px-3">
         {user ? (
           <>
-            <HeaderButton
-              className="bg-white text-black"
-              onClick={() => router.push("/dashboard")}
-            >
-              Dashboard
-            </HeaderButton>
+            {account.role === "admin" && (
+              <HeaderButton
+                className="bg-green-500 text-white"
+                onClick={() => router.push("/dashboard")}
+              >
+                Dashboard
+              </HeaderButton>
+            )}
             <HeaderButton
               className="bg-white text-black"
               onClick={handleLogout}
@@ -93,7 +113,11 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
             </HeaderButton>
             <HeaderButton
               className="rounded-full p-3  flex items-center justify-center opacity-75 hover:opacity-100 transition-all cursor-pointer"
-              onClick={() => router.push("/profile")}
+              onClick={() =>
+                // router.push("/profile")
+
+                console.log(user)
+              }
             >
               <FaUserAlt />
             </HeaderButton>

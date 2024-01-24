@@ -1,9 +1,6 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { redirect, useRouter } from "next/navigation";
-import { headers, cookies } from "next/headers";
 import React from "react";
-import { supabase } from "@/untils/supabaseSever";
-import toast from "react-hot-toast";
+import { supabase } from "@/utils/supabaseSever";
 
 const DashboardPage: React.FC = async () => {
   const { data: user } = await supabase.from("users").select("*").single();
