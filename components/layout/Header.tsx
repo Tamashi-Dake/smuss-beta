@@ -6,13 +6,12 @@ import { HiHome } from "react-icons/hi";
 import { FaUserAlt } from "react-icons/fa";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { twMerge } from "tailwind-merge";
-import HeaderButton from "./library/HeaderButton";
+import HeaderButton from "./HeaderButton";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import toast from "react-hot-toast";
 
 import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
-import useAdminStore from "@/hooks/useAdminStore";
 import supabase from "@/utils/supabaseClient";
 interface HeaderProps {
   children: React.ReactNode;
@@ -41,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
     }
   };
   useEffect(() => {
-    const fetchPosts = async () => {
+    const getUser = async () => {
       if (user?.id) {
         const { data } = await supabase
           .from("users")
@@ -52,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
       }
     };
 
-    fetchPosts();
+    getUser();
   }, [user]);
   return (
     <div
@@ -62,8 +61,10 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
         h-fit
         flex
         justify-between
-        bg-transparent
-        p-3`)}
+        bg-neutral-900
+        z-10
+        p-3
+        `)}
       {...props}
     >
       {/* medium screen nav */}
@@ -97,14 +98,14 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
       <div className="flex flex-row items-center justify-between gap-x-2 px-3">
         {user ? (
           <>
-            {account.role === "admin" && (
+            {/* {account.role === "admin" && (
               <HeaderButton
                 className="bg-green-500 text-white"
                 onClick={() => router.push("/dashboard")}
               >
                 Dashboard
               </HeaderButton>
-            )}
+            )} */}
             <HeaderButton
               className="bg-white text-black"
               onClick={handleLogout}

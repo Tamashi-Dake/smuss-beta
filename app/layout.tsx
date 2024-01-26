@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Figtree } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 import SupabaseProvider from "@/providers/SupabaseProvider";
 import UserProvider from "@/providers/UserProvider";
 import ModalProvider from "@/providers/ModalProvider";
@@ -25,7 +25,11 @@ export default function RootLayout({
         <SupabaseProvider>
           <ModalProvider />
           <UserProvider>
-            <Sidebar>{children}</Sidebar>
+            <Sidebar>
+              <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
+                {children}
+              </div>
+            </Sidebar>
           </UserProvider>
         </SupabaseProvider>
       </body>

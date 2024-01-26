@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import supabase from "@/utils/supabaseClient";
 import { useUser } from "@/hooks/useUser";
-import Header from "@/components/Header";
+import Header from "@/components/layout/Header";
 
 export default function ClientPosts() {
   const user = useUser();

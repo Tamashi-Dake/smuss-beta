@@ -1,16 +1,16 @@
-import { redirect, useRouter } from "next/navigation";
 import React from "react";
-import { supabase } from "@/utils/supabaseSever";
+import Header from "@/components/layout/Header";
+import SectionList from "@/components/home/SectionList";
+import SongsWrapper from "@/components/home/SongsWrapper";
 
 const DashboardPage: React.FC = async () => {
-  const { data: user } = await supabase.from("users").select("*").single();
-  if (user.role !== "admin") {
-    redirect("/");
-  }
   return (
-    <div>
-      <h1>Hello,admin world!</h1>
-    </div>
+    <>
+      <Header>Header</Header>
+      <div className=" flex flex-col m-auto gap-y-10 max-w-wide-screen px-4">
+        Dashboard Page
+      </div>{" "}
+    </>
   );
 };
 

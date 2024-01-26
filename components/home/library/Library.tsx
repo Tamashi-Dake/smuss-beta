@@ -2,6 +2,10 @@ import React from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { TbPlaylist } from "react-icons/tb";
 
+import useAuthModal from "@/hooks/useAuthModal";
+import { useUser } from "@/hooks/useUser";
+import useCreateModal from "@/hooks/useCreateModal";
+
 // interface Playlist {
 //   id: number;
 //   name: string;
@@ -16,6 +20,9 @@ const Library: React.FC = (
     /* { playlists } */
   }
 ) => {
+  const authModal = useAuthModal();
+  const createModal = useCreateModal();
+  const { user } = useUser();
   const handleLibraryClick = () => {
     console.log("Library clicked");
   };
@@ -25,7 +32,10 @@ const Library: React.FC = (
       // Handle playlist click
     };
   const handleAddPlaylist = () => {
-    // Handle add playlist
+    if (!user) {
+      return authModal.onOpen();
+    }
+    return createModal.onOpen();
   };
   return (
     <div className="flex flex-col">

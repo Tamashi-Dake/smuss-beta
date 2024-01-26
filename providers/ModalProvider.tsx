@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 import AuthModal from "@/components/patials/AuthModal";
+import CreateModal from "@/components/patials/CreateModal";
 // import SubscribeModal from "@/components/SubscribeModal";
-// import UploadModal from "@/components/UploadModal";
 // import { ProductWithPrice } from "@/types_stripe";
 
 interface ModalProviderProps {
@@ -30,7 +30,7 @@ const ModalProvider: React.FC<ModalProviderProps> = (
     <>
       <AuthModal />
       {/* <SubscribeModal products={products} /> */}
-      {/* <UploadModal /> */}
+      <CreateModal />
     </>
   );
 };
