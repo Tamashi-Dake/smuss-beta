@@ -2,12 +2,14 @@ import { create } from "zustand";
 
 type AdminState = {
   isAdmin: boolean;
-  checkAdmin: () => void;
+  isIn: () => void;
+  isOut: () => void;
 };
 
 const useAdminStore = create<AdminState>((set) => ({
   isAdmin: false,
-  checkAdmin: () => set((state) => ({ isAdmin: !state.isAdmin })),
+  isIn: () => set({ isAdmin: true }),
+  isOut: () => set({ isAdmin: false }),
 }));
 
 export default useAdminStore;

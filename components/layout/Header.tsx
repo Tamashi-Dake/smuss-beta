@@ -36,6 +36,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
     if (error) {
       toast.error(error.message);
     } else {
+      window.location.href = "/";
       toast.success("Logged out successfully");
     }
   };
