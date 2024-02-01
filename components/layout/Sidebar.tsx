@@ -12,12 +12,14 @@ import { AiOutlineDashboard } from "react-icons/ai";
 import { TbPlaylist } from "react-icons/tb";
 import { FaItunesNote, FaUser, FaUsers } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
+import { Playlist } from "@/types";
 BiSearch;
 interface SidebarProps {
   children: React.ReactNode;
+  playlists: Playlist[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   const pathname = usePathname();
   const currentUser = useCurrentUser();
   const [role, setRole] = useState("");
@@ -97,7 +99,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         </Box>
         {role !== "admin" && (
           <Box classname="overflow-y-auto h-full">
-            <Library />
+            <Library playlists={playlists} />
           </Box>
         )}
       </div>

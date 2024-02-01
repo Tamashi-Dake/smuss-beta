@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
         flex
         justify-between
         bg-neutral-900
-        z-10
+        z-[1001]
         p-3
         `)}
       {...props}

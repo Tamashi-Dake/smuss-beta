@@ -1,9 +1,16 @@
 import Header from "@/components/layout/Header";
 import SongsWrapper from "@/components/home/SongsWrapper";
 import SectionList from "@/components/home/SectionList";
-import Image from "next/image";
+import getPlaylists from "@/acitons/getPlaylists";
+import Wrapper from "@/components/shared/Wrapper";
+import Playlist from "@/components/shared/Playlist";
 
-export default function Home() {
+export const revalidate = 0;
+
+export default async function Home() {
+  // TODO: get all user playlists (for now, will change to get artists playlists later)
+  const playlists = await getPlaylists();
+
   return (
     <>
       <Header>Header</Header>
@@ -15,6 +22,20 @@ export default function Home() {
         <SectionList>
           <h1 className="text-2xl font-bold ">Recently Played</h1>
           <SongsWrapper />
+        </SectionList>
+        <SectionList>
+          <h1 className="text-2xl font-bold ">New Playlists</h1>
+          <Wrapper>
+            {playlists.length === 0 ? (
+              <p>No playlists found</p>
+            ) : (
+              playlists.map((item) => (
+                // <p key={item.id}>{item.name}</p>
+                <Playlist key={item.id} data={item} />
+              ))
+            )}
+          </Wrapper>
+          {/* animation section */}
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">Your Top Artists</h1>

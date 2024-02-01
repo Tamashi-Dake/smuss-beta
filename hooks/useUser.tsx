@@ -1,4 +1,4 @@
-import { Subscription, UserDetails } from "@/types_stripe";
+import { Subscription, UserDetails } from "@/types";
 import { User } from "@supabase/auth-helpers-nextjs";
 // useUser is a custom hook so i must remap it to useSupaUser to avoid conflict with useUser hook
 import {

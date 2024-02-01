@@ -6,18 +6,22 @@ import SupabaseProvider from "@/providers/SupabaseProvider";
 import UserProvider from "@/providers/UserProvider";
 import ModalProvider from "@/providers/ModalProvider";
 import ToastProvider from "@/providers/ToastProvider";
+import getUserPlaylists from "@/acitons/getUserPlaylists";
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Smuss Beta",
-  description: "Beta version of Smuss",
+  title: "Smuss",
+  description: "Music player for everyone, anytime, anywhere",
 };
 
-export default function RootLayout({
+export const revalidate = 0;
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const userPlaylist = await getUserPlaylists();
   return (
     <html lang="en">
       <body className={font.className}>
@@ -25,7 +29,7 @@ export default function RootLayout({
         <SupabaseProvider>
           <UserProvider>
             <ModalProvider />
-            <Sidebar>
+            <Sidebar playlists={userPlaylist}>
               <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
                 {children}
               </div>

@@ -5,21 +5,19 @@ import { TbPlaylist } from "react-icons/tb";
 import useAuthModal from "@/hooks/useAuthModal";
 import { useUser } from "@/hooks/useUser";
 import useCreateModal from "@/hooks/useCreateModal";
+import { Playlist } from "@/types";
+import UserPlaylist from "@/components/shared/UserPlaylist";
 
 // interface Playlist {
 //   id: number;
 //   name: string;
 // }
 
-// interface LibraryProps {
-//   playlists: Playlist[];
-// }
+interface LibraryProps {
+  playlists: Playlist[];
+}
 
-const Library: React.FC = (
-  {
-    /* { playlists } */
-  }
-) => {
+const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const authModal = useAuthModal();
   const createModal = useCreateModal();
   const { user } = useUser();
@@ -54,13 +52,11 @@ const Library: React.FC = (
         />
       </div>
       <div className="flex flex-col gap-y-2 mt-4 px-4">
-        Playlists
-        {/* {playlists.map((playlist) => (
-        <div key={playlist.id}>
-          <h3>{playlist.name}</h3>
-
-        </div>
-      ))} */}
+        {playlists.map((playlist) => (
+          <div key={playlist.id}>
+            <UserPlaylist data={playlist} onClick={handlePlaylistClick} />
+          </div>
+        ))}
       </div>
     </div>
   );
