@@ -10,7 +10,7 @@ interface PlaylistProps {
   data: Playlist;
 }
 
-const Playlist: React.FC<PlaylistProps> = ({ data }) => {
+const PlaylistItem: React.FC<PlaylistProps> = ({ data }) => {
   const router = useRouter();
   const imagePath = useLoadImage(data);
   return (
@@ -83,4 +83,4 @@ const Playlist: React.FC<PlaylistProps> = ({ data }) => {
   );
 };
 
-export default Playlist;
+export default PlaylistItem;

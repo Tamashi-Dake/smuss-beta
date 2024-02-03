@@ -7,6 +7,7 @@ import UserProvider from "@/providers/UserProvider";
 import ModalProvider from "@/providers/ModalProvider";
 import ToastProvider from "@/providers/ToastProvider";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
+import Header from "@/components/layout/Header";
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -31,6 +32,7 @@ export default async function RootLayout({
             <ModalProvider />
             <Sidebar playlists={userPlaylist}>
               <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
+                <Header>Header</Header>
                 {children}
               </div>
             </Sidebar>

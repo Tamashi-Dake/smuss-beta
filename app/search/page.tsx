@@ -1,0 +1,35 @@
+import getSearchResult from "@/acitons/getSearchQuery";
+import SearchContent from "@/components/home/search/searchContent";
+import SearchInput from "@/components/home/search/searchInput";
+import React from "react";
+
+export const revalidate = 0;
+
+interface SearchProps {
+  searchParams: { query: string };
+}
+
+const Search = async ({ searchParams }: SearchProps) => {
+  const playlists = await getSearchResult(searchParams.query);
+
+  return (
+    <div
+      className="
+        bg-neutral-900 
+        rounded-lg 
+        h-full 
+        w-full 
+        overflow-hidden 
+        overflow-y-auto
+      "
+    >
+      <div className="mb-2 flex flex-col gap-y-6">
+        <h1 className="text-white text-3xl font-semibold">Search</h1>
+        <SearchInput />
+      </div>
+      <SearchContent playlists={playlists} />
+    </div>
+  );
+};
+
+export default Search;

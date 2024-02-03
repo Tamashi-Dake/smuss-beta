@@ -1,9 +1,8 @@
-import Header from "@/components/layout/Header";
 import SongsWrapper from "@/components/home/SongsWrapper";
 import SectionList from "@/components/home/SectionList";
 import getPlaylists from "@/acitons/getPlaylists";
 import Wrapper from "@/components/shared/Wrapper";
-import Playlist from "@/components/shared/Playlist";
+import PlaylistItem from "@/components/shared/PlaylistItem";
 
 export const revalidate = 0;
 
@@ -13,7 +12,6 @@ export default async function Home() {
 
   return (
     <>
-      <Header>Header</Header>
       <div className="mt-8 flex flex-col m-auto gap-y-10 max-w-wide-screen px-4">
         <SectionList>
           <h1 className="text-2xl font-bold ">New Hits</h1>
@@ -31,7 +29,7 @@ export default async function Home() {
             ) : (
               playlists.map((item) => (
                 // <p key={item.id}>{item.name}</p>
-                <Playlist key={item.id} data={item} />
+                <PlaylistItem key={item.id} data={item} />
               ))
             )}
           </Wrapper>
