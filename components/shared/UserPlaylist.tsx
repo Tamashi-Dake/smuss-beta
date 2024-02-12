@@ -43,6 +43,7 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({ data, onClick }) => {
       >
         <Image
           fill
+          sizes="48px"
           src={imageUrl || "/images/music-placeholder.png"}
           alt="UserPlaylist"
           className="object-cover"

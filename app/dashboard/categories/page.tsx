@@ -4,7 +4,6 @@ import React from "react";
 const SearchPage: React.FC = () => {
   return (
     <>
-      <Header>Header</Header>
       <h1>Categories Here</h1>
     </>
   );
