@@ -2,23 +2,37 @@ import Stripe from "stripe";
 
 export interface Song {
   id: string;
-  user_id: string;
-  author: string;
+  created_at: string;
   title: string;
   song_path: string;
   image_path: string;
+  user_id: string;
   time: string;
-  lyrics: string;
+  lyric: string;
 }
 
 export interface Playlist {
   id: string;
+  created_at: string;
+  name: string;
+  description: string;
+  image_path: string;
   user_id: string;
+}
+export interface Artist {
+  id: string;
+  created_at: string;
   name: string;
   description: string;
   image_path: string;
 }
-
+export interface Category {
+  id: string;
+  created_at: string;
+  name: string;
+  description: string;
+  image_path: string;
+}
 export interface UserDetails {
   id: string;
   first_name: string;

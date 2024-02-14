@@ -1,9 +1,9 @@
 import getUsersDetails from "@/acitons/getUsers";
-import { DataTable } from "@/components/shared/DataTable";
+import { DataTable } from "@/components/dashboard/DataTable";
 import React from "react";
 import { columnType } from "./columnType";
 
-const SearchPage: React.FC = async () => {
+const ManageUsers: React.FC = async () => {
   const users = await getUsersDetails();
 
   return (
@@ -14,4 +14,4 @@ const SearchPage: React.FC = async () => {
   );
 };
 
-export default SearchPage;
+export default ManageUsers;
