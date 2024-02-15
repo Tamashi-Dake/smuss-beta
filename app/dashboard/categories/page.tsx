@@ -7,8 +7,10 @@ const ManageCategories: React.FC = async () => {
   const categories = await getCategories();
   return (
     <>
-      <h1>Categories Here</h1>
-      <DataTable columns={columnType} data={categories} />
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-white">Categories</h1>
+        <DataTable columns={columnType} data={categories} />
+      </div>
     </>
   );
 };

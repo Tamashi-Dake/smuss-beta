@@ -8,8 +8,10 @@ const ManageSongs: React.FC = async () => {
   const songs = await getSongs();
   return (
     <>
-      <h1>Songs Here</h1>
-      <DataTable columns={columnType} data={songs} />
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-white">Songs</h1>
+        <DataTable columns={columnType} data={songs} />
+      </div>
     </>
   );
 };

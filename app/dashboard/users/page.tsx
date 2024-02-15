@@ -8,8 +8,10 @@ const ManageUsers: React.FC = async () => {
 
   return (
     <>
-      <h1 className="text-white">Users Here</h1>
-      <DataTable columns={columnType} data={users} />
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-white">Users</h1>
+        <DataTable columns={columnType} data={users} />
+      </div>
     </>
   );
 };

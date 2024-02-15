@@ -1,11 +1,10 @@
 "use client";
-import { UserDetails } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
   ClipboardCopyIcon,
-  DollarSignIcon,
   MoreHorizontal,
+  User2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +15,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Song } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
-export const columnType: ColumnDef<UserDetails>[] = [
+export const columnType: ColumnDef<Song>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -47,41 +47,67 @@ export const columnType: ColumnDef<UserDetails>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          User ID
+          Song ID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
+
   {
-    accessorKey: "full_name",
+    accessorKey: "title",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Username/Gmail
+          Song Title
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
-    accessorKey: "avatar_url",
-    header: "Avatar",
+    accessorKey: "song_path",
+    header: "Song Path",
   },
   {
-    accessorKey: "billing_address",
-    header: "Billing Address",
+    accessorKey: "image_path",
+    header: "Image Path",
+  },
+
+  {
+    accessorKey: "time",
+    header: "Time",
   },
   {
-    accessorKey: "payment_method",
-    header: "Payment Method",
+    accessorKey: "lyric",
+    header: "Lyrics",
+  },
+
+  {
+    accessorKey: "created_at",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Created At
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const date = new Date(row.original.created_at);
+      // TODO: Use a date formatting library
+      return date.toLocaleDateString();
+    },
   },
   {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "user_id",
+    header: "Created By",
   },
   {
     header: ({ column }) => {
@@ -93,7 +119,7 @@ export const columnType: ColumnDef<UserDetails>[] = [
     },
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original;
+      const song = row.original;
 
       return (
         <div className="text-center">
@@ -107,16 +133,12 @@ export const columnType: ColumnDef<UserDetails>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(user.id)}
+                onClick={() => navigator.clipboard.writeText(song.id)}
               >
                 <ClipboardCopyIcon className="w-4 h-4 mr-2" />
-                Copy user ID
+                Copy song ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <DollarSignIcon className="w-4 h-4 mr-2" />
-                View payment details
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

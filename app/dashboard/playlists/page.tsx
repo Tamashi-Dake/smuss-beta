@@ -8,7 +8,7 @@ const SearchPage: React.FC = async () => {
   return (
     <>
       <div className="p-4">
-        <h1 className="text-xl text-white">Playlists </h1>
+        <h1 className="text-2xl font-bold text-white">Playlists </h1>
         <DataTable columns={columnType} data={playlist} />
       </div>
     </>

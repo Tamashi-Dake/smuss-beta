@@ -41,24 +41,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
               path: "/dashboard",
             },
             {
-              icon: FaUser,
-              label: "Manage Users",
-              active: pathname === "/dashboard/users",
-              path: "/dashboard/users",
-            },
-            {
-              icon: FaItunesNote,
-              label: "Manage Songs",
-              active: pathname === "/songs",
-              path: "/dashboard/songs",
-            },
-            {
-              icon: TbPlaylist,
-              label: "Manage Playlists",
-              active: pathname === "/dashboard/playlists",
-              path: "/dashboard/playlists",
-            },
-            {
               icon: FaUsers,
               label: "Manage Artists",
               active: pathname === "/dashboard/artists",
@@ -69,6 +51,25 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
               label: "Manage Categories",
               active: pathname === "/dashboard/categories",
               path: "/dashboard/categories",
+            },
+            {
+              icon: TbPlaylist,
+              label: "Manage Playlists",
+              active: pathname === "/dashboard/playlists",
+              path: "/dashboard/playlists",
+            },
+            {
+              icon: FaItunesNote,
+              label: "Manage Songs",
+              active: pathname === "/songs",
+              path: "/dashboard/songs",
+            },
+
+            {
+              icon: FaUser,
+              label: "Manage Users",
+              active: pathname === "/dashboard/users",
+              path: "/dashboard/users",
             },
           ]
         : []),
@@ -89,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
 
   return (
     <div className="sidebar flex h-full">
-      <div className="sidebar__header hidden md:flex flex-col gap-y-2 bg-black w-[300px] p-2">
+      <div className="sidebar__header hidden md:flex flex-col gap-y-2 bg-black min-w-[200px] max-w-[300px] p-2">
         <Box classname={` ${role !== "admin" ? "" : "overflow-y-auto h-full"}`}>
           <div className="flex flex-col gap-y-4 px-5 py-4">
             {routes.map((item) => (
