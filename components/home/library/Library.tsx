@@ -2,9 +2,9 @@ import React from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { TbPlaylist } from "react-icons/tb";
 
-import useAuthModal from "@/hooks/useAuthModal";
+import { useAuthModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
-import useCreateModal from "@/hooks/useCreateModal";
+import { useCreateModal } from "@/hooks/useModal";
 import { Playlist } from "@/types";
 import UserPlaylist from "@/components/shared/UserPlaylist";
 

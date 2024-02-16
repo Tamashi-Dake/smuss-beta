@@ -44,6 +44,8 @@ import {
   ChevronRightIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import AddButton from "./AddButton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -59,6 +61,8 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const [rowSelection, setRowSelection] = useState({});
+
+  const pathname = usePathname();
 
   const table = useReactTable({
     data,
@@ -80,10 +84,13 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder="Search by name/title/username..."
           value={
-            (table.getColumn("name")?.getFilterValue() as string) ??
-            (table.getColumn("title")?.getFilterValue() as string) ??
-            (table.getColumn("full_name")?.getFilterValue() as string) ??
-            ""
+            (pathname === "/dashboard/songs"
+              ? (table.getColumn("title")?.getFilterValue() as string)
+              : "") ??
+            (pathname === "/dashboard/users"
+              ? (table.getColumn("full_name")?.getFilterValue() as string)
+              : "") ??
+            (table.getColumn("name")?.getFilterValue() as string)
           }
           onChange={(event) => {
             if (table.getColumn("name")) {
@@ -98,7 +105,7 @@ export function DataTable<TData, TValue>({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
+            <Button variant="outline" className="mx-2">
               Columns
             </Button>
           </DropdownMenuTrigger>
@@ -122,6 +129,7 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <AddButton pathname={pathname} />
       </div>
       {/* Table */}
       <div className="rounded-md border bg-neutral-200 truncate w-full ">

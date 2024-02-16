@@ -9,7 +9,7 @@ import {
 } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 
-import useAuthModal from "@/hooks/useAuthModal";
+import { useAuthModal } from "@/hooks/useModal";
 
 import Modal from "../Modal";
 import toast from "react-hot-toast";

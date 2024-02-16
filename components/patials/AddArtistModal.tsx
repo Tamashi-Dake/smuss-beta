@@ -1,29 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  useSessionContext,
-  useSupabaseClient,
-} from "@supabase/auth-helpers-react";
+import React, { useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import uniqid from "uniqid";
-import { useCreateModal } from "@/hooks/useModal";
+import toast from "react-hot-toast";
 
 import Modal from "../Modal";
-import toast from "react-hot-toast";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Input from "../shared/Input";
 import HeaderButton from "../layout/HeaderButton";
-import { useUser } from "@/hooks/useUser";
+import { useAddArtistModal } from "@/hooks/useModal";
 import useCurrentUser from "@/hooks/useCurrentUser";
 
-const CreateModal = () => {
+const ArtistModal = () => {
   const router = useRouter();
-  const { onClose, isOpen } = useCreateModal();
   const supabaseClient = useSupabaseClient();
+  const currentUser = useCurrentUser();
+  const { onClose, isOpen } = useAddArtistModal();
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useUser();
-  // const currentUser = useCurrentUser();
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       name: "",
@@ -42,16 +37,22 @@ const CreateModal = () => {
     try {
       setIsLoading(true);
       const imageFile = values.image?.[0];
-      if (!imageFile || !user) {
-        toast.error("Missing image or user");
+      if (!imageFile) {
+        toast.error("Missing image");
         return;
       }
       const uniqueID = uniqid();
+      if (currentUser?.role !== "admin") {
+        setIsLoading(false);
+        toast.error("You are not authorized to perform this action");
+        return;
+      }
+
       // upload image to storage
       const { data: imageData, error: imageError } =
         await supabaseClient.storage
           .from("images")
-          .upload(`playlist/${uniqueID}`, imageFile, {
+          .upload(`artist/${uniqueID}`, imageFile, {
             cacheControl: "3600",
             upsert: false,
           });
@@ -59,15 +60,14 @@ const CreateModal = () => {
         setIsLoading(false);
         return toast.error("Failed to upload image");
       }
-      // insert playlist
+
+      // insert Artist
       const { error: supabaseError } = await supabaseClient
-        .from("playlist")
+        .from("artist")
         .insert({
           name: values.name,
           description: values.description,
           image_path: imageData.path,
-          user_id: user.id,
-          // user_id: currentUser?.role === "admin" ? user.id : "admin",
         });
       if (supabaseError) {
         setIsLoading(false);
@@ -75,7 +75,7 @@ const CreateModal = () => {
       }
       router.refresh();
       setIsLoading(false);
-      toast.success("Playlist created");
+      toast.success("Artist created");
       reset();
       onClose();
     } catch (error) {
@@ -87,8 +87,8 @@ const CreateModal = () => {
 
   return (
     <Modal
-      title="Add a playlist"
-      description="Create your own playlist!"
+      title="Add an Artist"
+      description=""
       isOpen={isOpen}
       onChange={onChange}
     >
@@ -98,7 +98,7 @@ const CreateModal = () => {
         className=" flex flex-col space-y-4"
       >
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="name">Playlist name</label>
+          <label htmlFor="name">Artist name</label>
           <Input
             id="name"
             disabled={isLoading}
@@ -107,7 +107,7 @@ const CreateModal = () => {
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Artist Description</label>
           <Input
             id="description"
             disabled={isLoading}
@@ -116,7 +116,7 @@ const CreateModal = () => {
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="image">Image</label>
+          <label htmlFor="image">Artist Image</label>
           {/* only accept image files */}
           <Input
             id="image"
@@ -139,4 +139,4 @@ const CreateModal = () => {
   );
 };
 
-export default CreateModal;
+export default ArtistModal;

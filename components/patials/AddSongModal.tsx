@@ -1,13 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  useSessionContext,
-  useSupabaseClient,
-} from "@supabase/auth-helpers-react";
+import React, { useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
-import { useCreateModal } from "@/hooks/useModal";
+import { useAddSongModal } from "@/hooks/useModal";
 
 import Modal from "../Modal";
 import toast from "react-hot-toast";
@@ -17,18 +14,20 @@ import HeaderButton from "../layout/HeaderButton";
 import { useUser } from "@/hooks/useUser";
 import useCurrentUser from "@/hooks/useCurrentUser";
 
-const CreateModal = () => {
+const SongModal = () => {
   const router = useRouter();
-  const { onClose, isOpen } = useCreateModal();
+  const { onClose, isOpen } = useAddSongModal();
   const supabaseClient = useSupabaseClient();
+  const currentUser = useCurrentUser();
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUser();
-  // const currentUser = useCurrentUser();
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       name: "",
-      description: "",
       image: null,
+      song: null,
+      time: "",
+      lyrics: "",
     },
   });
   const onChange = (open: boolean) => {
@@ -42,16 +41,22 @@ const CreateModal = () => {
     try {
       setIsLoading(true);
       const imageFile = values.image?.[0];
-      if (!imageFile || !user) {
-        toast.error("Missing image or user");
+      const songFile = values.song?.[0];
+      if (!imageFile || !songFile || !user) {
+        toast.error("Missing image or song or user");
         return;
       }
       const uniqueID = uniqid();
+      if (currentUser?.role !== "admin") {
+        setIsLoading(false);
+        toast.error("You are not authorized to perform this action");
+        return;
+      }
       // upload image to storage
       const { data: imageData, error: imageError } =
         await supabaseClient.storage
           .from("images")
-          .upload(`playlist/${uniqueID}`, imageFile, {
+          .upload(`song/${uniqueID}`, imageFile, {
             cacheControl: "3600",
             upsert: false,
           });
@@ -59,15 +64,27 @@ const CreateModal = () => {
         setIsLoading(false);
         return toast.error("Failed to upload image");
       }
-      // insert playlist
+      // upload image to storage
+      const { data: songData, error: songError } = await supabaseClient.storage
+        .from("songs")
+        .upload(`${uniqueID}`, songFile, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+      if (songError) {
+        setIsLoading(false);
+        return toast.error("Failed to upload song");
+      }
+      // insert Song
       const { error: supabaseError } = await supabaseClient
-        .from("playlist")
+        .from("songs")
         .insert({
-          name: values.name,
-          description: values.description,
+          title: values.title,
+          song_path: songData.path,
           image_path: imageData.path,
           user_id: user.id,
-          // user_id: currentUser?.role === "admin" ? user.id : "admin",
+          time: values.time,
+          lyric: values.lyric,
         });
       if (supabaseError) {
         setIsLoading(false);
@@ -75,7 +92,7 @@ const CreateModal = () => {
       }
       router.refresh();
       setIsLoading(false);
-      toast.success("Playlist created");
+      toast.success("Song created");
       reset();
       onClose();
     } catch (error) {
@@ -87,8 +104,8 @@ const CreateModal = () => {
 
   return (
     <Modal
-      title="Add a playlist"
-      description="Create your own playlist!"
+      title="Add a Song"
+      description=""
       isOpen={isOpen}
       onChange={onChange}
     >
@@ -98,37 +115,58 @@ const CreateModal = () => {
         className=" flex flex-col space-y-4"
       >
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="name">Playlist name</label>
+          <label htmlFor="title">Song name</label>
           <Input
-            id="name"
+            id="title"
             disabled={isLoading}
-            placeholder="Name"
-            {...register("name", { required: true })}
+            placeholder="Title"
+            {...register("title", { required: true })}
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="description">Description</label>
+          <label htmlFor="time">Song Time</label>
           <Input
-            id="description"
+            id="time"
             disabled={isLoading}
-            placeholder="Description"
-            {...register("description", { required: true })}
+            placeholder="Time"
+            {...register("time", { required: true })}
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="image">Image</label>
+          <label htmlFor="image">Song Image</label>
           {/* only accept image files */}
           <Input
             id="image"
             type="file"
             disabled={isLoading}
-            placeholder="Image"
             accept="
             .png,
             .jpeg,
             .jpg,
             "
             {...register("image", { required: true })}
+          />
+        </div>
+        <div className=" flex flex-col space-y-2">
+          <label htmlFor="song">Song File</label>
+          {/* only accept mp3 files */}
+          <Input
+            id="song"
+            type="file"
+            disabled={isLoading}
+            accept="
+            .mp3,
+            "
+            {...register("song", { required: true })}
+          />
+        </div>
+        <div className=" flex flex-col space-y-2">
+          <label htmlFor="lyric">Song Lyric</label>
+          <Input
+            id="lyric"
+            disabled={isLoading}
+            placeholder="Lyric"
+            {...register("lyric", { required: false })}
           />
         </div>
         <HeaderButton disabled={isLoading} type="submit" className="rounded-md">
@@ -139,4 +177,4 @@ const CreateModal = () => {
   );
 };
 
-export default CreateModal;
+export default SongModal;
