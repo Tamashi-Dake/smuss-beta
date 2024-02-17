@@ -1,22 +1,22 @@
 "use client";
 import useLoadImage from "@/hooks/useLoadImage";
-import { Playlist } from "@/types";
+import { Artist } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 import PlayButton from "./PlayButton";
 
-interface PlaylistProps {
-  data: Playlist;
+interface ArtistItemProps {
+  data: Artist;
 }
 
-const PlaylistItem: React.FC<PlaylistProps> = ({ data }) => {
+const ArtistItem: React.FC<ArtistItemProps> = ({ data }) => {
   const router = useRouter();
-  const imagePath = useLoadImage(data);
+  const imageUrl = useLoadImage(data);
   return (
     <div
       onClick={() =>
-        // router.push(`/playlist/${data.id}`)
+        // router.push(`/artist/${data.id}`)
         console.log(data.id)
       }
       className=" relative 
@@ -28,7 +28,7 @@ const PlaylistItem: React.FC<PlaylistProps> = ({ data }) => {
       rounded-md 
       overflow-hidden 
       gap-x-4 
-      bg-neutral-400/5 
+      bg-neutral-500/5
       text-white
       hover:bg-neutral-400/10 
       cursor-pointer 
@@ -50,8 +50,12 @@ const PlaylistItem: React.FC<PlaylistProps> = ({ data }) => {
       >
         <Image
           draggable={false}
-          className="object-cover  w-full h-full rounded-md overflow-hidden"
-          src={imagePath || "/liked.png"}
+          className="object-cover  w-full h-full rounded-full overflow-hidden"
+          src={
+            imageUrl && imageUrl.endsWith("null")
+              ? "/liked.png"
+              : imageUrl || "/liked.png"
+          }
           width={200}
           height={200}
           alt="Image"
@@ -78,11 +82,9 @@ const PlaylistItem: React.FC<PlaylistProps> = ({ data }) => {
           bottom-24 
           right-5
         "
-      >
-        <PlayButton />
-      </div>
+      ></div>
     </div>
   );
 };
 
-export default PlaylistItem;
+export default ArtistItem;

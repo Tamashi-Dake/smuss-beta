@@ -10,8 +10,9 @@ interface SearchProps {
 }
 
 const Search = async ({ searchParams }: SearchProps) => {
-  const playlists = await getSearchResult(searchParams.query);
-
+  const { songs, playlists, artists, categories } = await getSearchResult(
+    searchParams.query
+  );
   return (
     <div
       className="
@@ -20,13 +21,20 @@ const Search = async ({ searchParams }: SearchProps) => {
         h-full 
         w-full 
         px-4
+        max-w-[1500px]
+        mx-auto
       "
     >
       <div className="mb-2 flex flex-col gap-y-6">
         <h1 className="text-white text-3xl font-semibold">Search</h1>
         <SearchInput />
       </div>
-      <SearchContent playlists={playlists} />
+      <SearchContent
+        songs={songs}
+        playlists={playlists}
+        artists={artists}
+        categories={categories}
+      />
     </div>
   );
 };

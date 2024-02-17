@@ -32,7 +32,7 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
       responsive={responsive}
       ssr={true} // means to render carousel on server-side.
       containerClass="carousel-container"
-      removeArrowOnDeviceType={["tablet", "mobile"]}
+      removeArrowOnDeviceType={["mobile"]}
       // arrows={false}
       renderButtonGroupOutside={true}
       // customButtonGroup={<ButtonGroup />}

@@ -1,31 +1,88 @@
-import { Playlist } from "@/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import getPlaylists from "./getPlaylists";
+import getCategories from "./getCategories";
+import { Playlist, Song, Artist, Category } from "@/types";
 
-const getSearchResult = async (query: string): Promise<Playlist[]> => {
+interface SearchResult {
+  playlists: Playlist[];
+  songs: Song[];
+  artists: Artist[];
+  categories: Category[];
+}
+
+const getSearchResult = async (query: string): Promise<SearchResult> => {
   const supabase = createServerComponentClient({
     cookies: cookies,
   });
 
-  // TODO: Add search by name of artist, song and playlist.
-  // If no query, return all playlists (for now)
+  let playlists: Playlist[] = [];
+  let songs: Song[] = [];
+  let artists: Artist[] = [];
+  let categories: Category[] = [];
   if (!query) {
-    const allPlaylists = await getPlaylists();
-    return allPlaylists;
+    const defaultSearchView = await getCategories();
+    return {
+      playlists,
+      songs,
+      artists,
+      categories: defaultSearchView,
+    };
   }
 
-  const { data, error } = await supabase
+  // Tìm kiếm danh sách các Playlist
+  const playlistSearchResult = await supabase
     .from("playlist")
     .select("*")
     .ilike("name", `%${query}%`)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.log(error.message);
+  // Tìm kiếm danh sách các Song
+  const songSearchResult = await supabase
+    .from("songs")
+    .select("*")
+    .ilike("title", `%${query}%`)
+    .order("created_at", { ascending: false });
+
+  // Tìm kiếm danh sách các Artist
+  const artistSearchResult = await supabase
+    .from("artist")
+    .select("*")
+    .ilike("name", `%${query}%`)
+    .order("created_at", { ascending: false });
+
+  // Kiểm tra lỗi trong quá trình tìm kiếm
+  if (
+    playlistSearchResult.error ||
+    songSearchResult.error ||
+    artistSearchResult.error
+  ) {
+    console.log("Error occurred during search.");
+    console.log(
+      playlistSearchResult.error ??
+        songSearchResult.error ??
+        artistSearchResult.error
+    );
+    // Xử lý lỗi tại đây nếu cần thiết
   }
 
-  return (data as any) || [];
+  if (playlistSearchResult.data) {
+    playlists = playlistSearchResult.data;
+  }
+
+  if (songSearchResult.data) {
+    songs = songSearchResult.data;
+  }
+
+  if (artistSearchResult.data) {
+    artists = artistSearchResult.data;
+  }
+
+  return {
+    playlists,
+    songs,
+    artists,
+    categories,
+  };
 };
 
 export default getSearchResult;

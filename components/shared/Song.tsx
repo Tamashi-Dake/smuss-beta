@@ -7,7 +7,7 @@ interface SongProps {
   title: string;
   href: string;
 }
-const Song: React.FC<SongProps> = ({ image, title, href }) => {
+const SongItem: React.FC<SongProps> = ({ image, title, href }) => {
   const router = useRouter();
   const handleClick = () => {
     router.push(href);
@@ -35,4 +35,4 @@ const Song: React.FC<SongProps> = ({ image, title, href }) => {
   );
 };
 
-export default Song;
+export default SongItem;

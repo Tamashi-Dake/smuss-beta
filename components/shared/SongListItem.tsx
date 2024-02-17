@@ -3,18 +3,19 @@
 import Image from "next/image";
 
 import useLoadImage from "@/hooks/useLoadImage";
-import { Playlist } from "@/types";
+import { Song } from "@/types";
 import toast from "react-hot-toast";
 
-interface UserPlaylistProps {
-  data: Playlist;
+interface SongListItemProps {
+  data: Song;
   onClick?: (id: string) => void;
 }
 
-const UserPlaylist: React.FC<UserPlaylistProps> = ({ data, onClick }) => {
+const SongListItem: React.FC<SongListItemProps> = ({ data, onClick }) => {
   const imageUrl = useLoadImage(data);
+
   const handleClick = () => {
-    toast.success(`Playlist ${data.name} clicked`);
+    toast.success(`Song ${data.title} clicked`);
   };
 
   return (
@@ -48,16 +49,16 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({ data, onClick }) => {
               ? "/liked.png"
               : imageUrl || "/liked.png"
           }
-          alt="UserPlaylist"
+          alt="SongListItem"
           className="object-cover"
         />
       </div>
       <div className="flex flex-col gap-y-1 overflow-hidden">
-        <p className="text-white truncate">{data.name}</p>
-        <p className="text-neutral-400 text-sm truncate">{data.description}</p>
+        <p className="text-white truncate">{data.title}</p>
+        <p className="text-neutral-400 text-sm truncate">{data.time}</p>
       </div>
     </div>
   );
 };
 
-export default UserPlaylist;
+export default SongListItem;
