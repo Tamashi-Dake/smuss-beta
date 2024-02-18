@@ -3,6 +3,7 @@ import SectionList from "@/components/home/SectionList";
 import getPlaylists from "@/acitons/getPlaylists";
 import Wrapper from "@/components/shared/Wrapper";
 import PlaylistItem from "@/components/shared/PlaylistItem";
+import Link from "next/link";
 
 export const revalidate = 0;
 
@@ -12,7 +13,10 @@ export default async function Home() {
 
   return (
     <>
-      <div className="mt-8 flex flex-col m-auto gap-y-10 max-w-wide-screen px-4">
+      <div className="mt-8 flex flex-col m-auto gap-y-10 max-w-wide-screen px-4 text-white">
+        <Link className="text-xl font-bold  bg-blue-400" href="/favorites">
+          Favorites
+        </Link>
         <SectionList>
           <h1 className="text-2xl font-bold ">New Hits</h1>
           {/* animation section */}
