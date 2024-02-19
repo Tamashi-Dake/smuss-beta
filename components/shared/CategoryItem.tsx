@@ -13,7 +13,6 @@ interface CategoryProps {
 const CategoryItem: React.FC<CategoryProps> = ({ data }) => {
   const router = useRouter();
   const imageUrl = useLoadImage(data);
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
   return (
     <div
       onClick={() =>
@@ -34,7 +33,7 @@ const CategoryItem: React.FC<CategoryProps> = ({ data }) => {
       min-w-28
       max-w-52
       select-none "
-      style={{ backgroundColor: `#${randomColor}` }}
+      style={{ backgroundColor: data.color }}
     >
       <div
         className="

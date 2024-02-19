@@ -98,7 +98,7 @@ const CreateModal = () => {
         className=" flex flex-col space-y-4"
       >
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="name">Playlist name</label>
+          <label htmlFor="name">Playlist Name</label>
           <Input
             id="name"
             disabled={isLoading}
@@ -107,7 +107,7 @@ const CreateModal = () => {
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Playlist Description</label>
           <Input
             id="description"
             disabled={isLoading}
@@ -116,7 +116,7 @@ const CreateModal = () => {
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="image">Image</label>
+          <label htmlFor="image">Playlist Image</label>
           {/* only accept image files */}
           <Input
             id="image"
@@ -132,7 +132,7 @@ const CreateModal = () => {
           />
         </div>
         <HeaderButton disabled={isLoading} type="submit" className="rounded-md">
-          Create
+          Add
         </HeaderButton>
       </form>
     </Modal>

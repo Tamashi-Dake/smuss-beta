@@ -32,6 +32,7 @@ export interface Category {
   name: string;
   description: string;
   image_path: string;
+  color: string;
 }
 export interface UserDetails {
   id: string;

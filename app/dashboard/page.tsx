@@ -1,6 +1,7 @@
 import React from "react";
 import SectionList from "@/components/home/SectionList";
 import SongsWrapper from "@/components/home/SongsWrapper";
+export const revalidate = 0;
 
 const DashboardPage: React.FC = async () => {
   // TODO: Add max-w for table

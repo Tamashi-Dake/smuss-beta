@@ -1,10 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  useSessionContext,
-  useSupabaseClient,
-} from "@supabase/auth-helpers-react";
+import React, { useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import { useAddCategoryModal } from "@/hooks/useModal";
@@ -22,10 +19,15 @@ const CategoryModal = () => {
   const supabaseClient = useSupabaseClient();
   const currentUser = useCurrentUser();
   const [isLoading, setIsLoading] = useState(false);
+  const [color, setColor] = useState("000000");
+  const onChangeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setColor(e.target.value);
+  };
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       name: "",
       description: "",
+      color: "#000000",
       image: null,
     },
   });
@@ -69,6 +71,7 @@ const CategoryModal = () => {
           name: values.name,
           description: values.description,
           image_path: imageData.path,
+          color: values.color,
         });
       if (supabaseError) {
         setIsLoading(false);
@@ -99,7 +102,7 @@ const CategoryModal = () => {
         className=" flex flex-col space-y-4"
       >
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="name">Category name</label>
+          <label htmlFor="name">Category Name</label>
           <Input
             id="name"
             disabled={isLoading}
@@ -115,6 +118,29 @@ const CategoryModal = () => {
             placeholder="Description"
             {...register("description", { required: true })}
           />
+        </div>
+        <div className=" flex flex-col space-y-2">
+          <label htmlFor="color">Category Background Color</label>
+          <div className="flex gap-x-2">
+            <Input
+              id="color"
+              value={color}
+              disabled={isLoading}
+              placeholder="Hex Color"
+              {...register("color", { required: true })}
+              onChange={(e) => {
+                setColor(e.target.value);
+              }}
+              maxLength={7}
+            />
+            <Input
+              className="w-16 h-16"
+              type="color"
+              value={color}
+              disabled={isLoading}
+              onChange={onChangeColor}
+            />
+          </div>
         </div>
         <div className=" flex flex-col space-y-2">
           <label htmlFor="image">Category Image</label>
@@ -133,7 +159,7 @@ const CategoryModal = () => {
           />
         </div>
         <HeaderButton disabled={isLoading} type="submit" className="rounded-md">
-          Create
+          Add
         </HeaderButton>
       </form>
     </Modal>

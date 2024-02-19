@@ -115,7 +115,7 @@ const SongModal = () => {
         className=" flex flex-col space-y-4"
       >
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="title">Song name</label>
+          <label htmlFor="title">Song Name</label>
           <Input
             id="title"
             disabled={isLoading}
@@ -170,7 +170,7 @@ const SongModal = () => {
           />
         </div>
         <HeaderButton disabled={isLoading} type="submit" className="rounded-md">
-          Create
+          Add
         </HeaderButton>
       </form>
     </Modal>
