@@ -4,17 +4,21 @@ import React, { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
-import { useAddSongModal } from "@/hooks/useModal";
-
-import Modal from "../Modal";
+import Select from "react-select";
 import toast from "react-hot-toast";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import Input from "../shared/Input";
-import HeaderButton from "../layout/HeaderButton";
-import { useUser } from "@/hooks/useUser";
-import useCurrentUser from "@/hooks/useCurrentUser";
 
-const SongModal = () => {
+import { useAddSongModal } from "@/hooks/useModal";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { useUser } from "@/hooks/useUser";
+import Modal from "../Modal";
+import HeaderButton from "../layout/HeaderButton";
+import Input from "../shared/Input";
+import Textarea from "../shared/Textarea";
+import MutipleSelect from "../shared/MutipleSelect";
+import { Category } from "@/types";
+
+const SongModal = ({ categories }: { categories: Category[] }) => {
   const router = useRouter();
   const { onClose, isOpen } = useAddSongModal();
   const supabaseClient = useSupabaseClient();
@@ -24,18 +28,30 @@ const SongModal = () => {
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       name: "",
+      selectedOption: null,
       image: null,
       song: null,
       time: "",
       lyrics: "",
     },
   });
+
+  const [selectedOption, setSelectedOption] = useState(null);
+  const options = categories.map((item: Category) => ({
+    value: item.id.toString(),
+    label: item.name,
+  }));
+  const handleSelectChange = (selectedOption: any) => {
+    setSelectedOption(selectedOption);
+  };
+
   const onChange = (open: boolean) => {
     if (!open) {
       reset();
       onClose();
     }
   };
+
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     // upload to supabase
     try {
@@ -90,6 +106,15 @@ const SongModal = () => {
         setIsLoading(false);
         return toast.error(supabaseError.message);
       }
+      // insert relationship
+      // const { error: categoryError } = await supabaseClient
+      //   .from("REF_song_category")
+      //   .insert(
+      //     selectedOption && selectedOption.map((item: any) => ({
+      //       song_id: ,
+      //       category_id: item.value,
+      //     }))
+      //   );
       router.refresh();
       setIsLoading(false);
       toast.success("Song created");
@@ -124,6 +149,17 @@ const SongModal = () => {
           />
         </div>
         <div className=" flex flex-col space-y-2">
+          <label htmlFor="title">Song Category</label>
+          <MutipleSelect
+            id="category"
+            defaultValue={selectedOption}
+            onChange={handleSelectChange}
+            options={options}
+            isDisabled={isLoading}
+            isMulti
+          />
+        </div>
+        <div className=" flex flex-col space-y-2">
           <label htmlFor="time">Song Time</label>
           <Input
             id="time"
@@ -132,37 +168,39 @@ const SongModal = () => {
             {...register("time", { required: true })}
           />
         </div>
-        <div className=" flex flex-col space-y-2">
-          <label htmlFor="image">Song Image</label>
-          {/* only accept image files */}
-          <Input
-            id="image"
-            type="file"
-            disabled={isLoading}
-            accept="
+        <div className=" flex gap-4">
+          <div className=" flex flex-col space-y-2">
+            <label htmlFor="image">Song Image</label>
+            {/* only accept image files */}
+            <Input
+              id="image"
+              type="file"
+              disabled={isLoading}
+              accept="
             .png,
             .jpeg,
             .jpg,
             "
-            {...register("image", { required: true })}
-          />
-        </div>
-        <div className=" flex flex-col space-y-2">
-          <label htmlFor="song">Song File</label>
-          {/* only accept mp3 files */}
-          <Input
-            id="song"
-            type="file"
-            disabled={isLoading}
-            accept="
+              {...register("image", { required: true })}
+            />
+          </div>
+          <div className=" flex flex-col space-y-2">
+            <label htmlFor="song">Song File</label>
+            {/* only accept mp3 files */}
+            <Input
+              id="song"
+              type="file"
+              disabled={isLoading}
+              accept="
             .mp3,
             "
-            {...register("song", { required: true })}
-          />
+              {...register("song", { required: true })}
+            />
+          </div>
         </div>
         <div className=" flex flex-col space-y-2">
           <label htmlFor="lyric">Song Lyric</label>
-          <Input
+          <Textarea
             id="lyric"
             disabled={isLoading}
             placeholder="Lyric"

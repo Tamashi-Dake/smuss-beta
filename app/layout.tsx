@@ -8,6 +8,7 @@ import ModalProvider from "@/providers/ModalProvider";
 import ToastProvider from "@/providers/ToastProvider";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
 import Header from "@/components/layout/Header";
+import getSelectCategory from "@/acitons/getSelectCategory";
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -23,13 +24,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const userPlaylist = await getUserPlaylists();
+  const selectCategory = await getSelectCategory();
   return (
     <html lang="en">
       <body className={font.className}>
         <ToastProvider />
         <SupabaseProvider>
           <UserProvider>
-            <ModalProvider />
+            <ModalProvider
+              categories={selectCategory}
+              // artists={} playlists={} songs={}
+            />
             <Sidebar playlists={userPlaylist}>
               <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
                 <Header>Header</Header>

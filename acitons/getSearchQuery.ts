@@ -32,7 +32,8 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
   // Tìm kiếm danh sách các Playlist
   const playlistSearchResult = await supabase
     .from("playlist")
-    .select("*")
+    .select("*, users!inner(*)")
+    .eq("users.role", "admin")
     .ilike("name", `%${query}%`)
     .order("created_at", { ascending: false });
 
