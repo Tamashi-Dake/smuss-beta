@@ -1,6 +1,6 @@
 import SongsWrapper from "@/components/home/SongsWrapper";
 import SectionList from "@/components/home/SectionList";
-import getPlaylists from "@/acitons/getPlaylists";
+import getPublicPlaylists from "@/acitons/getPublicPlaylists";
 import Wrapper from "@/components/shared/Wrapper";
 import PlaylistItem from "@/components/shared/PlaylistItem";
 import Link from "next/link";
@@ -9,7 +9,7 @@ export const revalidate = 0;
 
 export default async function Home() {
   // TODO: get all user playlists (for now, will change to get artists playlists later)
-  const playlists = await getPlaylists();
+  const playlists = await getPublicPlaylists();
 
   return (
     <>

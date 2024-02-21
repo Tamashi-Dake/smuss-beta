@@ -9,6 +9,9 @@ import ToastProvider from "@/providers/ToastProvider";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
 import Header from "@/components/layout/Header";
 import getSelectCategory from "@/acitons/getSelectCategory";
+import getSelectArtist from "@/acitons/getSelectArtist";
+import getSelectPlaylist from "@/acitons/getSelectPlaylist";
+import getSelectSong from "@/acitons/getSelectSong";
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,6 +28,9 @@ export default async function RootLayout({
 }>) {
   const userPlaylist = await getUserPlaylists();
   const selectCategory = await getSelectCategory();
+  const selectArtist = await getSelectArtist();
+  const selectPlaylist = await getSelectPlaylist();
+  const selectSong = await getSelectSong();
   return (
     <html lang="en">
       <body className={font.className}>
@@ -33,7 +39,9 @@ export default async function RootLayout({
           <UserProvider>
             <ModalProvider
               categories={selectCategory}
-              // artists={} playlists={} songs={}
+              artists={selectArtist}
+              playlists={selectPlaylist}
+              songs={selectSong}
             />
             <Sidebar playlists={userPlaylist}>
               <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">

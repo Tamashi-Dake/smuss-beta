@@ -14,18 +14,18 @@ import { Artist, Category, Playlist, Song as SongType } from "@/types";
 // import { ProductWithPrice } from "@/types_stripe";
 
 interface ModalProviderProps {
-  // artists: Artist[];
+  artists: Artist[];
   categories: Category[];
-  // playlists: Playlist[];
-  // songs: SongType[];
+  playlists: Playlist[];
+  songs: SongType[];
   //   products: ProductWithPrice[];
 }
 
 const ModalProvider: React.FC<ModalProviderProps> = ({
-  // artists,
+  artists,
   categories,
-  // playlists,
-  // songs,
+  playlists,
+  songs,
   //   products
 }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -45,7 +45,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
       <CategoryModal />
       <CreateModal />
       {/* <SubscribeModal products={products} /> */}
-      <SongModal categories={categories} />
+      <SongModal categories={categories} artists={artists} />
     </>
   );
 };

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
-import Select from "react-select";
 import toast from "react-hot-toast";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
@@ -16,9 +15,17 @@ import HeaderButton from "../layout/HeaderButton";
 import Input from "../shared/Input";
 import Textarea from "../shared/Textarea";
 import MutipleSelect from "../shared/MutipleSelect";
-import { Category } from "@/types";
+import { Artist, Category } from "@/types";
 
-const SongModal = ({ categories }: { categories: Category[] }) => {
+const SongModal = ({
+  categories,
+  artists,
+}: // playlists,
+{
+  categories: Category[];
+  artists: Artist[];
+  // playlists: any;
+}) => {
   const router = useRouter();
   const { onClose, isOpen } = useAddSongModal();
   const supabaseClient = useSupabaseClient();
@@ -28,7 +35,6 @@ const SongModal = ({ categories }: { categories: Category[] }) => {
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       name: "",
-      selectedOption: null,
       image: null,
       song: null,
       time: "",
@@ -36,13 +42,14 @@ const SongModal = ({ categories }: { categories: Category[] }) => {
     },
   });
 
-  const [selectedOption, setSelectedOption] = useState(null);
-  const options = categories.map((item: Category) => ({
-    value: item.id.toString(),
-    label: item.name,
-  }));
-  const handleSelectChange = (selectedOption: any) => {
-    setSelectedOption(selectedOption);
+  const [categoryOption, setCategoryOption] = useState(null);
+  const [artistOption, setArtistOption] = useState(null);
+
+  const handleCategoryChange = (categoryOption: any) => {
+    setCategoryOption(categoryOption);
+  };
+  const handleArtistChange = (artistOption: any) => {
+    setArtistOption(artistOption);
   };
 
   const onChange = (open: boolean) => {
@@ -92,7 +99,7 @@ const SongModal = ({ categories }: { categories: Category[] }) => {
         return toast.error("Failed to upload song");
       }
       // insert Song
-      const { error: supabaseError } = await supabaseClient
+      const { data: songID, error: supabaseError } = await supabaseClient
         .from("songs")
         .insert({
           title: values.title,
@@ -101,20 +108,39 @@ const SongModal = ({ categories }: { categories: Category[] }) => {
           user_id: user.id,
           time: values.time,
           lyric: values.lyric,
-        });
+        })
+        .select();
       if (supabaseError) {
         setIsLoading(false);
         return toast.error(supabaseError.message);
       }
       // insert relationship
-      // const { error: categoryError } = await supabaseClient
-      //   .from("REF_song_category")
-      //   .insert(
-      //     selectedOption && selectedOption.map((item: any) => ({
-      //       song_id: ,
-      //       category_id: item.value,
-      //     }))
-      //   );
+      const { error: categoryError } = await supabaseClient
+        .from("rel_song_category")
+        .insert(
+          categoryOption &&
+            categoryOption.map((item: any) => ({
+              song_id: songID[0].id,
+              category_id: item.value,
+            }))
+        );
+      if (categoryError) {
+        setIsLoading(false);
+        return toast.error(categoryError.message);
+      }
+      const { error: artistError } = await supabaseClient
+        .from("rel_song_artist")
+        .insert(
+          artistOption &&
+            artistOption.map((item: any) => ({
+              song_id: songID[0].id,
+              artist_id: item.value,
+            }))
+        );
+      if (artistError) {
+        setIsLoading(false);
+        return toast.error(artistError.message);
+      }
       router.refresh();
       setIsLoading(false);
       toast.success("Song created");
@@ -126,7 +152,7 @@ const SongModal = ({ categories }: { categories: Category[] }) => {
       setIsLoading(false);
     }
   };
-
+  // console.log(playlists);
   return (
     <Modal
       title="Add a Song"
@@ -152,13 +178,41 @@ const SongModal = ({ categories }: { categories: Category[] }) => {
           <label htmlFor="title">Song Category</label>
           <MutipleSelect
             id="category"
-            defaultValue={selectedOption}
-            onChange={handleSelectChange}
-            options={options}
+            defaultValue={categoryOption}
+            onChange={handleCategoryChange}
+            options={categories.map((category) => ({
+              value: category.id.toString(),
+              label: category.name,
+            }))}
             isDisabled={isLoading}
             isMulti
           />
         </div>
+        <div className=" flex flex-col space-y-2">
+          <label htmlFor="artist">Song Artist</label>
+          <MutipleSelect
+            id="artist"
+            options={artists.map((artist) => ({
+              value: artist.id.toString(),
+              label: artist.name,
+            }))}
+            onChange={handleArtistChange}
+            isDisabled={isLoading}
+            isMulti
+          />
+        </div>
+        {/* <div className=" flex flex-col space-y-2">
+          <label htmlFor="playlist">Add to Playlist</label>
+          <MutipleSelect
+            id="playlist"
+            options={playlists.map((playlist: any) => ({
+              value: playlist.id.toString(),
+              label: playlist.name,
+            }))}
+            isDisabled={isLoading}
+            isMulti
+          />
+        </div> */}
         <div className=" flex flex-col space-y-2">
           <label htmlFor="time">Song Time</label>
           <Input

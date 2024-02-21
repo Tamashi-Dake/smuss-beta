@@ -101,6 +101,10 @@ export const columnType: ColumnDef<Playlist>[] = [
     header: "User ID",
   },
   {
+    accessorKey: "artist_id",
+    header: "Artist ID",
+  },
+  {
     header: ({ column }) => {
       return (
         <div className="text-center" aria-label="Actions">

@@ -51,7 +51,7 @@ const Modal: React.FC<ModalProps> = ({
             p-[25px] 
             focus:outline-none
             z-[9999]
-
+            overflow-auto
           "
         >
           <Dialog.Title

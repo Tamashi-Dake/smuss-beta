@@ -84,21 +84,19 @@ export function DataTable<TData, TValue>({
         <Input
           placeholder="Search by name/title/username..."
           value={
-            (pathname === "/dashboard/songs"
+            pathname === "/dashboard/songs"
               ? (table.getColumn("title")?.getFilterValue() as string)
-              : "") ??
-            (pathname === "/dashboard/users"
+              : pathname === "/dashboard/users"
               ? (table.getColumn("full_name")?.getFilterValue() as string)
-              : "") ??
-            (table.getColumn("name")?.getFilterValue() as string)
+              : (table.getColumn("name")?.getFilterValue() as string)
           }
           onChange={(event) => {
-            if (table.getColumn("name")) {
-              table.getColumn("name")?.setFilterValue(event.target.value);
-            } else if (table.getColumn("title")) {
+            if (pathname === "/dashboard/songs") {
               table.getColumn("title")?.setFilterValue(event.target.value);
-            } else if (table.getColumn("full_name")) {
+            } else if (pathname === "/dashboard/users") {
               table.getColumn("full_name")?.setFilterValue(event.target.value);
+            } else {
+              table.getColumn("name")?.setFilterValue(event.target.value);
             }
           }}
           className="max-w-sm"

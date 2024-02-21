@@ -61,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
             {
               icon: FaItunesNote,
               label: "Manage Songs",
-              active: pathname === "/songs",
+              active: pathname === "/dashboard/songs",
               path: "/dashboard/songs",
             },
 

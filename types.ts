@@ -18,6 +18,7 @@ export interface Playlist {
   description: string;
   image_path: string;
   user_id: string;
+  artist_id: string;
 }
 export interface Artist {
   id: string;
