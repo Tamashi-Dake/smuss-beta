@@ -4,7 +4,7 @@ import { supabase } from "@/utils/supabaseSever";
 const getSelectCategory = async (): Promise<Category[]> => {
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name")
+    .select("id, name,color")
     .order("name", { ascending: true });
   if (error) console.log("error", error);
   return (data as Category[]) || [];

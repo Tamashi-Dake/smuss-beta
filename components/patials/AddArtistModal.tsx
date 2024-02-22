@@ -13,7 +13,7 @@ import HeaderButton from "../layout/HeaderButton";
 import { useAddArtistModal } from "@/hooks/useModal";
 import useCurrentUser from "@/hooks/useCurrentUser";
 
-const ArtistModal = () => {
+const AddArtistModal = () => {
   const router = useRouter();
   const supabaseClient = useSupabaseClient();
   const currentUser = useCurrentUser();
@@ -139,4 +139,4 @@ const ArtistModal = () => {
   );
 };
 
-export default ArtistModal;
+export default AddArtistModal;

@@ -1,11 +1,19 @@
 import { twMerge } from "tailwind-merge";
-import Select, { GroupBase, Props } from "react-select";
+import Select, { GroupBase, Props, StylesConfig } from "react-select";
 
 function MutipleSelect<
   Option,
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>
->(props: Props<Option, IsMulti, Group>) {
+>(props: Props<Option, IsMulti, Group>, data: any) {
+  // const colorStyles: StylesConfig<any, true> = {
+  //   multiValueLabel: (styles) => {
+  //     return {
+  //       ...styles,
+  //       backgroundColor: data.color,
+  //     };
+  //   },
+  // };
   return (
     <Select
       unstyled
@@ -14,8 +22,8 @@ function MutipleSelect<
         clearIndicator: () => "hover:bg-neutral-500 p-2 rounded-sm",
         control: ({ isDisabled, isFocused }) =>
           twMerge(
-            "w-full rounded-md border border-transparent p-3",
-            isDisabled ? "opacity-50" : "bg-neutral-700",
+            "w-full rounded-md border border-transparent p-3 bg-neutral-700",
+            isDisabled ? "opacity-75 " : "",
             isFocused ? "border-blue-400" : "border-transparent"
           ),
         dropdownIndicator: () => "hover:bg-neutral-500 p-2 rounded-sm",
@@ -38,6 +46,7 @@ function MutipleSelect<
           ),
         // placeholder, singleValue, valueContainer
       }}
+      // styles={colorStyles}
     />
   );
 }

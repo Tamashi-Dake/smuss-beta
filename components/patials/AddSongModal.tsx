@@ -16,15 +16,16 @@ import Input from "../shared/Input";
 import Textarea from "../shared/Textarea";
 import MutipleSelect from "../shared/MutipleSelect";
 import { Artist, Category } from "@/types";
+import { insertRelationship } from "@/utils/insertRelationship";
 
-const SongModal = ({
+const AddSongModal = ({
   categories,
   artists,
-}: // playlists,
-{
+  playlists,
+}: {
   categories: Category[];
   artists: Artist[];
-  // playlists: any;
+  playlists: any;
 }) => {
   const router = useRouter();
   const { onClose, isOpen } = useAddSongModal();
@@ -44,12 +45,16 @@ const SongModal = ({
 
   const [categoryOption, setCategoryOption] = useState(null);
   const [artistOption, setArtistOption] = useState(null);
+  const [playlistOption, setPlaylistOption] = useState(null);
 
   const handleCategoryChange = (categoryOption: any) => {
     setCategoryOption(categoryOption);
   };
   const handleArtistChange = (artistOption: any) => {
     setArtistOption(artistOption);
+  };
+  const handlePlaylistChange = (playlistOption: any) => {
+    setPlaylistOption(playlistOption);
   };
 
   const onChange = (open: boolean) => {
@@ -115,32 +120,29 @@ const SongModal = ({
         return toast.error(supabaseError.message);
       }
       // insert relationship
-      const { error: categoryError } = await supabaseClient
-        .from("rel_song_category")
-        .insert(
-          categoryOption &&
-            categoryOption.map((item: any) => ({
-              song_id: songID[0].id,
-              category_id: item.value,
-            }))
-        );
-      if (categoryError) {
-        setIsLoading(false);
-        return toast.error(categoryError.message);
-      }
-      const { error: artistError } = await supabaseClient
-        .from("rel_song_artist")
-        .insert(
-          artistOption &&
-            artistOption.map((item: any) => ({
-              song_id: songID[0].id,
-              artist_id: item.value,
-            }))
-        );
-      if (artistError) {
-        setIsLoading(false);
-        return toast.error(artistError.message);
-      }
+      await insertRelationship(
+        supabaseClient,
+        "rel_song_category",
+        categoryOption || [],
+        songID[0].id,
+        "category_id"
+      );
+      await insertRelationship(
+        supabaseClient,
+        "rel_song_artist",
+        artistOption || [],
+        songID[0].id,
+        "artist_id"
+      );
+      await insertRelationship(
+        supabaseClient,
+        "rel_song_playlist",
+        playlistOption || [],
+        songID[0].id,
+        "playlist_id"
+      );
+
+      //  refresh page
       router.refresh();
       setIsLoading(false);
       toast.success("Song created");
@@ -152,7 +154,6 @@ const SongModal = ({
       setIsLoading(false);
     }
   };
-  // console.log(playlists);
   return (
     <Modal
       title="Add a Song"
@@ -201,7 +202,7 @@ const SongModal = ({
             isMulti
           />
         </div>
-        {/* <div className=" flex flex-col space-y-2">
+        <div className=" flex flex-col space-y-2">
           <label htmlFor="playlist">Add to Playlist</label>
           <MutipleSelect
             id="playlist"
@@ -209,10 +210,11 @@ const SongModal = ({
               value: playlist.id.toString(),
               label: playlist.name,
             }))}
+            onChange={handlePlaylistChange}
             isDisabled={isLoading}
             isMulti
           />
-        </div> */}
+        </div>
         <div className=" flex flex-col space-y-2">
           <label htmlFor="time">Song Time</label>
           <Input
@@ -257,7 +259,7 @@ const SongModal = ({
           <Textarea
             id="lyric"
             disabled={isLoading}
-            placeholder="Lyric"
+            placeholder="Line 1/ Line 2/ Line 3/ ..."
             {...register("lyric", { required: false })}
           />
         </div>
@@ -269,4 +271,4 @@ const SongModal = ({
   );
 };
 
-export default SongModal;
+export default AddSongModal;

@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { useAuthModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
 import supabase from "@/utils/supabaseClient";
+import { AiOutlineDashboard } from "react-icons/ai";
 interface HeaderProps {
   children: React.ReactNode;
   className?: string;
@@ -92,6 +93,11 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
           className="rounded-full p-2  flex items-center justify-center opacity-75 hover:opacity-100 transition-all bg-white text-neutral-900 cursor-pointer"
           size={35}
           onClick={() => router.push("/search")}
+        />
+        <AiOutlineDashboard
+          className="rounded-full p-2  flex items-center justify-center opacity-75 hover:opacity-100 transition-all bg-white text-neutral-900 cursor-pointer"
+          size={35}
+          onClick={() => router.push("/dashboard")}
         />
       </div>
 

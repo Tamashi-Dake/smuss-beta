@@ -7,7 +7,7 @@ import {
   useAddArtistModal,
   useAddCategoryModal,
   useAddSongModal,
-  useCreateModal,
+  useAddPlaylistModal,
 } from "@/hooks/useModal";
 
 type AddButtonProps = {
@@ -18,7 +18,7 @@ const AddButton: React.FC<AddButtonProps> = ({ pathname }) => {
   const modals: Record<string, ModalStore> = {
     "/dashboard/artists": useAddArtistModal(),
     "/dashboard/categories": useAddCategoryModal(),
-    "/dashboard/playlists": useCreateModal(),
+    "/dashboard/playlists": useAddPlaylistModal(),
     "/dashboard/songs": useAddSongModal(),
   };
 

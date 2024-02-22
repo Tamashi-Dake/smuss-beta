@@ -4,7 +4,7 @@ import { TbPlaylist } from "react-icons/tb";
 
 import { useAuthModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
-import { useCreateModal } from "@/hooks/useModal";
+import { useAddPlaylistModal } from "@/hooks/useModal";
 import { Playlist } from "@/types";
 import UserPlaylist from "@/components/shared/UserPlaylist";
 
@@ -19,7 +19,7 @@ interface LibraryProps {
 
 const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const authModal = useAuthModal();
-  const createModal = useCreateModal();
+  const addPlaylistModal = useAddPlaylistModal();
   const { user } = useUser();
   const handleLibraryClick = () => {
     console.log("Library clicked");
@@ -33,7 +33,7 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
     if (!user) {
       return authModal.onOpen();
     }
-    return createModal.onOpen();
+    return addPlaylistModal.onOpen();
   };
   return (
     <div className="flex flex-col">

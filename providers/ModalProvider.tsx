@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 
 import AuthModal from "@/components/patials/AuthModal";
-import CreateModal from "@/components/patials/CreateModal";
-import ArtistModal from "@/components/patials/AddArtistModal";
-import CategoryModal from "@/components/patials/AddCategoryModal";
+import AddPlaylistModal from "@/components/patials/AddPlaylistModal";
+import AddArtistModal from "@/components/patials/AddArtistModal";
+import AddCategoryModal from "@/components/patials/AddCategoryModal";
 import { Play } from "next/font/google";
 import Song from "@/components/shared/Song";
-import SongModal from "@/components/patials/AddSongModal";
+import AddSongModal from "@/components/patials/AddSongModal";
 import { Artist, Category, Playlist, Song as SongType } from "@/types";
 // import SubscribeModal from "@/components/SubscribeModal";
 // import { ProductWithPrice } from "@/types_stripe";
@@ -37,15 +37,20 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
   if (!isMounted) {
     return null;
   }
+  console.log("ModalProvider", playlists);
 
   return (
     <>
       <AuthModal />
-      <ArtistModal />
-      <CategoryModal />
-      <CreateModal />
+      <AddArtistModal />
+      <AddCategoryModal />
+      <AddPlaylistModal artists={artists} songs={songs} />
       {/* <SubscribeModal products={products} /> */}
-      <SongModal categories={categories} artists={artists} />
+      <AddSongModal
+        categories={categories}
+        artists={artists}
+        playlists={playlists}
+      />
     </>
   );
 };

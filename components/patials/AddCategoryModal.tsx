@@ -13,7 +13,7 @@ import Input from "../shared/Input";
 import HeaderButton from "../layout/HeaderButton";
 import useCurrentUser from "@/hooks/useCurrentUser";
 
-const CategoryModal = () => {
+const AddCategoryModal = () => {
   const router = useRouter();
   const { onClose, isOpen } = useAddCategoryModal();
   const supabaseClient = useSupabaseClient();
@@ -166,4 +166,4 @@ const CategoryModal = () => {
   );
 };
 
-export default CategoryModal;
+export default AddCategoryModal;

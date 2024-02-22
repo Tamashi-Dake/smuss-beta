@@ -1,28 +1,35 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import {
-  useSessionContext,
-  useSupabaseClient,
-} from "@supabase/auth-helpers-react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { usePathname, useRouter } from "next/navigation";
 import uniqid from "uniqid";
-import { useCreateModal } from "@/hooks/useModal";
-
-import Modal from "../Modal";
 import toast from "react-hot-toast";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import Input from "../shared/Input";
-import HeaderButton from "../layout/HeaderButton";
-import { useUser } from "@/hooks/useUser";
-import useCurrentUser from "@/hooks/useCurrentUser";
+import { Artist, Song } from "@/types";
 
-const CreateModal = () => {
+import { useAddPlaylistModal } from "@/hooks/useModal";
+import { useUser } from "@/hooks/useUser";
+import Modal from "../Modal";
+import HeaderButton from "../layout/HeaderButton";
+import Input from "../shared/Input";
+import MutipleSelect from "../shared/MutipleSelect";
+
+const AddPlaylistModal = ({
+  artists,
+  songs,
+}: {
+  artists: Artist[];
+  songs: Song[];
+}) => {
   const router = useRouter();
-  const { onClose, isOpen } = useCreateModal();
+  const pathname = usePathname();
+  const { user } = useUser();
+  const { onClose, isOpen } = useAddPlaylistModal();
   const supabaseClient = useSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useUser();
+  const [artistOption, setArtistOption] = useState<any>(null);
+  const [songOption, setSongOption] = useState<any>(null);
   // const currentUser = useCurrentUser();
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
@@ -36,6 +43,13 @@ const CreateModal = () => {
       reset();
       onClose();
     }
+  };
+  const handleArtistChange = (artistOption: any) => {
+    setArtistOption(artistOption);
+    // console.log(artistOption.label);
+  };
+  const handleSongChange = (songOption: any) => {
+    setSongOption(songOption);
   };
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     // upload to supabase
@@ -60,15 +74,32 @@ const CreateModal = () => {
         return toast.error("Failed to upload image");
       }
       // insert playlist
-      const { error: supabaseError } = await supabaseClient
+      const { data: playlistID, error: supabaseError } = await supabaseClient
         .from("playlist")
         .insert({
           name: values.name,
           description: values.description,
           image_path: imageData.path,
           user_id: user.id,
+          artist_id: artistOption!.value,
           // user_id: currentUser?.role === "admin" ? user.id : "admin",
-        });
+        })
+        .select();
+      // insert relationship
+      if (playlistID && songOption) {
+        const { error: relationshipError } = await supabaseClient
+          .from("rel_song_playlist")
+          .insert(
+            songOption.map((song: any) => ({
+              song_id: song.value,
+              playlist_id: playlistID[0].id,
+            }))
+          );
+        if (relationshipError) {
+          setIsLoading(false);
+          return toast.error(relationshipError.message);
+        }
+      }
       if (supabaseError) {
         setIsLoading(false);
         return toast.error(supabaseError.message);
@@ -88,7 +119,9 @@ const CreateModal = () => {
   return (
     <Modal
       title="Add a playlist"
-      description="Create your own playlist!"
+      description={
+        pathname === "/dashboard/playlists" ? "" : "Create your own playlist!"
+      }
       isOpen={isOpen}
       onChange={onChange}
     >
@@ -131,6 +164,34 @@ const CreateModal = () => {
             {...register("image", { required: true })}
           />
         </div>
+        {/* only show artist if the path is /dashboard/playlists*/}
+        {pathname === "/dashboard/playlists" && (
+          <div className=" flex flex-col space-y-2">
+            <label htmlFor="artist">Artist (if this is an Album)</label>
+            <MutipleSelect
+              id="artist"
+              options={artists.map((artist) => ({
+                value: artist.id.toString(),
+                label: artist.name,
+              }))}
+              onChange={handleArtistChange}
+              isDisabled={isLoading}
+            />
+          </div>
+        )}
+        <div className=" flex flex-col space-y-2">
+          <label htmlFor="song">Add Songs</label>
+          <MutipleSelect
+            id="song"
+            options={songs.map((song) => ({
+              value: song.id.toString(),
+              label: song.title,
+            }))}
+            onChange={handleSongChange}
+            isDisabled={isLoading}
+            isMulti
+          />
+        </div>
         <HeaderButton disabled={isLoading} type="submit" className="rounded-md">
           Add
         </HeaderButton>
@@ -139,4 +200,4 @@ const CreateModal = () => {
   );
 };
 
-export default CreateModal;
+export default AddPlaylistModal;

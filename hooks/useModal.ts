@@ -6,7 +6,7 @@ export interface ModalStore {
   onClose: () => void;
 }
 
-const createModalHook = () => {
+const toggleModalHook = () => {
   return create<ModalStore>((set) => ({
     isOpen: false,
     onOpen: () => set({ isOpen: true }),
@@ -14,15 +14,15 @@ const createModalHook = () => {
   }));
 };
 
-const useAuthModal = createModalHook();
-const useCreateModal = createModalHook();
-const useAddArtistModal = createModalHook();
-const useAddCategoryModal = createModalHook();
-const useAddSongModal = createModalHook();
+const useAuthModal = toggleModalHook();
+const useAddPlaylistModal = toggleModalHook();
+const useAddArtistModal = toggleModalHook();
+const useAddCategoryModal = toggleModalHook();
+const useAddSongModal = toggleModalHook();
 
 export {
   useAuthModal,
-  useCreateModal,
+  useAddPlaylistModal,
   useAddArtistModal,
   useAddCategoryModal,
   useAddSongModal,
