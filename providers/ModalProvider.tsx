@@ -37,7 +37,6 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
   if (!isMounted) {
     return null;
   }
-  console.log("ModalProvider", playlists);
 
   return (
     <>

@@ -4,6 +4,8 @@ import {
   ArrowUpDown,
   ClipboardCopyIcon,
   MoreHorizontal,
+  PenSquareIcon,
+  Trash2Icon,
   User2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +19,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Category } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
+import useLoadImage from "@/hooks/useLoadImage";
+import Image from "next/image";
+import toast from "react-hot-toast";
 export const columnType: ColumnDef<Category>[] = [
   {
     id: "select",
@@ -41,6 +46,7 @@ export const columnType: ColumnDef<Category>[] = [
   },
   {
     accessorKey: "id",
+    id: "Category ID",
     header: ({ column }) => {
       return (
         <Button
@@ -52,10 +58,17 @@ export const columnType: ColumnDef<Category>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      return (
+        <div className="text-center">
+          <span className="">{row.original.id}</span>
+        </div>
+      );
+    },
   },
-
   {
     accessorKey: "name",
+    id: "Category Name",
     header: ({ column }) => {
       return (
         <Button
@@ -70,13 +83,36 @@ export const columnType: ColumnDef<Category>[] = [
   },
   {
     accessorKey: "description",
+    id: "Category Description",
     header: "Category Description",
   },
   {
     accessorKey: "image_path",
-    header: "Image Path",
+    id: "Image",
+    header: "Image",
+    cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const imagePath = useLoadImage(row.original);
+      return (
+        <div className="flex items-center justify-center">
+          <Image
+            draggable={false}
+            className="object-cover  w-10 h-10 rounded-md overflow-hidden"
+            src={
+              imagePath && imagePath.endsWith("null")
+                ? "/liked.png"
+                : imagePath || "/liked.png"
+            }
+            width={200}
+            height={200}
+            alt={row.original.image_path}
+          />
+        </div>
+      );
+    },
   },
   {
+    id: "actions",
     header: ({ column }) => {
       return (
         <div className="text-center" aria-label="Actions">
@@ -84,30 +120,16 @@ export const columnType: ColumnDef<Category>[] = [
         </div>
       );
     },
-    id: "actions",
     cell: ({ row }) => {
       const category = row.original;
 
       return (
-        <div className="text-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(category.id)}
-              >
-                <ClipboardCopyIcon className="w-4 h-4 mr-2" />
-                Copy category ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex justify-center items-center gap-x-2">
+          <PenSquareIcon
+            className="h-6 w-6 cursor-pointer text-neutral-600"
+            onClick={() => toast.success(category.id)}
+          />
+          <Trash2Icon className="h-6 w-6 cursor-pointer text-red-500" />
         </div>
       );
     },

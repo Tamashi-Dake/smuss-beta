@@ -43,7 +43,7 @@ export interface UserDetails {
   avatar_url?: string;
   billing_address?: Stripe.Address;
   payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type];
-  roles?: string;
+  role?: string;
   // stripe_customer_id: string;
   // stripe_customer: Stripe.Customer;
   // stripe_subscription: Stripe.Subscription;
