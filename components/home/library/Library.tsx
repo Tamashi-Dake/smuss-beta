@@ -8,11 +8,6 @@ import { useAddPlaylistModal } from "@/hooks/useModal";
 import { Playlist } from "@/types";
 import UserPlaylist from "@/components/shared/UserPlaylist";
 
-// interface Playlist {
-//   id: number;
-//   name: string;
-// }
-
 interface LibraryProps {
   playlists: Playlist[];
 }
@@ -22,12 +17,13 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const addPlaylistModal = useAddPlaylistModal();
   const { user } = useUser();
   const handleLibraryClick = () => {
+    // TODO: Library page
     console.log("Library clicked");
   };
   const handlePlaylistClick = () =>
     // playlist: Playlist
     {
-      // Handle playlist click
+      //TODO: Handle playlist click
     };
   const handleAddPlaylist = () => {
     if (!user) {

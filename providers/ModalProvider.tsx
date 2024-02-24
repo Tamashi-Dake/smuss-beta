@@ -10,6 +10,8 @@ import { Play } from "next/font/google";
 import Song from "@/components/shared/Song";
 import AddSongModal from "@/components/patials/AddSongModal";
 import { Artist, Category, Playlist, Song as SongType } from "@/types";
+import UpdateSongModal from "@/components/patials/UpdateSongModal";
+import DeleteModal from "@/components/patials/DeleteModal";
 // import SubscribeModal from "@/components/SubscribeModal";
 // import { ProductWithPrice } from "@/types_stripe";
 
@@ -18,6 +20,9 @@ interface ModalProviderProps {
   categories: Category[];
   playlists: Playlist[];
   songs: SongType[];
+  relationshipSongArtist: any[];
+  relationshipSongCategory: any[];
+  relationshipSongPlaylist: any[];
   //   products: ProductWithPrice[];
 }
 
@@ -26,6 +31,9 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
   categories,
   playlists,
   songs,
+  relationshipSongArtist,
+  relationshipSongPlaylist,
+  relationshipSongCategory,
   //   products
 }) => {
   const [isMounted, setIsMounted] = useState(false);
@@ -50,6 +58,16 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
         artists={artists}
         playlists={playlists}
       />
+      <UpdateSongModal
+        categories={categories}
+        artists={artists}
+        playlists={playlists}
+        songs={songs}
+        relationshipSongArtist={relationshipSongArtist}
+        relationshipSongCategory={relationshipSongCategory}
+        relationshipSongPlaylist={relationshipSongPlaylist}
+      />
+      <DeleteModal />
     </>
   );
 };

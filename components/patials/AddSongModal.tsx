@@ -92,7 +92,7 @@ const AddSongModal = ({
         setIsLoading(false);
         return toast.error("Failed to upload image");
       }
-      // upload image to storage
+      // upload song to storage
       const { data: songData, error: songError } = await supabaseClient.storage
         .from("songs")
         .upload(`${uniqueID}`, songFile, {
@@ -176,6 +176,19 @@ const AddSongModal = ({
           />
         </div>
         <div className=" flex flex-col space-y-2">
+          <label htmlFor="artist">Song Artist</label>
+          <MutipleSelect
+            id="artist"
+            options={artists.map((artist) => ({
+              value: artist.id.toString(),
+              label: artist.name,
+            }))}
+            onChange={handleArtistChange}
+            isDisabled={isLoading}
+            isMulti
+          />
+        </div>
+        <div className=" flex flex-col space-y-2">
           <label htmlFor="title">Song Category</label>
           <MutipleSelect
             id="category"
@@ -185,19 +198,6 @@ const AddSongModal = ({
               value: category.id.toString(),
               label: category.name,
             }))}
-            isDisabled={isLoading}
-            isMulti
-          />
-        </div>
-        <div className=" flex flex-col space-y-2">
-          <label htmlFor="artist">Song Artist</label>
-          <MutipleSelect
-            id="artist"
-            options={artists.map((artist) => ({
-              value: artist.id.toString(),
-              label: artist.name,
-            }))}
-            onChange={handleArtistChange}
             isDisabled={isLoading}
             isMulti
           />

@@ -8,10 +8,16 @@ import ModalProvider from "@/providers/ModalProvider";
 import ToastProvider from "@/providers/ToastProvider";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
 import Header from "@/components/layout/Header";
-import getSelectCategory from "@/acitons/getSelectCategory";
-import getSelectArtist from "@/acitons/getSelectArtist";
-import getSelectPlaylist from "@/acitons/getSelectPlaylist";
-import getSelectSong from "@/acitons/getSelectSong";
+import { get } from "http";
+import getCategories from "@/acitons/getCategories";
+import getArtists from "@/acitons/getArtists";
+import getPlaylists from "@/acitons/getPlaylists";
+import getSongs from "@/acitons/getSongs";
+import getPublicPlaylists from "@/acitons/getPublicPlaylists";
+import getRelationSongArtist from "@/acitons/getRelationSongArtist";
+import getRelationSongPlaylist from "@/acitons/getRelationSongPlaylist";
+import getRelationSongCategory from "@/acitons/getRelationSongCategory";
+
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -27,10 +33,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const userPlaylist = await getUserPlaylists();
-  const selectCategory = await getSelectCategory();
-  const selectArtist = await getSelectArtist();
-  const selectPlaylist = await getSelectPlaylist();
-  const selectSong = await getSelectSong();
+  const categories = await getCategories();
+  const artists = await getArtists();
+  const playlists = await getPublicPlaylists();
+  const songs = await getSongs();
+  const relationshipSongArtist = await getRelationSongArtist();
+  const relationshipSongCategory = await getRelationSongCategory();
+  const relationshipSongPlaylist = await getRelationSongPlaylist();
   return (
     <html lang="en">
       <body className={font.className}>
@@ -38,10 +47,13 @@ export default async function RootLayout({
         <SupabaseProvider>
           <UserProvider>
             <ModalProvider
-              categories={selectCategory}
-              artists={selectArtist}
-              playlists={selectPlaylist}
-              songs={selectSong}
+              categories={categories}
+              artists={artists}
+              playlists={playlists}
+              songs={songs}
+              relationshipSongArtist={relationshipSongArtist}
+              relationshipSongCategory={relationshipSongCategory}
+              relationshipSongPlaylist={relationshipSongPlaylist}
             />
             <Sidebar playlists={userPlaylist}>
               <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">

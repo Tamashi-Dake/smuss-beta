@@ -22,6 +22,7 @@ import useLoadSong from "@/hooks/useLoadSong";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { useDeleteModal, useUpdateSongModal } from "@/hooks/useModal";
 export const columnType: ColumnDef<Song>[] = [
   {
     id: "select",
@@ -68,7 +69,7 @@ export const columnType: ColumnDef<Song>[] = [
   },
   {
     accessorKey: "title",
-    id: "Song Title",
+    id: "title",
     header: ({ column }) => {
       return (
         <Button
@@ -84,10 +85,13 @@ export const columnType: ColumnDef<Song>[] = [
   {
     accessorKey: "song_path",
     id: "Song",
-    header: "Song Path",
+    header: ({ column }) => {
+      return <p className="w-[14rem]">Song Path</p>;
+    },
     cell: ({ row }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const song = useLoadSong(row.original) || "";
+      // console.log(song);
       return (
         <div className="w-fit">
           <audio controls>
@@ -108,6 +112,7 @@ export const columnType: ColumnDef<Song>[] = [
       return (
         <div className="flex items-center justify-center">
           <Image
+            key={row.original.image_path}
             draggable={false}
             className="object-cover  w-10 h-10 rounded-md overflow-hidden"
             src={imagePath || "/liked.png"}
@@ -158,13 +163,24 @@ export const columnType: ColumnDef<Song>[] = [
     },
     cell: ({ row }) => {
       const song = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const updateModal = useUpdateSongModal();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const deleteModal = useDeleteModal();
       return (
         <div className="flex justify-center items-center gap-x-2">
           <PenSquareIcon
             className="h-6 w-6 cursor-pointer text-neutral-600"
-            onClick={() => toast.success(song.id)}
+            onClick={() => {
+              updateModal.onOpen(song.id);
+            }}
           />
-          <Trash2Icon className="h-6 w-6 cursor-pointer text-red-500" />
+          <Trash2Icon
+            className="h-6 w-6 cursor-pointer text-red-500"
+            onClick={() => {
+              deleteModal.onOpen(song.id, "song");
+            }}
+          />
         </div>
       );
     },

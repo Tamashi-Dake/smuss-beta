@@ -13,7 +13,10 @@ export default async function Home() {
 
   return (
     <>
-      <div className="mt-8 flex flex-col m-auto gap-y-10 max-w-wide-screen px-4 text-white">
+      <div
+        className="mt-8 flex flex-col m-auto gap-y-10 px-4 text-white max-w-[1500px]
+        mx-auto"
+      >
         <Link className="text-xl font-bold  bg-blue-400" href="/favorites">
           Favorites
         </Link>
