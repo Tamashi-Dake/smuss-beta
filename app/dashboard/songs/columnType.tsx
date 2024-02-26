@@ -1,27 +1,13 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ClipboardCopyIcon,
-  MoreHorizontal,
-  PenSquareIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { ArrowUpDown, PenSquareIcon, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Song } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import useLoadSong from "@/hooks/useLoadSong";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";
-import toast from "react-hot-toast";
 import { useDeleteModal, useUpdateSongModal } from "@/hooks/useModal";
 export const columnType: ColumnDef<Song>[] = [
   {

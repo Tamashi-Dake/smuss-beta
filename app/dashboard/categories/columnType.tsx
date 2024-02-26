@@ -1,27 +1,13 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ClipboardCopyIcon,
-  MoreHorizontal,
-  PenSquareIcon,
-  Trash2Icon,
-  User2,
-} from "lucide-react";
+import { ArrowUpDown, PenSquareIcon, Trash2Icon, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Category } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { useDeleteModal, useUpdateCategoryModal } from "@/hooks/useModal";
 export const columnType: ColumnDef<Category>[] = [
   {
     id: "select",
@@ -68,7 +54,7 @@ export const columnType: ColumnDef<Category>[] = [
   },
   {
     accessorKey: "name",
-    id: "Category Name",
+    id: "name",
     header: ({ column }) => {
       return (
         <Button
@@ -122,14 +108,20 @@ export const columnType: ColumnDef<Category>[] = [
     },
     cell: ({ row }) => {
       const category = row.original;
-
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const updateModal = useUpdateCategoryModal();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const deleteModal = useDeleteModal();
       return (
         <div className="flex justify-center items-center gap-x-2">
           <PenSquareIcon
             className="h-6 w-6 cursor-pointer text-neutral-600"
-            onClick={() => toast.success(category.id)}
+            onClick={() => updateModal.onOpen(category.id)}
           />
-          <Trash2Icon className="h-6 w-6 cursor-pointer text-red-500" />
+          <Trash2Icon
+            className="h-6 w-6 cursor-pointer text-red-500"
+            onClick={() => deleteModal.onOpen(category.id, "category")}
+          />
         </div>
       );
     },

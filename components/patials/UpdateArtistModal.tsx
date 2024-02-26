@@ -1,36 +1,46 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import uniqid from "uniqid";
-import { useAddCategoryModal } from "@/hooks/useModal";
+import toast from "react-hot-toast";
 
 import Modal from "../Modal";
-import toast from "react-hot-toast";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Input from "../shared/Input";
 import HeaderButton from "../layout/HeaderButton";
+import { useUpdateArtistModal } from "@/hooks/useModal";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import { fetchRecordData } from "@/utils/selectRecord";
+import { deleteStogare } from "@/utils/deleteRecord";
 
-const AddCategoryModal = () => {
+const UpdateArtistModal = () => {
   const router = useRouter();
-  const { onClose, isOpen } = useAddCategoryModal();
   const supabaseClient = useSupabaseClient();
   const currentUser = useCurrentUser();
+  const { onClose, isOpen, id } = useUpdateArtistModal();
   const [isLoading, setIsLoading] = useState(false);
-  const [color, setColor] = useState("#000000");
-  const onChangeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setColor(e.target.value);
-  };
+  const [artist, setArtist] = useState<any>(null);
+  // set default value for form
   const { register, handleSubmit, reset } = useForm<FieldValues>({
-    defaultValues: {
-      name: "",
-      description: "",
-      color: "#000000",
-      image: null,
-    },
+    defaultValues: useMemo(() => {
+      return artist;
+    }, [artist]),
   });
+  useEffect(() => {
+    reset(artist);
+  }, [reset, artist]);
+  useEffect(() => {
+    const fetchRecord = async () => {
+      const data = await fetchRecordData(supabaseClient, "artist", id);
+      setArtist(data);
+    };
+    if (isOpen) {
+      fetchRecord();
+    }
+  }, [isOpen, id]);
+
   const onChange = (open: boolean) => {
     if (!open) {
       reset();
@@ -40,46 +50,53 @@ const AddCategoryModal = () => {
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     // upload to supabase
     try {
+      const uniqueID = uniqid();
       setIsLoading(true);
       const imageFile = values.image?.[0];
-      if (!imageFile) {
-        toast.error("Missing image");
-        return;
-      }
-      const uniqueID = uniqid();
       if (currentUser?.role !== "admin") {
         setIsLoading(false);
         toast.error("You are not authorized to perform this action");
         return;
       }
-      // upload image to storage
-      const { data: imageData, error: imageError } =
-        await supabaseClient.storage
-          .from("images")
-          .upload(`category/${uniqueID}`, imageFile, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-      if (imageError) {
-        setIsLoading(false);
-        return toast.error("Failed to upload image");
+      // update Artist
+      const artistUpdateData: any = {
+        name: values.name,
+        description: values.description,
+      };
+
+      if (imageFile) {
+        if (artist.image_path) {
+          // delete old image
+          await deleteStogare(supabaseClient, "images", artist.image_path);
+        }
+
+        // update artist with new image
+        const { data: imageData, error: imageError } =
+          await supabaseClient.storage
+            .from("images")
+            .upload(`artist/${uniqueID}`, imageFile, {
+              cacheControl: "3600",
+              upsert: false,
+            });
+        if (imageError) {
+          setIsLoading(false);
+          return toast.error("Failed to upload image");
+        }
+        artistUpdateData.image_path = imageData.path;
       }
-      // insert Category
+
+      // update Artist
       const { error: supabaseError } = await supabaseClient
-        .from("categories")
-        .insert({
-          name: values.name,
-          description: values.description,
-          image_path: imageData.path,
-          color: values.color,
-        });
+        .from("artist")
+        .update(artistUpdateData)
+        .eq("id", id);
       if (supabaseError) {
         setIsLoading(false);
         return toast.error(supabaseError.message);
       }
       router.refresh();
       setIsLoading(false);
-      toast.success("Category created");
+      toast.success("Artist updated successfully");
       reset();
       onClose();
     } catch (error) {
@@ -91,7 +108,7 @@ const AddCategoryModal = () => {
 
   return (
     <Modal
-      title="Add a Category"
+      title="Update an Artist"
       description=""
       isOpen={isOpen}
       onChange={onChange}
@@ -102,7 +119,7 @@ const AddCategoryModal = () => {
         className=" flex flex-col space-y-4"
       >
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="name">Category Name</label>
+          <label htmlFor="name">Artist Name</label>
           <Input
             id="name"
             disabled={isLoading}
@@ -111,7 +128,7 @@ const AddCategoryModal = () => {
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="description">Category Description</label>
+          <label htmlFor="description">Artist Description</label>
           <Input
             id="description"
             disabled={isLoading}
@@ -120,30 +137,7 @@ const AddCategoryModal = () => {
           />
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="color">Category Background Color</label>
-          <div className="flex gap-x-2">
-            <Input
-              id="color"
-              value={color}
-              disabled={isLoading}
-              placeholder="Hex Color"
-              {...register("color", { required: true })}
-              onChange={(e) => {
-                setColor(e.target.value);
-              }}
-              maxLength={7}
-            />
-            <Input
-              className="w-16 h-16"
-              type="color"
-              value={color}
-              disabled={isLoading}
-              onChange={onChangeColor}
-            />
-          </div>
-        </div>
-        <div className=" flex flex-col space-y-2">
-          <label htmlFor="image">Category Image</label>
+          <label htmlFor="image">Artist Image</label>
           {/* only accept image files */}
           <Input
             id="image"
@@ -155,15 +149,15 @@ const AddCategoryModal = () => {
             .jpeg,
             .jpg,
             "
-            {...register("image", { required: true })}
+            {...register("image", { required: false })}
           />
         </div>
         <HeaderButton disabled={isLoading} type="submit" className="rounded-md">
-          Add
+          {isLoading ? "Loading..." : "Update"}
         </HeaderButton>
       </form>
     </Modal>
   );
 };
 
-export default AddCategoryModal;
+export default UpdateArtistModal;

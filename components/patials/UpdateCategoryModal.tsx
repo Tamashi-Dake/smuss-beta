@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
-import { useAddCategoryModal } from "@/hooks/useModal";
+import { useUpdateCategoryModal } from "@/hooks/useModal";
 
 import Modal from "../Modal";
 import toast from "react-hot-toast";
@@ -12,25 +12,39 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import Input from "../shared/Input";
 import HeaderButton from "../layout/HeaderButton";
 import useCurrentUser from "@/hooks/useCurrentUser";
+import { fetchRecordData } from "@/utils/selectRecord";
+import { deleteStogare } from "@/utils/deleteRecord";
 
-const AddCategoryModal = () => {
+const UpdateCategoryModal = () => {
   const router = useRouter();
-  const { onClose, isOpen } = useAddCategoryModal();
+  const { onClose, isOpen, id } = useUpdateCategoryModal();
   const supabaseClient = useSupabaseClient();
   const currentUser = useCurrentUser();
   const [isLoading, setIsLoading] = useState(false);
   const [color, setColor] = useState("#000000");
+  const [category, setCategory] = useState<any>(null);
   const onChangeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
     setColor(e.target.value);
   };
   const { register, handleSubmit, reset } = useForm<FieldValues>({
-    defaultValues: {
-      name: "",
-      description: "",
-      color: "#000000",
-      image: null,
-    },
+    defaultValues: useMemo(() => {
+      return category;
+    }, [category]),
   });
+  useEffect(() => {
+    reset(category);
+  }, [reset, category]);
+
+  useEffect(() => {
+    const fetchRecord = async () => {
+      const data = await fetchRecordData(supabaseClient, "categories", id);
+      setCategory(data);
+      setColor(data.color);
+    };
+    if (isOpen) {
+      fetchRecord();
+    }
+  }, [isOpen, id]);
   const onChange = (open: boolean) => {
     if (!open) {
       reset();
@@ -40,46 +54,54 @@ const AddCategoryModal = () => {
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     // upload to supabase
     try {
+      const uniqueID = uniqid();
       setIsLoading(true);
       const imageFile = values.image?.[0];
-      if (!imageFile) {
-        toast.error("Missing image");
-        return;
-      }
-      const uniqueID = uniqid();
       if (currentUser?.role !== "admin") {
         setIsLoading(false);
         toast.error("You are not authorized to perform this action");
         return;
       }
-      // upload image to storage
-      const { data: imageData, error: imageError } =
-        await supabaseClient.storage
-          .from("images")
-          .upload(`category/${uniqueID}`, imageFile, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-      if (imageError) {
-        setIsLoading(false);
-        return toast.error("Failed to upload image");
+
+      // update Category
+      const categoryUpdateData: any = {
+        name: values.name,
+        description: values.description,
+        color: values.color,
+      };
+
+      if (imageFile) {
+        if (category.image_path) {
+          // delete old image
+          await deleteStogare(supabaseClient, "images", category.image_path);
+        }
+
+        // update category with new image
+        const { data: imageData, error: imageError } =
+          await supabaseClient.storage
+            .from("images")
+            .upload(`category/${uniqueID}`, imageFile, {
+              cacheControl: "3600",
+              upsert: false,
+            });
+        if (imageError) {
+          setIsLoading(false);
+          return toast.error("Failed to upload image");
+        }
+        categoryUpdateData.image_path = imageData.path;
       }
-      // insert Category
+      // update Category
       const { error: supabaseError } = await supabaseClient
         .from("categories")
-        .insert({
-          name: values.name,
-          description: values.description,
-          image_path: imageData.path,
-          color: values.color,
-        });
+        .update(categoryUpdateData)
+        .eq("id", id);
       if (supabaseError) {
         setIsLoading(false);
         return toast.error(supabaseError.message);
       }
       router.refresh();
       setIsLoading(false);
-      toast.success("Category created");
+      toast.success("Category updated successfully");
       reset();
       onClose();
     } catch (error) {
@@ -91,7 +113,7 @@ const AddCategoryModal = () => {
 
   return (
     <Modal
-      title="Add a Category"
+      title="Update a Category"
       description=""
       isOpen={isOpen}
       onChange={onChange}
@@ -155,15 +177,15 @@ const AddCategoryModal = () => {
             .jpeg,
             .jpg,
             "
-            {...register("image", { required: true })}
+            {...register("image", { required: false })}
           />
         </div>
         <HeaderButton disabled={isLoading} type="submit" className="rounded-md">
-          Add
+          Update
         </HeaderButton>
       </form>
     </Modal>
   );
 };
 
-export default AddCategoryModal;
+export default UpdateCategoryModal;

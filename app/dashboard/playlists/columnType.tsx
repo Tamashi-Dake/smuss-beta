@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { useDeleteModal, useUpdatePlaylistModal } from "@/hooks/useModal";
 
 export const columnType: ColumnDef<Playlist | any>[] = [
   {
@@ -54,7 +55,7 @@ export const columnType: ColumnDef<Playlist | any>[] = [
   },
   {
     accessorKey: "name",
-    id: "Playlist Title",
+    id: "name",
     header: ({ column }) => {
       return (
         <Button
@@ -152,14 +153,20 @@ export const columnType: ColumnDef<Playlist | any>[] = [
     },
     cell: ({ row }) => {
       const playlist = row.original;
-
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const updateModal = useUpdatePlaylistModal();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const deleteModal = useDeleteModal();
       return (
         <div className="flex justify-center items-center gap-x-2">
           <PenSquareIcon
             className="h-6 w-6 cursor-pointer text-neutral-600"
-            onClick={() => toast.success(playlist.id)}
+            onClick={() => updateModal.onOpen(playlist.id)}
           />
-          <Trash2Icon className="h-6 w-6 cursor-pointer text-red-500" />
+          <Trash2Icon
+            className="h-6 w-6 cursor-pointer text-red-500"
+            onClick={() => deleteModal.onOpen(playlist.id, "playlist")}
+          />
         </div>
       );
     },

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -11,28 +11,70 @@ import useCurrentUser from "@/hooks/useCurrentUser";
 import { useUser } from "@/hooks/useUser";
 import Modal from "../Modal";
 import HeaderButton from "../layout/HeaderButton";
-import Input from "../shared/Input";
-import Textarea from "../shared/Textarea";
-import MutipleSelect from "../shared/MutipleSelect";
-import { Artist, Category } from "@/types";
-import { insertRelationship } from "@/utils/insertRelationship";
+import { deleteRecord, deleteStogare } from "@/utils/deleteRecord";
+import { fetchRecordData } from "@/utils/selectRecord";
 
-// use for all records, it will NOT delete media file from storage so this is a temporary solution
-// in order to delete media file, i might have to create modals for each type of records -> match id with record id -> get media link -> delete from storage
 const DeleteModal = ({}) => {
   const router = useRouter();
   const { onClose, isOpen, id, type } = useDeleteModal();
   const supabaseClient = useSupabaseClient();
   const currentUser = useCurrentUser();
   const [isLoading, setIsLoading] = useState(false);
+  const [recordData, setRecordData] = useState<any>(null);
   const { user } = useUser();
   const { handleSubmit } = useForm();
+  const [itemName, setItem] = useState<string>("");
   const onChange = (open: boolean) => {
     if (!open) {
       onClose();
+      setRecordData(null);
     }
   };
 
+  useEffect(() => {
+    const fetchRecord = async () => {
+      switch (type) {
+        case "artist":
+          const data = await fetchRecordData(supabaseClient, "artist", id);
+          setRecordData(data);
+          break;
+        case "category":
+          const data2 = await fetchRecordData(supabaseClient, "categories", id);
+          setRecordData(data2);
+          break;
+        case "playlist":
+          const data3 = await fetchRecordData(supabaseClient, "playlist", id);
+          setRecordData(data3);
+          break;
+        case "song":
+          const data4 = await fetchRecordData(supabaseClient, "songs", id);
+          setRecordData(data4);
+          break;
+        default:
+          break;
+      }
+    };
+    if (isOpen) {
+      fetchRecord();
+
+      switch (type) {
+        case "artist":
+          setItem("artist");
+          break;
+        case "category":
+          setItem("category");
+          break;
+        case "playlist":
+          setItem("playlist");
+          break;
+        case "song":
+          setItem("song");
+          break;
+        default:
+          break;
+      }
+    }
+  }, [isOpen, id, type]);
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     // upload to supabase
     try {
@@ -47,16 +89,26 @@ const DeleteModal = ({}) => {
         return;
       }
 
-      if (type === "song") {
-        // Delete Song
-        const { error: supabaseError } = await supabaseClient
-          .from("songs")
-          .delete()
-          .eq("id", id);
-        if (supabaseError) {
-          setIsLoading(false);
-          return toast.error(supabaseError.message);
-        }
+      switch (type) {
+        case "artist":
+          await deleteRecord(supabaseClient, "artist", id, setIsLoading);
+          await deleteStogare(supabaseClient, "images", recordData?.image_path);
+          break;
+        case "category":
+          await deleteRecord(supabaseClient, "categories", id, setIsLoading);
+          await deleteStogare(supabaseClient, "images", recordData?.image_path);
+          break;
+        case "playlist":
+          await deleteRecord(supabaseClient, "playlist", id, setIsLoading);
+          await deleteStogare(supabaseClient, "images", recordData?.image_path);
+          break;
+        case "song":
+          await deleteRecord(supabaseClient, "songs", id, setIsLoading);
+          await deleteStogare(supabaseClient, "images", recordData?.image_path);
+          await deleteStogare(supabaseClient, "songs", recordData?.song_path);
+          break;
+        default:
+          break;
       }
 
       //  refresh page
@@ -83,7 +135,10 @@ const DeleteModal = ({}) => {
         className=" flex flex-col space-y-4"
       >
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="title">You about to delete item with id: {id}</label>
+          <label htmlFor="title">
+            You about to delete this {itemName}:{" "}
+            {recordData?.title ?? recordData?.name}
+          </label>
         </div>
         <HeaderButton
           disabled={isLoading}

@@ -6,7 +6,7 @@ import { Artist } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";
-import toast from "react-hot-toast";
+import { useDeleteModal, useUpdateArtistModal } from "@/hooks/useModal";
 
 export const columnType: ColumnDef<Artist>[] = [
   {
@@ -54,7 +54,7 @@ export const columnType: ColumnDef<Artist>[] = [
   },
   {
     accessorKey: "name",
-    id: "Artist Name",
+    id: "name",
     header: ({ column }) => {
       return (
         <Button
@@ -127,14 +127,21 @@ export const columnType: ColumnDef<Artist>[] = [
     },
     cell: ({ row }) => {
       const artist = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const updateModal = useUpdateArtistModal();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const deleteModal = useDeleteModal();
 
       return (
         <div className="flex justify-center items-center gap-x-2">
           <PenSquareIcon
             className="h-6 w-6 cursor-pointer text-neutral-600"
-            onClick={() => toast.success(artist.id)}
+            onClick={() => updateModal.onOpen(artist.id)}
           />
-          <Trash2Icon className="h-6 w-6 cursor-pointer text-red-500" />
+          <Trash2Icon
+            className="h-6 w-6 cursor-pointer text-red-500"
+            onClick={() => deleteModal.onOpen(artist.id, "artist")}
+          />
         </div>
       );
     },

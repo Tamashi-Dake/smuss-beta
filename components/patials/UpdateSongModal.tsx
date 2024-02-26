@@ -16,7 +16,6 @@ import Input from "../shared/Input";
 import Textarea from "../shared/Textarea";
 import MutipleSelect from "../shared/MutipleSelect";
 import { Artist, Category, Playlist, Song } from "@/types";
-import { insertRelationship } from "@/utils/insertRelationship";
 import {
   filterRelationships,
   mapRelationshipToOption,
@@ -66,12 +65,12 @@ const UpdateSongModal = ({
   const [relationshipArtist, setRelationshipArtist] = useState<any[]>([]);
   const [relationshipCategory, setRelationshipCategory] = useState<any[]>([]);
   const [relationshipPlaylist, setRelationshipPlaylist] = useState<any[]>([]);
-  const [artistOption, setArtistOption] = useState([]);
-  const [categoryOption, setCategoryOption] = useState([]);
-  const [playlistOption, setPlaylistOption] = useState([]);
-  const [tempArtistOption, setTempArtistOption] = useState([]);
-  const [tempCategoryOption, setTempCategoryOption] = useState([]);
-  const [tempPlaylistOption, setTempPlaylistOption] = useState([]);
+  const [artistOption, setArtistOption] = useState<any[]>([]);
+  const [categoryOption, setCategoryOption] = useState<any[]>([]);
+  const [playlistOption, setPlaylistOption] = useState<any[]>([]);
+  const [tempArtistOption, setTempArtistOption] = useState<any[]>([]);
+  const [tempCategoryOption, setTempCategoryOption] = useState<any[]>([]);
+  const [tempPlaylistOption, setTempPlaylistOption] = useState<any[]>([]);
 
   // get relationship by song id
   useEffect(() => {
@@ -200,8 +199,9 @@ const UpdateSongModal = ({
         lyric: values.lyric,
       };
 
-      // since update image and song in storage will take the same url => images and songs will be cache and won't be updated unless admin refresh the page
-      // so for now, delete the old image and song and upload new one seam to be the only solution
+      // since update image and song in storage will take the same url
+      // => images and songs will be cache and won't be updated unless admin refresh the page
+      // so for now, delete the old image and song and upload new one seems to be the only solution
       if (imageFile) {
         // delete old image
         const { data, error } = await supabaseClient.storage

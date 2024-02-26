@@ -54,7 +54,11 @@ const useAddArtistModal = toggleModalHook();
 const useAddCategoryModal = toggleModalHook();
 const useAddSongModal = toggleModalHook();
 
+const useUpdateArtistModal = toggleUpdateModalHook();
+const useUpdateCategoryModal = toggleUpdateModalHook();
+const useUpdatePlaylistModal = toggleUpdateModalHook();
 const useUpdateSongModal = toggleUpdateModalHook();
+
 const useDeleteModal = toggleDeleteModalHook();
 
 export {
@@ -63,6 +67,9 @@ export {
   useAddArtistModal,
   useAddCategoryModal,
   useAddSongModal,
+  useUpdateArtistModal,
+  useUpdateCategoryModal,
+  useUpdatePlaylistModal,
   useUpdateSongModal,
   useDeleteModal,
 };
