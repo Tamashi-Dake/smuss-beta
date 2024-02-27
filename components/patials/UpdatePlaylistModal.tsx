@@ -5,8 +5,8 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { usePathname, useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import toast from "react-hot-toast";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { Artist, Song } from "@/types";
+import { FieldValues, SubmitHandler, set, useForm } from "react-hook-form";
+import { Artist, Playlist, Song } from "@/types";
 
 import { useUpdatePlaylistModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
@@ -14,15 +14,20 @@ import Modal from "../Modal";
 import HeaderButton from "../layout/HeaderButton";
 import Input from "../shared/Input";
 import MutipleSelect from "../shared/MutipleSelect";
-import { fetchRecordData } from "@/utils/selectRecord";
 import { deleteStogare } from "@/utils/deleteRecord";
+import { mapRelationshipToOption } from "@/utils/mappingRelationship";
+import { compareObjects } from "@/utils/compareRelationship";
 
 const UpdatePlaylistModal = ({
   artists,
   songs,
+  playlists,
+  relationshipSongPlaylist,
 }: {
   artists: Artist[];
+  playlists: Playlist[];
   songs: Song[];
+  relationshipSongPlaylist: any[];
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -30,9 +35,16 @@ const UpdatePlaylistModal = ({
   const { onClose, isOpen, id } = useUpdatePlaylistModal();
   const supabaseClient = useSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
-  const [playlist, setPlaylist] = useState<any>(null);
+  const playlist = playlists.find((playlist) => playlist.id === id);
+  // const [playlist, setPlaylist] = useState<any>(null);
+  // const [songRelation, setSongRelation] = useState<any>(null);
+
   const [artistOption, setArtistOption] = useState<any>(null);
   const [songOption, setSongOption] = useState<any>(null);
+  const [relationshipSong, setRelationshipSong] = useState<any[]>([]);
+  // const [tempArtistOption, setTempArtistOption] = useState<any[]>([]);
+  const [tempSongOption, setTempSongOption] = useState<any[]>([]);
+
   // const currentUser = useCurrentUser();
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: useMemo(() => {
@@ -44,15 +56,47 @@ const UpdatePlaylistModal = ({
     reset(playlist);
   }, [reset, playlist]);
 
+  // get relationship by playlist id
   useEffect(() => {
-    const fetchRecord = async () => {
-      const data = await fetchRecordData(supabaseClient, "playlist", id);
-      setPlaylist(data);
-    };
-    if (isOpen) {
-      fetchRecord();
-    }
-  }, [isOpen, id]);
+    const artist = artists.find((artist) => artist.id === playlist?.artist_id);
+    setArtistOption({
+      value: artist?.id.toString(),
+      label: artist?.name,
+    });
+    const filteredRelationshipPlaylist = relationshipSongPlaylist.filter(
+      (rel) => rel.playlist_id === id
+    );
+    setRelationshipSong(filteredRelationshipPlaylist);
+  }, [id, relationshipSongPlaylist]);
+
+  // map previous options
+  useEffect(() => {
+    const updatedPlaylistOption = mapRelationshipToOption(
+      relationshipSong,
+      "song_id",
+      songs
+    );
+    setSongOption(updatedPlaylistOption);
+    setTempSongOption(updatedPlaylistOption);
+  }, [relationshipSong, songs]);
+
+  // map all option to select
+  const allArtistOption = artists.map((artist) => ({
+    value: artist.id.toString(),
+    label: artist.name,
+  }));
+  const allSongOption = songs.map((song) => ({
+    value: song.id.toString(),
+    label: song.title,
+  }));
+
+  // filter out existing option
+  // const remainingArtistOption = allArtistOption.filter(
+  //   (artist) => artist.value !== artistOption?.value
+  // );
+  const remainingSongOption = allSongOption.filter(
+    (song) => !tempSongOption.some((temp) => temp.value === song.value)
+  );
 
   const onChange = (open: boolean) => {
     if (!open) {
@@ -81,13 +125,11 @@ const UpdatePlaylistModal = ({
       const playlistUpdateData: any = {
         name: values.name,
         description: values.description,
+        artist_id: artistOption.value,
       };
-      if (imageFile) {
-        if (playlist.image_path) {
-          // delete old image
-          await deleteStogare(supabaseClient, "images", playlist.image_path);
-        }
-
+      if (imageFile && playlist) {
+        // delete old image
+        await deleteStogare(supabaseClient, "images", playlist.image_path);
         // update playlist with new image
         const { data: imageData, error: imageError } =
           await supabaseClient.storage
@@ -103,40 +145,49 @@ const UpdatePlaylistModal = ({
         playlistUpdateData.image_path = imageData.path;
       }
 
-      // TODO: change to update{playlistUpdateData}
       // update playlist
-      const { data: playlistID, error: supabaseError } = await supabaseClient
+      const { error: supabaseError } = await supabaseClient
         .from("playlist")
-        .insert({
-          name: values.name,
-          description: values.description,
-          user_id: user.id,
-          artist_id: artistOption!.value,
-          // user_id: currentUser?.role === "admin" ? user.id : "admin",
-        })
-        .select();
-      // insert relationship
-      if (playlistID && songOption) {
-        const { error: relationshipError } = await supabaseClient
+        .update(playlistUpdateData)
+        .eq("id", id);
+
+      // compare old option with current option
+      const [addedSongItems, removedSongItems] = compareObjects(
+        tempSongOption,
+        songOption
+      );
+
+      // update relationship
+      // remove deleted relationship
+      for (const removedSong of removedSongItems) {
+        const { error: removeError } = await supabaseClient
           .from("rel_song_playlist")
-          .insert(
-            songOption.map((song: any) => ({
-              song_id: song.value,
-              playlist_id: playlistID[0].id,
-            }))
-          );
-        if (relationshipError) {
+          .delete()
+          .eq("playlist_id", id)
+          .eq("song_id", removedSong.value);
+        if (removeError) {
           setIsLoading(false);
-          return toast.error(relationshipError.message);
+          return toast.error("Failed to remove song");
         }
       }
-      if (supabaseError) {
-        setIsLoading(false);
-        return toast.error(supabaseError.message);
+      // add new relationship
+      for (const addedSong of addedSongItems) {
+        const { error: addError } = await supabaseClient
+          .from("rel_song_playlist")
+          .insert({
+            song_id: addedSong.value,
+            playlist_id: id,
+          });
+        if (addError) {
+          setIsLoading(false);
+          return toast.error("Failed to add song relationship");
+        }
       }
+
+      // refresh page
       router.refresh();
       setIsLoading(false);
-      toast.success("Playlist created");
+      toast.success("Playlist updated!");
       reset();
       onClose();
     } catch (error) {
@@ -200,10 +251,8 @@ const UpdatePlaylistModal = ({
             <label htmlFor="artist">Artist (if this is an Album)</label>
             <MutipleSelect
               id="artist"
-              options={artists.map((artist) => ({
-                value: artist.id.toString(),
-                label: artist.name,
-              }))}
+              value={artistOption}
+              options={allArtistOption}
               onChange={handleArtistChange}
               isDisabled={isLoading}
             />
@@ -213,10 +262,8 @@ const UpdatePlaylistModal = ({
           <label htmlFor="song">Update Songs</label>
           <MutipleSelect
             id="song"
-            options={songs.map((song) => ({
-              value: song.id.toString(),
-              label: song.title,
-            }))}
+            value={songOption}
+            options={remainingSongOption}
             onChange={handleSongChange}
             isDisabled={isLoading}
             isMulti

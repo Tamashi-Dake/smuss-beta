@@ -14,6 +14,7 @@ import UpdateSongModal from "@/components/patials/UpdateSongModal";
 import DeleteModal from "@/components/patials/DeleteModal";
 import UpdateArtistModal from "@/components/patials/UpdateArtistModal";
 import UpdateCategoryModal from "@/components/patials/UpdateCategoryModal";
+import UpdatePlaylistModal from "@/components/patials/UpdatePlaylistModal";
 // import SubscribeModal from "@/components/SubscribeModal";
 // import { ProductWithPrice } from "@/types_stripe";
 
@@ -62,9 +63,12 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
       />
       <UpdateArtistModal />
       <UpdateCategoryModal />
-      {/* 
-      <UpdatePlaylistModal  />
-       */}
+      <UpdatePlaylistModal
+        artists={artists}
+        songs={songs}
+        playlists={playlists}
+        relationshipSongPlaylist={relationshipSongPlaylist}
+      />
       <UpdateSongModal
         categories={categories}
         artists={artists}

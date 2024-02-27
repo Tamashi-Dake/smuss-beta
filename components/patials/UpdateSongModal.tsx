@@ -48,6 +48,15 @@ const UpdateSongModal = ({
   const { user } = useUser();
   const song = songs.find((song) => song.id === id);
 
+  const [relationshipArtist, setRelationshipArtist] = useState<any[]>([]);
+  const [relationshipCategory, setRelationshipCategory] = useState<any[]>([]);
+  const [relationshipPlaylist, setRelationshipPlaylist] = useState<any[]>([]);
+  const [artistOption, setArtistOption] = useState<any[]>([]);
+  const [categoryOption, setCategoryOption] = useState<any[]>([]);
+  const [playlistOption, setPlaylistOption] = useState<any[]>([]);
+  const [tempArtistOption, setTempArtistOption] = useState<any[]>([]);
+  const [tempCategoryOption, setTempCategoryOption] = useState<any[]>([]);
+  const [tempPlaylistOption, setTempPlaylistOption] = useState<any[]>([]);
   // set default value for form
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: useMemo(() => {
@@ -60,17 +69,6 @@ const UpdateSongModal = ({
     reset(song);
     // console.log(song);
   }, [reset, song]);
-
-  // Filter relationship
-  const [relationshipArtist, setRelationshipArtist] = useState<any[]>([]);
-  const [relationshipCategory, setRelationshipCategory] = useState<any[]>([]);
-  const [relationshipPlaylist, setRelationshipPlaylist] = useState<any[]>([]);
-  const [artistOption, setArtistOption] = useState<any[]>([]);
-  const [categoryOption, setCategoryOption] = useState<any[]>([]);
-  const [playlistOption, setPlaylistOption] = useState<any[]>([]);
-  const [tempArtistOption, setTempArtistOption] = useState<any[]>([]);
-  const [tempCategoryOption, setTempCategoryOption] = useState<any[]>([]);
-  const [tempPlaylistOption, setTempPlaylistOption] = useState<any[]>([]);
 
   // get relationship by song id
   useEffect(() => {

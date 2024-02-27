@@ -1,4 +1,6 @@
-// helpers.ts
+type SourceArrayItem =
+  | { id: string; name: string }
+  | { id: string; title: string };
 
 export function filterRelationships(
   relationshipArray: any[],
@@ -10,12 +12,24 @@ export function filterRelationships(
 export function mapRelationshipToOption(
   relationshipArray: any[],
   targetArray: string,
-  sourceArray: { id: string; name: string }[]
+  sourceArray: SourceArrayItem[]
 ): { value: string; label: string }[] {
   return relationshipArray.map((rel) => ({
     value: rel[targetArray].toString(),
-    label: sourceArray.find((item) => item.id === rel[targetArray])?.name || "",
+    label: findLabel(sourceArray, rel[targetArray]),
   }));
+}
+
+function findLabel(sourceArray: SourceArrayItem[], targetId: string): string {
+  const item = sourceArray.find((item) => item.id === targetId);
+  if (item) {
+    if ("name" in item) {
+      return item.name;
+    } else if ("title" in item) {
+      return item.title;
+    }
+  }
+  return "";
 }
 
 export function filterPreviousOptions(

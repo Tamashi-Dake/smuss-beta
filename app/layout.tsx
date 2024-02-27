@@ -13,7 +13,6 @@ import getCategories from "@/acitons/getCategories";
 import getArtists from "@/acitons/getArtists";
 import getPlaylists from "@/acitons/getPlaylists";
 import getSongs from "@/acitons/getSongs";
-import getPublicPlaylists from "@/acitons/getPublicPlaylists";
 import getRelationSongArtist from "@/acitons/getRelationSongArtist";
 import getRelationSongPlaylist from "@/acitons/getRelationSongPlaylist";
 import getRelationSongCategory from "@/acitons/getRelationSongCategory";
@@ -35,7 +34,7 @@ export default async function RootLayout({
   const userPlaylist = await getUserPlaylists();
   const categories = await getCategories();
   const artists = await getArtists();
-  const playlists = await getPublicPlaylists();
+  const playlists = await getPlaylists();
   const songs = await getSongs();
   const relationshipSongArtist = await getRelationSongArtist();
   const relationshipSongCategory = await getRelationSongCategory();
