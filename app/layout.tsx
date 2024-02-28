@@ -16,6 +16,8 @@ import getSongs from "@/acitons/getSongs";
 import getRelationSongArtist from "@/acitons/getRelationSongArtist";
 import getRelationSongPlaylist from "@/acitons/getRelationSongPlaylist";
 import getRelationSongCategory from "@/acitons/getRelationSongCategory";
+import Player from "@/components/layout/Player";
+import Detail from "@/components/layout/Detail";
 
 const font = Figtree({ subsets: ["latin"] });
 
@@ -59,7 +61,9 @@ export default async function RootLayout({
                 <Header>Header</Header>
                 {children}
               </div>
+              {/* <Detail /> */}
             </Sidebar>
+            <Player />
           </UserProvider>
         </SupabaseProvider>
       </body>

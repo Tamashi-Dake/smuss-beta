@@ -4,13 +4,14 @@ import getPublicPlaylists from "@/acitons/getPublicPlaylists";
 import Wrapper from "@/components/shared/Wrapper";
 import PlaylistItem from "@/components/shared/PlaylistItem";
 import Link from "next/link";
+import getRandomSongs from "@/acitons/getRandomSongs";
 
 export const revalidate = 0;
 
 export default async function Home() {
   // TODO: get all user playlists (for now, will change to get artists playlists later)
+  const randomSongs = await getRandomSongs();
   const playlists = await getPublicPlaylists();
-
   return (
     <>
       <div
@@ -26,7 +27,7 @@ export default async function Home() {
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">Recently Played</h1>
-          <SongsWrapper />
+          {/* <SongsWrapper /> */}
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">New Playlists</h1>
@@ -49,7 +50,7 @@ export default async function Home() {
         <SectionList>
           <h1 className="text-2xl font-bold ">Have you tried these?</h1>
           {/* will change to wrapper cpn later */}
-          <SongsWrapper />
+          <SongsWrapper songs={randomSongs} />
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">Discovery</h1>

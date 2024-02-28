@@ -1,35 +1,40 @@
 "use client";
+import useLoadImage from "@/hooks/useLoadImage";
+import { Song } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FaPlay } from "react-icons/fa";
+
 interface SongProps {
-  image: string;
-  title: string;
-  href: string;
+  data: Song;
+  onClick: (id: string) => void;
 }
-const SongItem: React.FC<SongProps> = ({ image, title, href }) => {
+
+const SongItem: React.FC<SongProps> = ({ data, onClick }) => {
   const router = useRouter();
+  const image = useLoadImage(data);
   const handleClick = () => {
-    router.push(href);
+    // router.push();
   };
   return (
     <div
       onClick={handleClick}
-      className="relative group flex  items-center overflow-hidden gap-x-4 bg-neutral-100/10 transition-all pr-4 rounded-md cursor-pointer"
+      className="relative group flex items-center overflow-hidden gap-x-4 bg-neutral-100/10 transition-all pr-4 rounded-md cursor-pointer hover:bg-neutral-100/20 min-h-16"
     >
-      <div className="relative min-h-[64px] min-w-[64px]">
+      {/* TODO: Add shadow */}
+      <div className="relative min-h-[64px] min-w-[64px] ">
         <Image
-          className=" rounded-lg "
-          src={image}
-          alt={title}
-          width={70}
-          height={70}
+          className="object-cover size-16 rounded-md overflow-hidden"
+          src={image || "/liked.png"}
+          alt={data.title}
+          width={200}
+          height={200}
         />
       </div>
 
-      <h1 className="text-white text-2xl truncate font-medium">{title}</h1>
-      <div className="absolute transition-all opacity-0 rounded-full flex items-center justify-center bg-green-500 p-4 drop-shadow-md group-hover:opacity-100 hover:scale-110 right-5 ">
-        <FaPlay className="text-black" />
+      <h1 className="text-white text-xl truncate font-medium">{data.title}</h1>
+      <div className="absolute transition-all opacity-0 rounded-full flex items-center justify-center bg-green-500 p-3 drop-shadow-md group-hover:opacity-100 hover:scale-110 right-5 ">
+        <FaPlay className="text-black" onClick={() => onClick(data.id)} />
       </div>
     </div>
   );

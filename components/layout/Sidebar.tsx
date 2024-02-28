@@ -89,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   }, [currentUser]);
 
   return (
-    <div className="sidebar flex h-full">
+    <div className="sidebar flex h-full bg-black">
       <div className="sidebar__header hidden md:flex flex-col gap-y-2 bg-black min-w-[200px] max-w-[300px] p-2">
         <Box classname={` ${role !== "admin" ? "" : "overflow-y-auto h-full"}`}>
           <div className="flex flex-col gap-y-4 px-5 py-4">
@@ -107,6 +107,20 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
       <main className="flex-1 flex flex-col bg-black overflow-auto py-2 h-full ">
         {children}
       </main>
+      {/* Now Playing Detail */}
+      {/* <div
+        className="
+        bg-black
+        min-w-[300px]
+        max-w-[500px]
+        p-2 
+        h-full
+        text-white
+        rounded-lg
+      "
+      >
+        Song Lyrics Artist
+      </div> */}
     </div>
   );
 };
