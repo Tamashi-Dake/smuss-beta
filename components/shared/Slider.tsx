@@ -47,6 +47,11 @@ const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
             h-full
           "
         />
+        <RadixSlider.Thumb
+          className=" block -translate-y-1
+         size-3 bg-white shadow-md rounded-full hover:bg-neutral-300 focus:outline-none focus:shadow-2xl        "
+          aria-label="Volume"
+        />
       </RadixSlider.Track>
     </RadixSlider.Root>
   );

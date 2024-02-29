@@ -25,7 +25,7 @@ const Player = () => {
         bg-black 
         w-full 
         py-2 
-        h-[80px] 
+        min-h-[100px] 
         px-4
         text-white
         z-[1001]
@@ -33,7 +33,6 @@ const Player = () => {
     >
       <PlayerContent
         // assign key so that the component reset use-sound hook when the song changes (cus use-sound doesn't support dynamic url changes)
-        key={songUrl}
         song={song}
         songUrl={songUrl}
       />
