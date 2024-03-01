@@ -4,7 +4,6 @@ import { Artist } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import PlayButton from "./PlayButton";
 
 interface ArtistItemProps {
   data: Artist;

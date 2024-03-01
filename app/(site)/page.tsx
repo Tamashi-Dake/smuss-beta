@@ -5,6 +5,8 @@ import Wrapper from "@/components/shared/Wrapper";
 import PlaylistItem from "@/components/shared/PlaylistItem";
 import Link from "next/link";
 import getRandomSongs from "@/acitons/getRandomSongs";
+import PlaylistWrapper from "@/components/home/PlaylistWrapper";
+import getSongInPlaylist from "@/acitons/getSongInPlaylist";
 
 export const revalidate = 0;
 
@@ -12,6 +14,7 @@ export default async function Home() {
   // TODO: get all user playlists (for now, will change to get artists playlists later)
   const randomSongs = await getRandomSongs();
   const playlists = await getPublicPlaylists();
+  const relatedSong = await getSongInPlaylist();
   return (
     <>
       <div
@@ -31,16 +34,7 @@ export default async function Home() {
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">New Playlists</h1>
-          <Wrapper>
-            {playlists.length === 0 ? (
-              <p>No playlists found</p>
-            ) : (
-              playlists.map((item) => (
-                // <p key={item.id}>{item.name}</p>
-                <PlaylistItem key={item.id} data={item} />
-              ))
-            )}
-          </Wrapper>
+          <PlaylistWrapper data={playlists} related={relatedSong} />
           {/* animation section */}
         </SectionList>
         <SectionList>

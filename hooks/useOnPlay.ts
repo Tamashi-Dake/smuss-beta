@@ -5,7 +5,10 @@ import usePlayer from "./usePlayer";
 import { useAuthModal } from "./useModal";
 import { useUser } from "./useUser";
 
-const useOnPlay = (songs: Song[]) => {
+const useOnPlay = (
+  songs: Song[]
+  // , type: string
+) => {
   const player = usePlayer();
   //   const subscribeModal = useSubscribeModal();
   const authModal = useAuthModal();
@@ -15,13 +18,21 @@ const useOnPlay = (songs: Song[]) => {
     if (!user) {
       return authModal.onOpen();
     }
+    // if (songs.length === 0) {
+    //   console.log("no songs");
+    //   return;
+    // }
 
     // if (!subscription) {
     //   return subscribeModal.onOpen();
     // }
-
+    // if (type === "song") {
     player.setId(id);
     player.setIds(songs.map((song) => song.id));
+    // } else {
+    //   player.setId(songs[0].id);
+    //   player.setIds(songs.map((song) => song.id));
+    // }
   };
 
   return onPlay;

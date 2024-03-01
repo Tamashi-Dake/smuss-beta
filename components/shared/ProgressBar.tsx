@@ -7,7 +7,7 @@ interface SlideProps {
   onChange?: (value: number) => void;
 }
 
-const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
+const ProgressBar: React.FC<SlideProps> = ({ value = 0, onChange }) => {
   const handleChange = (newValue: number[]) => {
     onChange?.(newValue[0]);
   };
@@ -23,12 +23,12 @@ const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
         w-full 
         h-10
       "
-      defaultValue={[1]}
+      defaultValue={[0]}
       value={[value]}
       onValueChange={handleChange}
       max={1}
       step={0.01}
-      aria-label="Volume"
+      aria-label="Progress bar"
     >
       <RadixSlider.Track
         className="
@@ -37,6 +37,7 @@ const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
           grow 
           rounded-full 
           h-[3px]
+          group
         "
       >
         <RadixSlider.Range
@@ -48,13 +49,13 @@ const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
           "
         />
         <RadixSlider.Thumb
-          className=" block -translate-y-1
+          className=" hidden group-hover:block -translate-y-1
          size-3 bg-white shadow-md rounded-full hover:bg-neutral-300 focus:outline-none focus:shadow-2xl        "
-          aria-label="Volume"
+          aria-label="ProgressBar thumb"
         />
       </RadixSlider.Track>
     </RadixSlider.Root>
   );
 };
 
-export default Slider;
+export default ProgressBar;

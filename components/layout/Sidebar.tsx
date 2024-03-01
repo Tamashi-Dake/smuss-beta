@@ -13,6 +13,8 @@ import { TbPlaylist } from "react-icons/tb";
 import { FaItunesNote, FaUser, FaUsers } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { Playlist } from "@/types";
+import { twMerge } from "tailwind-merge";
+import usePlayer from "@/hooks/usePlayer";
 BiSearch;
 interface SidebarProps {
   children: React.ReactNode;
@@ -23,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   const pathname = usePathname();
   const currentUser = useCurrentUser();
   const [role, setRole] = useState("");
+  const player = usePlayer();
   const routes = useMemo(
     () => [
       { icon: HiHome, label: "Home", active: pathname === "/", path: "/" },
@@ -89,8 +92,13 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   }, [currentUser]);
 
   return (
-    <div className="sidebar flex h-full bg-black">
-      <div className="sidebar__header hidden md:flex flex-col gap-y-2 bg-black min-w-[200px] max-w-[300px] p-2">
+    <div
+      className={twMerge(
+        "sidebar flex h-full bg-black",
+        player.activeId && "h-[calc(100%-100px)]"
+      )}
+    >
+      <div className="sidebar__header hidden md:flex flex-col gap-y-2 bg-black min-w-[250px] max-w-[300px] p-2">
         <Box classname={` ${role !== "admin" ? "" : "overflow-y-auto h-full"}`}>
           <div className="flex flex-col gap-y-4 px-5 py-4">
             {routes.map((item) => (

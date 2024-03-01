@@ -36,6 +36,7 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
       // arrows={false}
       renderButtonGroupOutside={true}
       // customButtonGroup={<ButtonGroup />}
+      className="w-full grow-1"
     >
       {children}
     </Carousel>

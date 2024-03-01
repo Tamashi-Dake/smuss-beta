@@ -31,11 +31,7 @@ const Player = () => {
         z-[1001]
       "
     >
-      <PlayerContent
-        // assign key so that the component reset use-sound hook when the song changes (cus use-sound doesn't support dynamic url changes)
-        song={song}
-        songUrl={songUrl}
-      />
+      <PlayerContent song={song} songUrl={songUrl} />
     </div>
   );
 };

@@ -6,7 +6,7 @@ interface SectionListProps {
 }
 const SectionList: React.FC<SectionListProps> = ({ children, className }) => {
   return (
-    <section className={twMerge(`flex flex-col gap-4`, className)}>
+    <section className={twMerge(`flex flex-col gap-4 w-full`, className)}>
       {children}
     </section>
   );

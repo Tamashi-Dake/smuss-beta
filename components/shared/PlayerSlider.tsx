@@ -4,10 +4,15 @@ import * as RadixSlider from "@radix-ui/react-slider";
 
 interface SlideProps {
   value?: number;
+  duration?: any;
   onChange?: (value: number) => void;
 }
 
-const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
+const PlayerSlider: React.FC<SlideProps> = ({
+  value = 1,
+  duration,
+  onChange,
+}) => {
   const handleChange = (newValue: number[]) => {
     onChange?.(newValue[0]);
   };
@@ -26,9 +31,9 @@ const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
       defaultValue={[1]}
       value={[value]}
       onValueChange={handleChange}
-      max={1}
+      max={duration || 1}
       step={0.01}
-      aria-label="Volume"
+      aria-label="Progress"
     >
       <RadixSlider.Track
         className="
@@ -42,7 +47,7 @@ const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
         <RadixSlider.Range
           className="
             absolute 
-            bg-white 
+            bg-green-400
             rounded-full 
             h-full
           "
@@ -57,4 +62,4 @@ const Slider: React.FC<SlideProps> = ({ value = 1, onChange }) => {
   );
 };
 
-export default Slider;
+export default PlayerSlider;

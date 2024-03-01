@@ -3,21 +3,28 @@ import useLoadImage from "@/hooks/useLoadImage";
 import { Playlist } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
-import PlayButton from "./PlayButton";
+import React, { useState } from "react";
+import { FaPlay } from "react-icons/fa";
 
 interface PlaylistProps {
   data: Playlist;
+  onClick: (id: string) => void;
 }
 
-const PlaylistItem: React.FC<PlaylistProps> = ({ data }) => {
+const PlaylistItem: React.FC<PlaylistProps> = ({ data, onClick }) => {
   const router = useRouter();
   const imagePath = useLoadImage(data);
+  const handlePlaylist = (event: any) => {
+    event.stopPropagation();
+    onClick(data.id);
+  };
   return (
     <div
-      onClick={() =>
+      onClick={
+        () => {}
         // router.push(`/playlist/${data.id}`)
-        console.log(data.id)
+        // console.log(data.id)
+        // router.push(`/playlist/${data.id}`)
       }
       className=" relative 
       group 
@@ -79,7 +86,25 @@ const PlaylistItem: React.FC<PlaylistProps> = ({ data }) => {
           right-5
         "
       >
-        <PlayButton />
+        <button
+          className="
+    transition-all
+    duration-400
+    ease-in-out
+    translate-y-2
+    opacity-0
+    p-4
+    bg-green-500
+    rounded-full
+    hover:scale-110
+    hover:bg-green-400
+    group-hover:-translate-y-1 
+    group-hover:opacity-100
+    peer
+    "
+        >
+          <FaPlay className="text-black" onClick={handlePlaylist} />
+        </button>
       </div>
     </div>
   );
