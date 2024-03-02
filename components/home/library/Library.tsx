@@ -7,6 +7,7 @@ import { useUser } from "@/hooks/useUser";
 import { useAddPlaylistModal } from "@/hooks/useModal";
 import { Playlist } from "@/types";
 import UserPlaylist from "@/components/shared/UserPlaylist";
+import Link from "next/link";
 
 interface LibraryProps {
   playlists: Playlist[];
@@ -16,10 +17,6 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const authModal = useAuthModal();
   const addPlaylistModal = useAddPlaylistModal();
   const { user } = useUser();
-  const handleLibraryClick = () => {
-    // TODO: Library page
-    console.log("Library clicked");
-  };
   const handlePlaylistClick = () =>
     // playlist: Playlist
     {
@@ -34,13 +31,13 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-between px-5 pt-4">
-        <div
+        <Link
+          href="/library"
           className="inline-flex items-center gap-x-4 px-2 text-neutral-400 cursor-pointer hover:text-white transition-all"
-          onClick={handleLibraryClick}
         >
           <TbPlaylist size={20} />
           <h3 className="text-md font-semibold">Your Library</h3>
-        </div>
+        </Link>
         <AiOutlinePlus
           className="cursor-pointer text-neutral-400 hover:text-white transition-all"
           size={20}

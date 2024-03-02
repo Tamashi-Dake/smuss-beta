@@ -13,7 +13,9 @@ import LikeButton from "../shared/LikeButton";
 import Slider from "../shared/Slider";
 import PlayerSong from "./PlayerSong";
 import PlayerSlider from "../shared/PlayerSlider";
-import { Repeat, Repeat1 } from "lucide-react";
+import { Repeat, Repeat1, Shuffle } from "lucide-react";
+import { TbRepeatOff } from "react-icons/tb";
+import { set } from "react-hook-form";
 
 interface PlayerContentProps {
   song: Song;
@@ -26,27 +28,34 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0); // Progress in seconds
   const [repeatMode, setRepeatMode] = useState("none"); // 'none', 'repeat', 'repeatList'
+  const [shuffleMode, setShuffleMode] = useState(false);
+  const [playedSongs, setPlayedSongs] = useState<string[]>([]);
+  const repeatModeRef = useRef("none"); // Sử dụng useRef để lưu trữ giá trị repeatMode
   const soundRef = useRef<Howl | null>(null);
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
   const toggleRepeatMode = () => {
-    switch (repeatMode) {
+    // console.log("repeatModeRef.current", repeatModeRef.current);
+    switch (repeatModeRef.current) {
       case "none":
-        setRepeatMode("repeat");
+        repeatModeRef.current = "repeat";
         break;
       case "repeat":
-        setRepeatMode("repeatList");
+        repeatModeRef.current = "repeatList";
         break;
       case "repeatList":
-        setRepeatMode("none");
+        repeatModeRef.current = "none";
         break;
       default:
         break;
     }
+    setRepeatMode(repeatModeRef.current);
   };
-  useEffect(() => {
-    console.log(repeatMode);
-  }, [repeatMode]);
+
+  // useEffect(() => {
+  //   setRepeatMode(repeatModeRef.current);
+  //   console.log("repeatMode", repeatMode);
+  // }, [repeatModeRef.current]);
 
   const onPlayNext = () => {
     if (player.ids.length === 0) {
@@ -54,19 +63,56 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     }
 
     const currentIndex = player.ids.findIndex((id) => id === player.activeId);
-    const nextSong = player.ids[currentIndex + 1];
-    console.log("repeatMode", repeatMode);
-    console.log("nextSong", nextSong);
+    let nextSong;
+    if (shuffleMode) {
+      const unplayedSongs = player.ids.filter((id) => id !== player.activeId);
+      const randomIndex = Math.floor(Math.random() * unplayedSongs.length);
+      nextSong = unplayedSongs[randomIndex];
+    } else {
+      nextSong = player.ids[currentIndex + 1];
+    }
+    // console.log("repeatMode", repeatModeRef.current); // Sử dụng repeatModeRef.current ở đây
+    // console.log("nextSong", nextSong);
     if (!nextSong) {
-      if (repeatMode === "repeatList") {
+      if (repeatModeRef.current === "repeatList") {
         return player.setId(player.ids[0]);
       } else {
         return;
       }
     }
+    if (repeatModeRef.current === "repeat") {
+      // console.log("setProgress", 0);
+      setProgress(0);
+      soundRef.current?.seek(0);
+      soundRef.current?.play();
+      return;
+    } else {
+      player.setId(nextSong);
+    }
+  };
+  const handlePlayNext = () => {
+    if (player.ids.length === 0) {
+      return;
+    }
+    const currentIndex = player.ids.findIndex((id) => id === player.activeId);
+    let nextSong;
+
+    if (shuffleMode) {
+      const unplayedSongs = player.ids.filter((id) => id !== player.activeId);
+      const randomIndex = Math.floor(Math.random() * unplayedSongs.length);
+      nextSong = unplayedSongs[randomIndex];
+    } else {
+      nextSong = player.ids[currentIndex + 1];
+    }
+    console.log("player.ids", player.ids);
+    console.log("nextSong", nextSong);
+    console.log("playedSongs", playedSongs);
+
+    if (!nextSong) {
+      return player.setId(player.ids[0]);
+    }
     player.setId(nextSong);
   };
-
   const onPlayPrevious = () => {
     if (player.ids.length === 0) {
       return;
@@ -98,7 +144,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
       volume: volume,
       onplay: () => setIsPlaying(true),
       onend: () => {
-        setIsPlaying(false);
+        repeatModeRef.current !== "repeat" && setIsPlaying(false);
         onPlayNext();
       },
       onpause: () => setIsPlaying(false),
@@ -107,7 +153,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     });
 
     return () => {
-      if (soundRef.current) {
+      if (soundRef.current && repeatModeRef.current !== "repeat") {
+        // console.log("unmount");
         soundRef.current.unload();
       }
     };
@@ -136,8 +183,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   const toggleMute = () => {
     if (volume === 0) {
       setVolume(1);
+      soundRef.current?.volume(1);
     } else {
       setVolume(0);
+      soundRef.current?.volume(0);
     }
   };
 
@@ -199,7 +248,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             gap-x-6"
         >
           {repeatMode === "none" && (
-            <Repeat
+            <TbRepeatOff
               onClick={toggleRepeatMode}
               size={30}
               className="
@@ -226,7 +275,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
               onClick={toggleRepeatMode}
               size={30}
               className="
-                text-green-200 
+                text-white
                 cursor-pointer 
                 transition
               "
@@ -260,7 +309,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
             <Icon size={30} className="text-black" />
           </div>
           <AiFillStepForward
-            onClick={onPlayNext}
+            onClick={handlePlayNext}
             size={30}
             className="
               text-neutral-400 
@@ -268,6 +317,17 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
               hover:text-white 
               transition
             "
+          />
+
+          <Shuffle
+            size={30}
+            className={
+              (shuffleMode
+                ? "text-white"
+                : "text-neutral-400 hover:text-neutral-200") +
+              " cursor-pointer  transition "
+            }
+            onClick={() => setShuffleMode(!shuffleMode)}
           />
         </div>
         <PlayerSlider

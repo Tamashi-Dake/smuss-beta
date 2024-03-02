@@ -20,12 +20,7 @@ const PlaylistItem: React.FC<PlaylistProps> = ({ data, onClick }) => {
   };
   return (
     <div
-      onClick={
-        () => {}
-        // router.push(`/playlist/${data.id}`)
-        // console.log(data.id)
-        // router.push(`/playlist/${data.id}`)
-      }
+      onClick={() => router.push(`/playlist/${data.id}`)}
       className=" relative 
       group 
       flex 
