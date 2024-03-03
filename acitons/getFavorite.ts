@@ -13,12 +13,13 @@ const getFavorite = async (): Promise<Song[]> => {
 
   const { data } = await supabase
     .from("liked_songs")
-    .select("*, songs(*)")
+    .select("*, songs(*)", { count: "exact", head: true })
     .eq("user_id", session?.user?.id)
     .order("created_at", { ascending: false });
 
   if (!data) return [];
 
+  // TODO: check this part again
   return data.map((item) => ({
     ...item.songs,
   }));

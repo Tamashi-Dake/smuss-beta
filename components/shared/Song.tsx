@@ -33,8 +33,11 @@ const SongItem: React.FC<SongProps> = ({ data, onClick }) => {
       </div>
 
       <h1 className="text-white text-xl truncate font-medium">{data.title}</h1>
-      <div className="absolute transition-all opacity-0 rounded-full flex items-center justify-center bg-green-500 p-3 drop-shadow-md group-hover:opacity-100 hover:scale-110 right-5 ">
-        <FaPlay className="text-black" onClick={() => onClick(data.id)} />
+      <div
+        className="absolute transition-all opacity-0 rounded-full flex items-center justify-center bg-green-500 p-3 drop-shadow-md group-hover:opacity-100 hover:scale-110 right-5 "
+        onClick={() => onClick(data.id)}
+      >
+        <FaPlay className="text-black" />
       </div>
     </div>
   );

@@ -14,9 +14,9 @@ const ArtistItem: React.FC<ArtistItemProps> = ({ data }) => {
   const imageUrl = useLoadImage(data);
   return (
     <div
-      onClick={() =>
-        // router.push(`/artist/${data.id}`)
-        console.log(data.id)
+      onClick={
+        () => router.push(`/artist/${data.id}`)
+        // console.log(data.id)
       }
       className=" relative 
       group 

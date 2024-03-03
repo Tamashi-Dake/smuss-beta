@@ -7,6 +7,8 @@ import Link from "next/link";
 import getRandomSongs from "@/acitons/getRandomSongs";
 import PlaylistWrapper from "@/components/home/PlaylistWrapper";
 import getSongInPlaylist from "@/acitons/getSongInPlaylist";
+import getNewHits from "@/acitons/getNewHit";
+import NewHits from "@/components/home/NewHits";
 
 export const revalidate = 0;
 
@@ -15,18 +17,16 @@ export default async function Home() {
   const randomSongs = await getRandomSongs();
   const playlists = await getPublicPlaylists();
   const relatedSong = await getSongInPlaylist();
+  const newHits = await getNewHits();
   return (
     <>
       <div
-        className="mt-8 flex flex-col m-auto gap-y-10 px-4 text-white max-w-[1500px]
+        className=" flex flex-col m-auto gap-y-10 px-4 text-white max-w-[1500px]
         mx-auto"
       >
-        <Link className="text-xl font-bold  bg-blue-400" href="/favorites">
-          Favorites
-        </Link>
         <SectionList>
           <h1 className="text-2xl font-bold ">New Hits</h1>
-          {/* animation section */}
+          <NewHits songs={newHits} />
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">Recently Played</h1>

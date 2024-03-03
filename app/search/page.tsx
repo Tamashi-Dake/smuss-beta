@@ -17,11 +17,11 @@ const Search = async ({ searchParams }: SearchProps) => {
     <div
       className="
         bg-neutral-900 
-        rounded-lg 
         h-full 
         w-full 
         px-4
-
+        max-w-screen-2xl
+        m-auto
       "
     >
       <div className="mb-2 flex flex-col gap-y-6">

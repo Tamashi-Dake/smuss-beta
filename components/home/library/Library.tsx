@@ -8,6 +8,8 @@ import { useAddPlaylistModal } from "@/hooks/useModal";
 import { Playlist } from "@/types";
 import UserPlaylist from "@/components/shared/UserPlaylist";
 import Link from "next/link";
+import Image from "next/image";
+import getFavorite from "@/acitons/getFavorite";
 
 interface LibraryProps {
   playlists: Playlist[];
@@ -17,6 +19,9 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const authModal = useAuthModal();
   const addPlaylistModal = useAddPlaylistModal();
   const { user } = useUser();
+  // const favorite = getFavorite();
+  // console.log(favorite);
+  // const supabase =
   const handlePlaylistClick = () =>
     // playlist: Playlist
     {
@@ -45,6 +50,34 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
         />
       </div>
       <div className="flex flex-col gap-y-2 mt-4 px-4">
+        {user && (
+          <Link
+            href="/favorites"
+            className="flex items-center gap-x-3 cursor-pointer  hover:bg-neutral-600/50 w-full p-2 rounded-md"
+          >
+            <div
+              className="
+          relative 
+          rounded-md 
+          min-h-[48px] 
+          min-w-[48px] 
+          overflow-hidden
+        "
+            >
+              <Image
+                fill
+                sizes="48px"
+                src={"/liked.png"}
+                alt="UserFavoritePlaylist"
+                className="object-cover"
+              />
+            </div>
+            <div className="flex flex-col gap-y-1 overflow-hidden">
+              <p className="text-white truncate">Favorite</p>
+              {/* <p className="text-neutral-400 text-sm truncate"></p> */}
+            </div>
+          </Link>
+        )}
         {playlists.map((playlist) => (
           <div key={playlist.id}>
             <UserPlaylist data={playlist} onClick={handlePlaylistClick} />

@@ -97,8 +97,9 @@ const PlaylistItem: React.FC<PlaylistProps> = ({ data, onClick }) => {
     group-hover:opacity-100
     peer
     "
+          onClick={handlePlaylist}
         >
-          <FaPlay className="text-black" onClick={handlePlaylist} />
+          <FaPlay className="text-black" />
         </button>
       </div>
     </div>

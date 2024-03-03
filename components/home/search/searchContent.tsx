@@ -2,12 +2,11 @@
 
 import ArtistItem from "@/components/shared/ArtistItem";
 import CategoryItem from "@/components/shared/CategoryItem";
-import LikeButton from "@/components/shared/LikeButton";
 import PlaylistItem from "@/components/shared/PlaylistItem";
 import SongListItem from "@/components/shared/SongListItem";
-import UserPlaylist from "@/components/shared/UserPlaylist";
 import Wrapper from "@/components/shared/Wrapper";
 import { Artist, Category, Playlist, Song } from "@/types";
+import { useRouter } from "next/navigation";
 
 // import LikeButton from "@/components/LikeButton";
 // import useOnPlay from "@/hooks/useOnPlay";
@@ -25,6 +24,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
   artists,
   categories,
 }) => {
+  const router = useRouter();
   //   const onPlay = useOnPlay(playlists);
   if (categories?.length > 0) {
     return (
@@ -55,6 +55,9 @@ const SearchContent: React.FC<SearchContentProps> = ({
       </div>
     );
   }
+  const handlePlaylist = (playlistId: string) => {
+    router.push(`/playlist/${playlistId}`);
+  };
 
   return (
     <div className="flex flex-col gap-y-2 w-full ">
@@ -82,7 +85,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
         {playlists.map((playlist: Playlist) => (
           <PlaylistItem
             key={playlist.id}
-            //   onClick={(id: string) => onPlay(id)}
+            onClick={() => handlePlaylist(playlist.id)}
             data={playlist}
           />
         ))}
@@ -94,11 +97,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
       )}
       <Wrapper>
         {artists.map((artist: Artist) => (
-          <ArtistItem
-            key={artist.id}
-            //   onClick={(id: string) => onPlay(id)}
-            data={artist}
-          />
+          <ArtistItem key={artist.id} data={artist} />
         ))}
       </Wrapper>
     </div>
