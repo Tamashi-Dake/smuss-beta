@@ -54,7 +54,7 @@ const NewHits: React.FC<NewHitsProps> = ({ songs }) => {
         );
         return nextIndex;
       });
-      console.log(positonIndex);
+      // console.log(positonIndex);
     }, 5000);
 
     return () => {
@@ -64,7 +64,7 @@ const NewHits: React.FC<NewHitsProps> = ({ songs }) => {
 
   return (
     <>
-      <div className=" relative flex flex-col justify-between items-center min-h-32">
+      <div className=" relative flex flex-col justify-between items-center min-h-32 w-full">
         {songState.map((song, index) => (
           <motion.div
             key={song.id}
@@ -73,7 +73,7 @@ const NewHits: React.FC<NewHitsProps> = ({ songs }) => {
             exit={{ opacity: 0 }}
             variants={songVariants}
             transition={{ duration: 0.5 }}
-            className="absolute song-item rounded-lg px-10"
+            className="absolute song-item rounded-lg px-4 lg:px-7 xl:px-8"
           >
             <NewHitItem data={song} onClick={(id) => onPlay(id)} />
           </motion.div>

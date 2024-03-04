@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/dashboard/DataTable";
-import React from "react";
 import { columnType } from "./columnType";
 import getArtists from "@/acitons/getArtists";
 

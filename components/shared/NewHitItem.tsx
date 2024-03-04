@@ -15,11 +15,13 @@ const NewHitItem: React.FC<NewHitItemProps> = ({ data, onClick }) => {
   const router = useRouter();
   const image = useLoadImage(data);
   return (
-    <div className="relative min-h-40 min-w-64 cursor-pointer">
+    <div className="relative h-28 w-36 xl:min-h-40 xl:min-w-64 cursor-pointer  overflow-hidden ">
       <Image
-        className="object-cover size-32 min-w-52 rounded-md overflow-hidden"
+        className="object-cover rounded-md h-28 w-36 xl:min-h-40 xl:min-w-64 hover:scale-125 transition-all ease-in-out duration-200"
         src={image || "/liked.png"}
         alt={data.title}
+        width={500}
+        height={500}
         onClick={() => onClick(data.id)}
       />
     </div>

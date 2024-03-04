@@ -1,16 +1,13 @@
 import SongsWrapper from "@/components/home/SongsWrapper";
 import SectionList from "@/components/home/SectionList";
 import getPublicPlaylists from "@/acitons/getPublicPlaylists";
-import Wrapper from "@/components/shared/Wrapper";
-import PlaylistItem from "@/components/shared/PlaylistItem";
-import Link from "next/link";
 import getRandomSongs from "@/acitons/getRandomSongs";
 import PlaylistWrapper from "@/components/home/PlaylistWrapper";
 import getSongInPlaylist from "@/acitons/getSongInPlaylist";
 import getNewHits from "@/acitons/getNewHit";
 import NewHits from "@/components/home/NewHits";
 
-export const revalidate = 0;
+// export const revalidate = 0;
 
 export default async function Home() {
   // TODO: get all user playlists (for now, will change to get artists playlists later)
