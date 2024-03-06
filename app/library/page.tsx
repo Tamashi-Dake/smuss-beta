@@ -2,12 +2,12 @@ import React from "react";
 import SectionList from "@/components/home/SectionList";
 import SongsWrapper from "@/components/home/SongsWrapper";
 import PlaylistWrapper from "@/components/home/PlaylistWrapper";
-import getPublicPlaylists from "@/acitons/getPublicPlaylists";
+import getRandomPublicPlaylists from "@/acitons/getRandomPublicPlaylists";
 import getSongInPlaylist from "@/acitons/getSongInPlaylist";
 export const revalidate = 0;
 
 const LibraryPage: React.FC = async () => {
-  const playlists = await getPublicPlaylists();
+  const playlists = await getRandomPublicPlaylists();
   const relatedSong = await getSongInPlaylist();
   return (
     <div

@@ -23,9 +23,7 @@ const UpdateCategoryModal = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [color, setColor] = useState("#000000");
   const [category, setCategory] = useState<any>(null);
-  const onChangeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setColor(e.target.value);
-  };
+
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: useMemo(() => {
       return category;
@@ -45,6 +43,12 @@ const UpdateCategoryModal = () => {
       fetchRecord();
     }
   }, [isOpen, id]);
+
+  const onChangeColor = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setColor(e.target.value);
+    // console.log(color);
+  };
+
   const onChange = (open: boolean) => {
     if (!open) {
       reset();
@@ -64,6 +68,7 @@ const UpdateCategoryModal = () => {
       }
 
       // update Category
+      values.color = color;
       const categoryUpdateData: any = {
         name: values.name,
         description: values.description,
@@ -99,6 +104,7 @@ const UpdateCategoryModal = () => {
         setIsLoading(false);
         return toast.error(supabaseError.message);
       }
+      // console.log(categoryUpdateData);
       router.refresh();
       setIsLoading(false);
       toast.success("Category updated successfully");

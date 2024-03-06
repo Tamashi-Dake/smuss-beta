@@ -1,13 +1,14 @@
 import { Playlist } from "@/types";
 import { supabase } from "@/utils/supabaseSever";
 
-const getPublicPlaylists = async (): Promise<Playlist[]> => {
+const getRandomPublicPlaylists = async (): Promise<Playlist[]> => {
   const { data, error } = await supabase
-    .from("playlist")
+    .from("random_playlists")
     .select("*, users!inner(*)")
+    .is("artist_id", null)
     .eq("users.role", "admin");
   if (error) console.log("error", error);
   return (data as Playlist[]) || [];
 };
 
-export default getPublicPlaylists;
+export default getRandomPublicPlaylists;

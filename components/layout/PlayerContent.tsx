@@ -1,12 +1,12 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
-import { Howl, Howler } from "howler";
+import { Howl } from "howler";
 
-import { Song } from "@/types";
+import { ArtistRecord, Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 
 import LikeButton from "../shared/LikeButton";
@@ -20,9 +20,15 @@ import { set } from "react-hook-form";
 interface PlayerContentProps {
   song: Song;
   songUrl: string;
+  artists: ArtistRecord[];
 }
 
-const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
+const PlayerContent: React.FC<PlayerContentProps> = ({
+  song,
+  songUrl,
+  artists,
+}) => {
+  const [artistRecord, setArtistRecord] = useState<ArtistRecord[]>([]);
   const player = usePlayer();
   const [volume, setVolume] = useState(0.5);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -104,9 +110,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
     } else {
       nextSong = player.ids[currentIndex + 1];
     }
-    console.log("player.ids", player.ids);
-    console.log("nextSong", nextSong);
-    console.log("playedSongs", playedSongs);
+    // console.log("player.ids", player.ids);
+    // console.log("nextSong", nextSong);
+    // console.log("playedSongs", playedSongs);
 
     if (!nextSong) {
       return player.setId(player.ids[0]);
@@ -161,6 +167,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
   }, [songUrl]);
 
   useEffect(() => {
+    setArtistRecord(artists);
+  }, [artists]);
+  useEffect(() => {
     const updateProgress = () => {
       const seek = soundRef.current?.seek() || 0;
       setProgress(seek);
@@ -192,8 +201,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({ song, songUrl }) => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 h-full">
-      <div className="flex  justify-start items-center gap-x-4">
-        <PlayerSong song={song} />
+      <div className="flex  justify-start items-center gap-x-1">
+        <PlayerSong song={song} artists={artistRecord} />
         <LikeButton songId={song.id} />
       </div>
 

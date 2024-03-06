@@ -29,10 +29,19 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
     };
   }
 
+  // Tìm kiếm danh sách các Artist
+  const artistSearchResult = await supabase
+    .from("artist")
+    .select("*")
+    .limit(6)
+    .ilike("name", `%${query}%`)
+    .order("created_at", { ascending: false });
+
   // Tìm kiếm danh sách các Playlist
   const playlistSearchResult = await supabase
     .from("playlist")
     .select("*, users!inner(*)")
+    .limit(6)
     .eq("users.role", "admin")
     .ilike("name", `%${query}%`)
     .order("created_at", { ascending: false });
@@ -41,14 +50,8 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
   const songSearchResult = await supabase
     .from("songs")
     .select("*")
+    .limit(6)
     .ilike("title", `%${query}%`)
-    .order("created_at", { ascending: false });
-
-  // Tìm kiếm danh sách các Artist
-  const artistSearchResult = await supabase
-    .from("artist")
-    .select("*")
-    .ilike("name", `%${query}%`)
     .order("created_at", { ascending: false });
 
   // Kiểm tra lỗi trong quá trình tìm kiếm

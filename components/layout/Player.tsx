@@ -4,13 +4,15 @@ import usePlayer from "@/hooks/usePlayer";
 import useLoadSong from "@/hooks/useLoadSong";
 import useGetSongById from "@/hooks/useGetSongById";
 import PlayerContent from "./PlayerContent";
+import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
 
 // import PlayerContent from "./PlayerContent";
 
 const Player = () => {
   const player = usePlayer();
   const { song } = useGetSongById(player.activeId);
-
+  const { artist } = useGetArtistBySongId(player.activeId);
+  // console.log(artist);
   const songUrl = useLoadSong(song!);
 
   if (!song || !songUrl || !player.activeId) {
@@ -31,7 +33,7 @@ const Player = () => {
         z-[1001]
       "
     >
-      <PlayerContent song={song} songUrl={songUrl} />
+      <PlayerContent song={song} songUrl={songUrl} artists={artist} />
     </div>
   );
 };

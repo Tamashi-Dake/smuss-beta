@@ -59,7 +59,6 @@ const CategoryItem: React.FC<CategoryProps> = ({ data }) => {
           width={400}
           height={400}
           alt="Image"
-          priority={true}
         />
       </div>
     </div>

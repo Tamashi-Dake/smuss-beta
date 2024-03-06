@@ -58,7 +58,6 @@ const ArtistItem: React.FC<ArtistItemProps> = ({ data }) => {
           width={200}
           height={200}
           alt="Image"
-          priority={true}
         />
       </div>
       <div className="flex flex-col items-start w-full pt-4 gap-y-1">

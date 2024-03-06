@@ -1,15 +1,17 @@
 "use client";
 import useLoadImage from "@/hooks/useLoadImage";
-import { Song } from "@/types";
+import { ArtistRecord, Song } from "@/types";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 interface PlaylistProps {
   song: Song;
+  artists: ArtistRecord[];
 }
 
-const PlayerSong: React.FC<PlaylistProps> = ({ song }) => {
+const PlayerSong: React.FC<PlaylistProps> = ({ song, artists }) => {
   const router = useRouter();
   const imagePath = useLoadImage(song);
   return (
@@ -31,6 +33,7 @@ hover:bg-neutral-400/10
 cursor-pointer 
 transition 
 select-none
+
 "
     >
       <div
@@ -48,12 +51,11 @@ select-none
           height={200}
           objectFit="cover"
           alt={song.title}
-          priority={true}
         />
       </div>
       <div
         className="flex flex-col items-start w-full pt-4 gap-y-1 
-max-w-[100px] md:max-w-[150px] lg:max-w-[200px]
+         md:max-w-40 lg:max-w-52 truncate
 "
       >
         <p className="font-semibold truncate w-full">{song.title}</p>
@@ -66,7 +68,22 @@ max-w-[100px] md:max-w-[150px] lg:max-w-[200px]
       truncate
     "
         >
-          Song artist
+          {/* map mảng artists với mỗi item là 1 link đến artist đó, liền trên 1 dòng, ngăn cách bằng dấu "," */}
+
+          {artists.length === 0
+            ? "Unknown"
+            : artists.map((artist, index) => (
+                <>
+                  <Link
+                    key={artist.id}
+                    href={`/artist/${artist.id}`}
+                    className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none"
+                  >
+                    {artist.name}
+                  </Link>
+                  {index < artists.length - 1 && ", "}
+                </>
+              ))}
         </p>
       </div>
     </div>

@@ -17,7 +17,7 @@ const NewHitItem: React.FC<NewHitItemProps> = ({ data, onClick }) => {
   return (
     <div className="relative h-28 w-36 xl:min-h-40 xl:min-w-64 cursor-pointer  overflow-hidden ">
       <Image
-        className="object-cover rounded-md h-28 w-36 xl:min-h-40 xl:min-w-64 hover:scale-125 transition-all ease-in-out duration-200"
+        className="object-cover object-top rounded-md h-28 w-36 xl:min-h-40 xl:min-w-64 hover:scale-125 transition-all ease-in-out duration-200"
         src={image || "/liked.png"}
         alt={data.title}
         width={500}

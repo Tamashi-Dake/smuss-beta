@@ -3,8 +3,6 @@ import SearchContent from "@/components/home/search/searchContent";
 import SearchInput from "@/components/home/search/searchInput";
 import React from "react";
 
-export const revalidate = 0;
-
 interface SearchProps {
   searchParams: { query: string };
 }

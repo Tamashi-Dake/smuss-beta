@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { useAuthModal } from "@/hooks/useModal";
 
 import Modal from "../Modal";
-import toast from "react-hot-toast";
 
 const AuthModal = () => {
   const { session } = useSessionContext();
