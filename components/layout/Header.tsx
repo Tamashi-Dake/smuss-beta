@@ -62,10 +62,11 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
       top-0
         h-fit
         flex
-        justify-between
+        md:justify-between
         bg-neutral-900
         z-[1001]
         p-3
+        justify-end
         `)}
       {...props}
     >
@@ -83,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
         />
       </div>
       {/* small screen nav */}
-      <div className="flex md:hidden gap-x-2 items-center">
+      {/* <div className="flex md:hidden gap-x-2 items-center">
         <HiHome
           className="rounded-full p-2  flex items-center justify-center opacity-75 hover:opacity-100 transition-all bg-white text-neutral-900 cursor-pointer"
           size={35}
@@ -99,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
           size={35}
           onClick={() => router.push("/dashboard")}
         />
-      </div>
+      </div> */}
 
       {/* Authentication */}
       <div className="flex flex-row items-center justify-between gap-x-2 px-3">

@@ -1,21 +1,29 @@
 "use client";
 
+import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { use, useEffect, useMemo, useState } from "react";
-import { BiSearch } from "react-icons/bi";
-import { HiHome } from "react-icons/hi";
+import { twMerge } from "tailwind-merge";
+import { useMediaQuery } from "usehooks-ts";
+
+import useCurrentUser from "@/hooks/useCurrentUser";
+import usePlayer from "@/hooks/usePlayer";
+
+import { Playlist } from "@/types";
+
 import Box from "../shared/Box";
 import SidebarItem from "./SidebarItem";
 import Library from "../home/library/Library";
-import useCurrentUser from "@/hooks/useCurrentUser";
+
+import { BiSearch } from "react-icons/bi";
+import { HiHome } from "react-icons/hi";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { TbPlaylist } from "react-icons/tb";
 import { FaItunesNote, FaUser, FaUsers } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
-import { Playlist } from "@/types";
-import { twMerge } from "tailwind-merge";
-import usePlayer from "@/hooks/usePlayer";
-BiSearch;
+import { cn } from "@/lib/utils";
+import { AlignJustify, ChevronsLeft, MenuIcon, X } from "lucide-react";
+import Image from "next/image";
+
 interface SidebarProps {
   children: React.ReactNode;
   playlists: Playlist[];
@@ -26,6 +34,15 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   const currentUser = useCurrentUser();
   const [role, setRole] = useState("");
   const player = usePlayer();
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  // console.log("isMobile", isMobile);
+  const isResizingRef = useRef(false);
+  const sidebarRef = useRef<ElementRef<"aside">>(null);
+  const mainRef = useRef<ElementRef<"main">>(null);
+  const [isResetting, setIsResetting] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(isMobile);
+
   const routes = useMemo(
     () => [
       { icon: HiHome, label: "Home", active: pathname === "/", path: "/" },
@@ -79,6 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
     ],
     [pathname, role]
   );
+
   useEffect(() => {
     const checkUser = async () => {
       const role = await currentUser.role;
@@ -91,6 +109,78 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
     checkUser();
   }, [currentUser]);
 
+  useEffect(() => {
+    if (isMobile) {
+      collapse();
+    } else {
+      resetWidth();
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isMobile) {
+      collapse();
+    }
+  }, [pathname, isMobile]);
+
+  const handleMouseDown = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    isResizingRef.current = true;
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (event: MouseEvent) => {
+    if (!isResizingRef.current) return;
+    let newWidth = event.clientX;
+
+    if (newWidth < 240) newWidth = 240;
+    if (newWidth > 400) newWidth = 400;
+
+    if (sidebarRef.current && mainRef.current) {
+      sidebarRef.current.style.width = `${newWidth}px`;
+      mainRef.current.style.setProperty("left", `${newWidth}px`);
+      mainRef.current.style.setProperty("width", `calc(100% - ${newWidth}px)`);
+    }
+  };
+
+  const handleMouseUp = () => {
+    isResizingRef.current = false;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  const resetWidth = () => {
+    if (sidebarRef.current && mainRef.current) {
+      setIsCollapsed(false);
+      setIsResetting(true);
+
+      sidebarRef.current.style.width = isMobile ? "100%" : "240px";
+      mainRef.current.style.setProperty(
+        "width",
+        isMobile ? "0" : "calc(100% - 240px)"
+      );
+      mainRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
+      setTimeout(() => setIsResetting(false), 300);
+    }
+  };
+
+  const collapse = () => {
+    if (sidebarRef.current && mainRef.current) {
+      setIsCollapsed(true);
+      setIsResetting(true);
+
+      sidebarRef.current.style.width = "0";
+      mainRef.current.style.setProperty("width", "100%");
+      mainRef.current.style.setProperty("left", "0");
+      setTimeout(() => setIsResetting(false), 300);
+    }
+  };
+
   return (
     <div
       className={twMerge(
@@ -98,7 +188,34 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
         player.activeId && "h-[calc(100%-100px)]"
       )}
     >
-      <div className="sidebar__header hidden md:flex flex-col gap-y-2 bg-black min-w-[250px] max-w-[300px] p-2">
+      <aside
+        ref={sidebarRef}
+        className={cn(
+          "group/sidebar  relative flex w-60 flex-col gap-y-2 bg-black pr-1 select-none",
+          isResetting && "transition-all ease-in-out duration-300",
+          isMobile && "w-0"
+        )}
+      >
+        <div
+          onClick={collapse}
+          role="button"
+          className={cn(
+            "h-7 w-7 flex justify-center items-center md:hidden z-[1002] text-muted-foreground rounded-full active:bg-white absolute top-6 right-5 opacity-0 transition-all ",
+            isMobile && "opacity-100 "
+          )}
+        >
+          <X className={"h-5 w-5 "} size={35} />
+        </div>
+        {/* Logo */}
+        <div className="flex items-center justify-center h-20">
+          <Image
+            src="/smuss.png"
+            alt="logo"
+            width={500}
+            height={700}
+            className="h-20 w-40 object-contain"
+          />
+        </div>
         <Box classname={` ${role !== "admin" ? "" : "overflow-y-auto h-full"}`}>
           <div className="flex flex-col gap-y-4 px-5 py-4">
             {routes.map((item) => (
@@ -111,8 +228,32 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
             <Library playlists={playlists} />
           </Box>
         )}
-      </div>
-      <main className="flex-1 flex flex-col bg-black overflow-auto py-2 h-full ">
+        <div
+          onMouseDown={handleMouseDown}
+          onClick={resetWidth}
+          className="opacity-0 group-hover/sidebar:opacity-100 transition cursor-grab h-full w-1 bg-neutral-500 right-0 top-0 absolute"
+        ></div>
+      </aside>
+      <main
+        ref={mainRef}
+        className={cn(
+          "absolute top-0 left-60 w-[calc(100%-240px)] flex-1 flex flex-col bg-black ",
+          isResetting && "transition-all ease-in-out duration-300",
+          isMobile && "left-0 w-full",
+          player.activeId ? "h-[calc(100%-100px)]" : "h-full"
+        )}
+      >
+        {isCollapsed && (
+          <div
+            onClick={resetWidth}
+            className="h-6 w-6 flex justify-center items-center md:hidden z-[1002] text-muted-foreground rounded-full active:bg-white absolute top-3 left-2 opacity-75 hover:opacity-100 transition-all"
+          >
+            <MenuIcon
+              role="button"
+              className="h-5 w-5 text-white active:text-green-400"
+            />
+          </div>
+        )}
         {children}
       </main>
       {/* Now Playing Detail */}

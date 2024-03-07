@@ -28,7 +28,7 @@ const SearchContent: React.FC<SearchContentProps> = ({
   //   const onPlay = useOnPlay(playlists);
   if (categories?.length > 0) {
     return (
-      <div className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {categories.map((category: Category) => (
           <CategoryItem
             key={category.id}

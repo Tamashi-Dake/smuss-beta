@@ -3,44 +3,53 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Song } from "@/types";
 import useOnPlay from "@/hooks/useOnPlay";
-import SongItem from "../shared/Song";
 import NewHitItem from "../shared/NewHitItem";
+import { useMediaQuery } from "usehooks-ts";
 
 interface NewHitsProps {
   songs: Song[];
 }
 
 const NewHits: React.FC<NewHitsProps> = ({ songs }) => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const [songState, setSongState] = useState<Song[]>(songs);
-  const [positonIndex, setPositionIndex] = useState([0, 1, 2]);
-  const position = ["left", "center", "right"];
+  const [positonIndex, setPositionIndex] = useState(
+    isMobile ? [0, 1] : [0, 1, 2]
+  );
   const onPlay = useOnPlay(songs);
-
-  const songVariants = {
-    left: {
-      x: "-100%",
-      opacity: 1,
-      transition: {
-        duration: 0.5,
+  const position = isMobile ? ["left", "right"] : ["left", "center", "right"];
+  const [variants, setVariants] = useState({});
+  useEffect(() => {
+    const songVariants = {
+      left: {
+        x: "-100%",
+        opacity: 1,
+        transition: {
+          duration: 0.5,
+        },
       },
-    },
-    center: {
-      x: "0%",
-      opacity: 1,
+      ...(isMobile
+        ? {
+            center: {
+              x: "0%",
+              opacity: 1,
+              transition: {
+                duration: 0.5,
+              },
+            },
+          }
+        : {}),
+      right: {
+        x: "100%",
+        opacity: 1,
 
-      transition: {
-        duration: 0.5,
+        transition: {
+          duration: 0.5,
+        },
       },
-    },
-    right: {
-      x: "100%",
-      opacity: 1,
-
-      transition: {
-        duration: 0.5,
-      },
-    },
-  };
+    };
+    setVariants(songVariants);
+  }, [isMobile]);
 
   useEffect(() => {
     setSongState(songs);
@@ -54,24 +63,24 @@ const NewHits: React.FC<NewHitsProps> = ({ songs }) => {
         );
         return nextIndex;
       });
-      // console.log(positonIndex);
+
+      // console.log(variants);
     }, 5000);
 
     return () => {
       clearInterval(interval);
     };
   }, []);
-
   return (
     <>
       <div className=" relative flex flex-col justify-between items-center min-h-32 w-full">
         {songState.map((song, index) => (
           <motion.div
             key={song.id}
-            initial="center"
-            animate={position[positonIndex.indexOf(index)]}
+            initial={isMobile ? "left" : "center"}
+            animate={position[positonIndex[index]]}
             exit={{ opacity: 0 }}
-            variants={songVariants}
+            variants={variants}
             transition={{ duration: 0.5 }}
             className="absolute song-item rounded-lg px-4 lg:px-7 xl:px-8"
           >

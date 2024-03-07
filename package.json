@@ -46,6 +46,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "uniqid": "^5.4.0",
+    "usehooks-ts": "^2.16.0",
     "zustand": "^4.5.0"
   },
   "devDependencies": {

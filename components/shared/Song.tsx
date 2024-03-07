@@ -3,23 +3,41 @@ import useLoadImage from "@/hooks/useLoadImage";
 import { Song } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FaPlay } from "react-icons/fa";
+import ContextMenuSong from "../patials/ContextMenuSong";
 
 interface SongProps {
   data: Song;
   onClick: (id: string) => void;
 }
-
+const initialContextMenu = {
+  x: 0,
+  y: 0,
+  show: false,
+};
 const SongItem: React.FC<SongProps> = ({ data, onClick }) => {
   const router = useRouter();
   const image = useLoadImage(data);
+  const [contextMenu, setContextMenu] = useState(initialContextMenu);
   const handleClick = () => {
-    // router.push();
+    router.push(`/song/${data.id}`);
+  };
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const { clientX, clientY } = e;
+    console.log(clientX, clientY);
+    setContextMenu({ x: clientX, y: clientY, show: true });
+  };
+  const closeContextMenu = (e: any) => {
+    e.stopPropagation();
+    setContextMenu(initialContextMenu);
   };
   return (
     <div
       onClick={handleClick}
-      className="relative group flex items-center overflow-hidden gap-x-4 bg-neutral-100/10 transition-all pr-4 rounded-md cursor-pointer hover:bg-neutral-100/20 min-h-16"
+      onContextMenu={(e) => handleContextMenu(e)}
+      className="relative group flex items-center gap-x-4 bg-neutral-100/10 transition-all pr-4 rounded-md cursor-pointer hover:bg-neutral-100/20 min-h-16"
     >
       {/* TODO: Add shadow */}
       <div className="relative min-h-[64px] min-w-[64px] ">
@@ -39,6 +57,13 @@ const SongItem: React.FC<SongProps> = ({ data, onClick }) => {
       >
         <FaPlay className="text-black" />
       </div>
+      {contextMenu.show && (
+        <ContextMenuSong
+          x={contextMenu.x}
+          y={contextMenu.y}
+          close={closeContextMenu}
+        />
+      )}
     </div>
   );
 };

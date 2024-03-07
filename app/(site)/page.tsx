@@ -27,7 +27,7 @@ export default async function Home() {
     <>
       <div
         className=" flex flex-col m-auto gap-y-10 px-4 text-white max-w-[1500px]
-        mx-auto"
+        mx-auto select-none"
       >
         <SectionList>
           <h1 className="text-2xl font-bold ">New Hits</h1>
