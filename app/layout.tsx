@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   description: "Music player for everyone, anytime, anywhere",
 };
 
-export const revalidate = 0;
+// export const revalidate = 0;
 
 export default async function RootLayout({
   children,

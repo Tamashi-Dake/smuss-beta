@@ -60,7 +60,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ data, onClick }) => {
         <p className="text-neutral-400 text-sm truncate">{data.time}</p>
       </div>
       <div className="flex gap-x-4 ml-auto px-2 h-full">
-        <LikeButton songId={data.id} />
+        <LikeButton songId={data.id} refresh={true} />
         <MoreHorizontalIcon className="w-4 text-neutral-400" />
       </div>
     </div>

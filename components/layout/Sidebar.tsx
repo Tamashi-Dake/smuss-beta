@@ -207,13 +207,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
           <X className={"h-5 w-5 "} size={35} />
         </div>
         {/* Logo */}
-        <div className="flex items-center justify-center h-20">
+        <div className="flex items-center justify-center h-20 select-none ">
           <Image
             src="/smuss.png"
             alt="logo"
+            draggable={false}
             width={500}
             height={700}
-            className="h-20 w-40 object-contain"
+            className="h-20 w-40 object-contain "
           />
         </div>
         <Box classname={` ${role !== "admin" ? "" : "overflow-y-auto h-full"}`}>

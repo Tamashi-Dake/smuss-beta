@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
@@ -16,6 +16,8 @@ import PlayerSlider from "../shared/PlayerSlider";
 import { Repeat, Repeat1, Shuffle } from "lucide-react";
 import { TbRepeatOff } from "react-icons/tb";
 import { set } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "usehooks-ts";
 
 interface PlayerContentProps {
   song: Song;
@@ -30,6 +32,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
 }) => {
   const [artistRecord, setArtistRecord] = useState<ArtistRecord[]>([]);
   const player = usePlayer();
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const [volume, setVolume] = useState(0.5);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0); // Progress in seconds
@@ -200,24 +203,40 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 h-full">
-      <div className="flex  justify-start items-center gap-x-1">
+    <div
+      className={cn(
+        "grid h-full",
+        isMobile ? "grid-cols-[1fr,auto]" : "grid-cols-3"
+      )}
+    >
+      <div
+        className={cn(
+          "grid gap-x-1 ",
+          isMobile ? "grid-cols-[1fr,auto] mr-4" : "grid-cols-2"
+        )}
+      >
         <PlayerSong song={song} artists={artistRecord} />
-        <LikeButton songId={song.id} />
+        <LikeButton songId={song.id} refresh={false} />
       </div>
 
       {/* mobile play/pause button
        */}
       <div
-        className="
-            flex 
-            md:hidden 
-            col-auto 
-            w-full 
-            justify-end 
-            items-center
-          "
+        className={cn(
+          " flex gap-x-4 w-full justify-end items-center",
+          isMobile ? "" : "hidden"
+        )}
       >
+        <AiFillStepBackward
+          onClick={onPlayPrevious}
+          size={30}
+          className="
+              text-neutral-400 
+              cursor-pointer 
+              hover:text-white 
+              transition
+            "
+        />
         <div
           onClick={handlePlay}
           className="
@@ -234,19 +253,25 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         >
           <Icon size={30} className="text-black" />
         </div>
+        <AiFillStepForward
+          onClick={handlePlayNext}
+          size={30}
+          className="
+              text-neutral-400 
+              cursor-pointer 
+              hover:text-white 
+              transition
+            "
+        />
       </div>
 
       {/* player controls
        */}
       <div
-        className="
-            hidden
-            h-full
-            md:flex
-            flex-col
-            justify-center
-            items-center
-          "
+        className={cn(
+          "h-full flex-col justify-center items-center",
+          isMobile ? "hidden" : "flex"
+        )}
       >
         <div
           className="md:flex 
@@ -346,7 +371,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         />
       </div>
 
-      <div className="hidden md:flex w-full justify-end pr-2">
+      <div
+        className={cn(" w-full justify-end pr-2", isMobile ? "hidden" : "flex")}
+      >
         <div className="flex items-center gap-x-2 w-[120px]">
           <VolumeIcon
             onClick={toggleMute}

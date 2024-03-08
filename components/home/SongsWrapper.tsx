@@ -11,7 +11,7 @@ const SongsWrapper: React.FC<SongsWrapperProps> = ({ songs }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 rounded-md">
       {songs.map((song) => (
-        <SongItem key={song.id} data={song} onClick={(id) => onPlay(id)} />
+        <SongItem key={song.id} songData={song} onClick={(id) => onPlay(id)} />
       ))}
     </div>
   );

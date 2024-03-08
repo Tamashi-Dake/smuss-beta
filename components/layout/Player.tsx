@@ -16,6 +16,7 @@ const Player = () => {
   const songUrl = useLoadSong(song!);
 
   if (!song || !songUrl || !player.activeId) {
+    console.log(song, songUrl, player.activeId);
     return null;
   }
 

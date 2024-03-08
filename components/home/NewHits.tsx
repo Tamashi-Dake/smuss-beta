@@ -22,7 +22,7 @@ const NewHits: React.FC<NewHitsProps> = ({ songs }) => {
   useEffect(() => {
     const songVariants = {
       left: {
-        x: "-100%",
+        x: isMobile ? "-50%" : "-100%",
         opacity: 1,
         transition: {
           duration: 0.5,
@@ -40,7 +40,7 @@ const NewHits: React.FC<NewHitsProps> = ({ songs }) => {
           }
         : {}),
       right: {
-        x: "100%",
+        x: isMobile ? "50%" : "100%",
         opacity: 1,
 
         transition: {

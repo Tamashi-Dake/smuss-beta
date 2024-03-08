@@ -11,9 +11,10 @@ import { useAuthModal } from "@/hooks/useModal";
 
 interface LikeButtonProps {
   songId: string;
+  refresh: boolean;
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ songId, refresh }) => {
   const router = useRouter();
   const { supabaseClient } = useSessionContext();
   const authModal = useAuthModal();
@@ -77,7 +78,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({ songId }) => {
       }
     }
 
-    router.refresh();
+    // refresh page
+    refresh && router.refresh();
   };
 
   return (

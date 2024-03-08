@@ -16,9 +16,9 @@ const PlayerSong: React.FC<PlaylistProps> = ({ song, artists }) => {
   const imagePath = useLoadImage(song);
   return (
     <div
-      onClick={() =>
-        // router.push(`/song/${song.id}`)
-        console.log(song.id)
+      onClick={
+        () => router.push(`/song/${song.id}`)
+        // console.log(song.id)
       }
       className=" 
       flex
