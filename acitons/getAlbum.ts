@@ -1,7 +1,8 @@
 import { Playlist } from "@/types";
-import { supabase } from "@/utils/supabaseSever";
+import { getSupabase } from "@/utils/supabaseSever";
 
 const getAlbums = async (): Promise<Playlist[]> => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("playlist")
     .select("*, artist!inner(*)")

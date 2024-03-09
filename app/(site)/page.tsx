@@ -10,7 +10,6 @@ import getAlbums from "@/acitons/getAlbum";
 import getTopArtists from "@/acitons/getTopArtist";
 import ArtistsWrapper from "@/components/home/ArtistWapper";
 
-export const maxDuration = 30;
 // export const revalidate = 0;
 
 export default async function Home() {

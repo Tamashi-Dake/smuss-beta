@@ -3,7 +3,7 @@ import React from "react";
 import { columnType } from "./columnType";
 import getPlaylists from "@/acitons/getPlaylists";
 
-const SearchPage: React.FC = async () => {
+const ManagePlaylist: React.FC = async () => {
   const playlist = await getPlaylists();
   return (
     <>
@@ -15,4 +15,4 @@ const SearchPage: React.FC = async () => {
   );
 };
 
-export default SearchPage;
+export default ManagePlaylist;

@@ -1,6 +1,7 @@
-import { supabase } from "@/utils/supabaseSever";
+import { getSupabase } from "@/utils/supabaseSever";
 
 const getSongInPlaylist = async (): Promise<any[]> => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("rel_song_playlist")
     .select("*,songs(*)")

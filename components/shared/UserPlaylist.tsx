@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import useLoadImage from "@/hooks/useLoadImage";
 import { Playlist } from "@/types";
-import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { FaPlay } from "react-icons/fa";
 import { ContextMenu } from "@radix-ui/react-context-menu";
@@ -49,7 +48,6 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({
       if (!error && data) {
         setSongIDs(data);
       }
-      // console.log(playlistData.id);
     };
     fetchRelationshipData();
   }, [user?.id, supabaseClient, playlistData.id]);
@@ -57,12 +55,6 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({
   const handleClick = () => {
     router.push(`/playlist/${playlistData.id}`);
   };
-  // const handlePlay = () => {
-  //   if (onClick) {
-  //     const songIds = relationship.map((item) => item.song_id);
-  //     onClick(songIds);
-  //   }
-  // };
 
   return (
     <ContextMenu>

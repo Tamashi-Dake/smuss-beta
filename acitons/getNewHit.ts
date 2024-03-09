@@ -1,7 +1,8 @@
 import { Song } from "@/types";
-import { supabase } from "@/utils/supabaseSever";
+import { getSupabase } from "@/utils/supabaseSever";
 
 const getNewHits = async (): Promise<Song[]> => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("songs")
     .select("*")

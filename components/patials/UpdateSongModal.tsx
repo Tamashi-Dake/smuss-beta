@@ -122,8 +122,13 @@ const UpdateSongModal = ({
       "playlist_id",
       playlists
     );
-    setPlaylistOption(updatedPlaylistOption);
-    setTempPlaylistOption(updatedPlaylistOption);
+    // filter out option with label = null
+    setPlaylistOption(
+      updatedPlaylistOption.filter((option) => option.label !== "")
+    );
+    setTempPlaylistOption(
+      updatedPlaylistOption.filter((option) => option.label !== "")
+    );
   }, [relationshipPlaylist, playlists]);
 
   // map all option to select

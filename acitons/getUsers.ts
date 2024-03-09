@@ -1,7 +1,8 @@
 import { UserDetails } from "@/types";
-import { supabase } from "@/utils/supabaseSever";
+import { getSupabase } from "@/utils/supabaseSever";
 
 const getUsersDetails = async (): Promise<UserDetails[]> => {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("users")
     .select("*")
