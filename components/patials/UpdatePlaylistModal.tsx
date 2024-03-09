@@ -10,10 +10,12 @@ import { Artist, Playlist, Song } from "@/types";
 
 import { useUpdatePlaylistModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
+
 import Modal from "../Modal";
 import HeaderButton from "../layout/HeaderButton";
 import Input from "../shared/Input";
 import MutipleSelect from "../shared/MutipleSelect";
+
 import { deleteStogare } from "@/utils/deleteRecord";
 import { mapRelationshipToOption } from "@/utils/mappingRelationship";
 import { compareObjects } from "@/utils/compareRelationship";
@@ -22,10 +24,12 @@ const UpdatePlaylistModal = ({
   artists,
   songs,
   playlists,
+  userPlaylist,
   relationshipSongPlaylist,
 }: {
   artists: Artist[];
   playlists: Playlist[];
+  userPlaylist: Playlist[];
   songs: Song[];
   relationshipSongPlaylist: any[];
 }) => {
@@ -35,14 +39,16 @@ const UpdatePlaylistModal = ({
   const { onClose, isOpen, id } = useUpdatePlaylistModal();
   const supabaseClient = useSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
-  const playlist = playlists.find((playlist) => playlist.id === id);
-  // const [playlist, setPlaylist] = useState<any>(null);
-  // const [songRelation, setSongRelation] = useState<any>(null);
+
+  // if pathname not /dashboard/playlists, playlist will be map from userPlaylist, else from playlists
+  const playlist =
+    pathname !== "/dashboard/playlists"
+      ? userPlaylist.find((playlist) => playlist.id === id)
+      : playlists.find((playlist) => playlist.id === id);
 
   const [artistOption, setArtistOption] = useState<any>(null);
   const [songOption, setSongOption] = useState<any>(null);
   const [relationshipSong, setRelationshipSong] = useState<any[]>([]);
-  // const [tempArtistOption, setTempArtistOption] = useState<any[]>([]);
   const [tempSongOption, setTempSongOption] = useState<any[]>([]);
 
   // const currentUser = useCurrentUser();
@@ -90,10 +96,6 @@ const UpdatePlaylistModal = ({
     label: song.title,
   }));
 
-  // filter out existing option
-  // const remainingArtistOption = allArtistOption.filter(
-  //   (artist) => artist.value !== artistOption?.value
-  // );
   const remainingSongOption = allSongOption.filter(
     (song) => !tempSongOption.some((temp) => temp.value === song.value)
   );
@@ -106,7 +108,6 @@ const UpdatePlaylistModal = ({
   };
   const handleArtistChange = (artistOption: any) => {
     setArtistOption(artistOption);
-    // console.log(artistOption.label);
   };
   const handleSongChange = (songOption: any) => {
     setSongOption(songOption);

@@ -11,8 +11,10 @@ interface SearchResult {
 }
 
 const getSearchResult = async (query: string): Promise<SearchResult> => {
+  const cookieStore = cookies();
+
   const supabase = createServerComponentClient({
-    cookies: cookies,
+    cookies: () => cookieStore,
   });
 
   let playlists: Playlist[] = [];

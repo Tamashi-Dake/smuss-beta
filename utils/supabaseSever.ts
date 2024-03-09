@@ -12,6 +12,7 @@ import { cache } from "react";
 
 export const getSupabase = cache(async () => {
   const cookieStore = cookies();
+  cookies().getAll();
   return createServerComponentClient({ cookies: () => cookieStore });
 });
 

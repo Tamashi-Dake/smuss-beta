@@ -3,9 +3,8 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 
 const getFavorite = async (): Promise<Song[]> => {
-  const supabase = createServerComponentClient({
-    cookies: cookies,
-  });
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient({ cookies: () => cookieStore });
 
   const {
     data: { session },

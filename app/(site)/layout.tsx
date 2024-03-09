@@ -8,7 +8,6 @@ import ModalProvider from "@/providers/ModalProvider";
 import ToastProvider from "@/providers/ToastProvider";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
 import Header from "@/components/layout/Header";
-import { get } from "http";
 import getCategories from "@/acitons/getCategories";
 import getArtists from "@/acitons/getArtists";
 import getPlaylists from "@/acitons/getPlaylists";
@@ -17,7 +16,6 @@ import getRelationSongArtist from "@/acitons/getRelationSongArtist";
 import getRelationSongPlaylist from "@/acitons/getRelationSongPlaylist";
 import getRelationSongCategory from "@/acitons/getRelationSongCategory";
 import Player from "@/components/layout/Player";
-import Detail from "@/components/layout/Detail";
 
 const font = Figtree({ subsets: ["latin"] });
 
@@ -25,8 +23,6 @@ export const metadata: Metadata = {
   title: "Smuss",
   description: "Music player for everyone, anytime, anywhere",
 };
-
-// export const revalidate = 0;
 
 export default async function RootLayout({
   children,
@@ -51,6 +47,7 @@ export default async function RootLayout({
               categories={categories}
               artists={artists}
               playlists={playlists}
+              userPlaylist={userPlaylist}
               songs={songs}
               relationshipSongArtist={relationshipSongArtist}
               relationshipSongCategory={relationshipSongCategory}

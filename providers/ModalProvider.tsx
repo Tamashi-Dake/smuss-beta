@@ -22,6 +22,7 @@ interface ModalProviderProps {
   artists: Artist[];
   categories: Category[];
   playlists: Playlist[];
+  userPlaylist: Playlist[];
   songs: SongType[];
   relationshipSongArtist: any[];
   relationshipSongCategory: any[];
@@ -33,6 +34,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
   artists,
   categories,
   playlists,
+  userPlaylist,
   songs,
   relationshipSongArtist,
   relationshipSongPlaylist,
@@ -67,6 +69,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
         artists={artists}
         songs={songs}
         playlists={playlists}
+        userPlaylist={userPlaylist}
         relationshipSongPlaylist={relationshipSongPlaylist}
       />
       <UpdateSongModal
