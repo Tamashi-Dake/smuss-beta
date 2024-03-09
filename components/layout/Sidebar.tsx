@@ -21,7 +21,7 @@ import { TbPlaylist } from "react-icons/tb";
 import { FaItunesNote, FaUser, FaUsers } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import { cn } from "@/lib/utils";
-import { AlignJustify, ChevronsLeft, MenuIcon, X } from "lucide-react";
+import { MenuIcon, X } from "lucide-react";
 import Image from "next/image";
 
 interface SidebarProps {
@@ -36,7 +36,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   const player = usePlayer();
 
   const isMobile = useMediaQuery("(max-width: 768px)");
-  // console.log("isMobile", isMobile);
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const mainRef = useRef<ElementRef<"main">>(null);
@@ -214,6 +213,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
             draggable={false}
             width={500}
             height={700}
+            priority={true}
             className="h-20 w-40 object-contain "
           />
         </div>

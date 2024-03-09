@@ -49,7 +49,6 @@ select-none
           src={imagePath || "/liked.png"}
           width={200}
           height={200}
-          objectFit="cover"
           alt={song.title}
         />
       </div>
@@ -73,16 +72,15 @@ select-none
           {artists.length === 0
             ? "Unknown"
             : artists.map((artist, index) => (
-                <>
+                <React.Fragment key={artist.id}>
                   <Link
-                    key={artist.id}
                     href={`/artist/${artist.id}`}
                     className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none"
                   >
                     {artist.name}
                   </Link>
                   {index < artists.length - 1 && ", "}
-                </>
+                </React.Fragment>
               ))}
         </p>
       </div>

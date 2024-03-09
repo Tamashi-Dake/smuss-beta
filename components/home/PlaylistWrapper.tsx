@@ -1,13 +1,14 @@
 "use client";
-import { Playlist, Song } from "@/types";
-import PlaylistItem from "../shared/PlaylistItem";
-import { useEffect, useState } from "react";
-import Wrapper from "../shared/Wrapper";
 import "react-multi-carousel/lib/styles.css";
-// import useOnPlaylistPlay from "@/hooks/useOnPlaylistPlay";
+import { useEffect, useState } from "react";
+import { Playlist, Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
+
 import { useAuthModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
+
+import PlaylistItem from "../shared/PlaylistItem";
+import Wrapper from "../shared/Wrapper";
 
 interface PlaylistWrapperProps {
   data: Playlist[];
@@ -15,7 +16,7 @@ interface PlaylistWrapperProps {
 }
 const PlaylistWrapper: React.FC<PlaylistWrapperProps> = ({ data, related }) => {
   const [activePlaylist, setActivePlaylist] = useState<string>("");
-  const [songList, setSongList] = useState<Song[]>([]); // Tạo state mới để lưu danh sách bài hát
+  const [songList, setSongList] = useState<Song[]>([]);
   const player = usePlayer();
   const authModal = useAuthModal();
   const { subscription, user } = useUser();
@@ -39,7 +40,7 @@ const PlaylistWrapper: React.FC<PlaylistWrapperProps> = ({ data, related }) => {
     if (!user) {
       return authModal.onOpen();
     }
-    player.reset();
+    // player.reset();
     setActivePlaylist(playlistId);
   };
   return (

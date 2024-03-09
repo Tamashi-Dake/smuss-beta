@@ -1,9 +1,15 @@
 "use client";
-import useLoadImage from "@/hooks/useLoadImage";
-import { Song } from "@/types";
-import Image from "next/image";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaPlay } from "react-icons/fa";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { Song } from "@/types";
+
+import useLoadImage from "@/hooks/useLoadImage";
+import { useUser } from "@/hooks/useUser";
+import { useAuthModal } from "@/hooks/useModal";
+
+import Image from "next/image";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -13,12 +19,9 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "../ui/context-menu";
+
+import { FaPlay } from "react-icons/fa";
 import { Heart, HeartCrack, PlusSquare, Share2Icon } from "lucide-react";
-import { useUser } from "@/hooks/useUser";
-import { useEffect, useState } from "react";
-import { useAuthModal } from "@/hooks/useModal";
-import toast from "react-hot-toast";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 
 interface SongProps {
   songData: Song;
@@ -28,7 +31,6 @@ interface SongProps {
 const SongItem: React.FC<SongProps> = ({ songData, onClick }) => {
   const router = useRouter();
   const image = useLoadImage(songData);
-  // const { onShow } = useSongContextMenu();
   const authModal = useAuthModal();
   const { user } = useUser();
   const { supabaseClient } = useSessionContext();
@@ -97,6 +99,7 @@ const SongItem: React.FC<SongProps> = ({ songData, onClick }) => {
         toast.error(error.message);
       } else {
         setIsLiked(false);
+        toast.success("Removed from favorite!");
       }
     } else {
       const { error } = await supabaseClient.from("liked_songs").insert({
@@ -108,6 +111,7 @@ const SongItem: React.FC<SongProps> = ({ songData, onClick }) => {
         toast.error(error.message);
       } else {
         setIsLiked(true);
+        toast.success("Added to favorite!");
       }
     }
   };
@@ -157,22 +161,12 @@ const SongItem: React.FC<SongProps> = ({ songData, onClick }) => {
     toast.success("Copied to clipboard!");
   };
 
-  // const handleContextMenu = (e: React.MouseEvent) => {
-  //   e.preventDefault();
-  //   // window.onscroll = () => {};
-  //   const { clientX, clientY } = e;
-  //   // console.log(clientX, clientY);
-  //   onShow(data.id, clientX, clientY);
-  // };
-
   return (
     <ContextMenu>
       <ContextMenuTrigger
         onClick={handleClick}
-        // onContextMenu={(e) => handleContextMenu(e)}
         className="relative group flex items-center gap-x-4 bg-neutral-100/10 transition-all pr-4 rounded-md cursor-pointer hover:bg-neutral-100/20 min-h-16"
       >
-        {/* TODO: Add shadow */}
         <div className="relative min-h-[64px] min-w-[64px] ">
           <Image
             className="object-cover size-16 rounded-md overflow-hidden"
@@ -183,7 +177,7 @@ const SongItem: React.FC<SongProps> = ({ songData, onClick }) => {
           />
         </div>
 
-        <h1 className="text-white text-xl truncate font-medium">
+        <h1 className="text-white text-xl truncate font-bold">
           {songData.title}
         </h1>
         <div

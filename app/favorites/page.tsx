@@ -3,7 +3,7 @@ import FavoriteContent from "@/components/favorite/FavoriteContent";
 import Image from "next/image";
 import React from "react";
 
-export const revalidate = 0;
+// export const revalidate = 0;
 
 const Favorites: React.FC = async () => {
   const favoritesSongs = await getFavorite();

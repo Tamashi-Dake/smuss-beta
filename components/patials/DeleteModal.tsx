@@ -83,11 +83,6 @@ const DeleteModal = ({}) => {
         toast.error("Missing image or song or user");
         return;
       }
-      if (currentUser?.role !== "admin") {
-        setIsLoading(false);
-        toast.error("You are not authorized to perform this action");
-        return;
-      }
 
       switch (type) {
         case "artist":
