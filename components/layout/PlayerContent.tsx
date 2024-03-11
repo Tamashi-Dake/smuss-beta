@@ -1,28 +1,31 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { HiSpeakerWave, HiSpeakerXMark } from "react-icons/hi2";
 import { AiFillStepBackward, AiFillStepForward } from "react-icons/ai";
 import { Howl } from "howler";
+import { useMediaQuery } from "usehooks-ts";
 
-import { ArtistRecord, Song } from "@/types";
+import { Artist, Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
+import useNowPlaying from "@/hooks/usePlaying";
+import { cn } from "@/lib/utils";
 
 import LikeButton from "../shared/LikeButton";
 import Slider from "../shared/Slider";
 import PlayerSong from "./PlayerSong";
 import PlayerSlider from "../shared/PlayerSlider";
-import { Repeat, Repeat1, Shuffle } from "lucide-react";
+
+import { PlaySquare, Repeat, Repeat1, Shuffle } from "lucide-react";
 import { TbRepeatOff } from "react-icons/tb";
-import { set } from "react-hook-form";
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "usehooks-ts";
+import NowPlaying from "./Detail";
+import { on } from "events";
 
 interface PlayerContentProps {
   song: Song;
   songUrl: string;
-  artists: ArtistRecord[];
+  artists: Artist[];
 }
 
 const PlayerContent: React.FC<PlayerContentProps> = ({
@@ -30,21 +33,22 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   songUrl,
   artists,
 }) => {
-  const [artistRecord, setArtistRecord] = useState<ArtistRecord[]>([]);
+  const [artistRecord, setArtistRecord] = useState<Artist[]>([]);
   const player = usePlayer();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [volume, setVolume] = useState(0.5);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0); // Progress in seconds
-  const [repeatMode, setRepeatMode] = useState("none"); // 'none', 'repeat', 'repeatList'
+  const [progress, setProgress] = useState(0);
+  const [repeatMode, setRepeatMode] = useState("none");
   const [shuffleMode, setShuffleMode] = useState(false);
-  const [playedSongs, setPlayedSongs] = useState<string[]>([]);
-  const repeatModeRef = useRef("none"); // Sử dụng useRef để lưu trữ giá trị repeatMode
+  const repeatModeRef = useRef("none");
   const soundRef = useRef<Howl | null>(null);
+  const { isShow, onShow, onHide } = useNowPlaying();
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
+
   const toggleRepeatMode = () => {
-    // console.log("repeatModeRef.current", repeatModeRef.current);
+    // Chuyển đổi giá trị repeatModeRef
     switch (repeatModeRef.current) {
       case "none":
         repeatModeRef.current = "repeat";
@@ -61,16 +65,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     setRepeatMode(repeatModeRef.current);
   };
 
-  // useEffect(() => {
-  //   setRepeatMode(repeatModeRef.current);
-  //   console.log("repeatMode", repeatMode);
-  // }, [repeatModeRef.current]);
-
+  // Next song
   const onPlayNext = () => {
+    // Nếu không có bài hát nào thì dừng
     if (player.ids.length === 0) {
       return;
     }
 
+    // Tìm vị trí của bài hát hiện tại trong danh sách
     const currentIndex = player.ids.findIndex((id) => id === player.activeId);
     let nextSong;
     if (shuffleMode) {
@@ -80,17 +82,17 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     } else {
       nextSong = player.ids[currentIndex + 1];
     }
-    // console.log("repeatMode", repeatModeRef.current); // Sử dụng repeatModeRef.current ở đây
-    // console.log("nextSong", nextSong);
+    // Nếu không có bài hát tiếp theo thì dừng
     if (!nextSong) {
+      // Nếu đang bật chế độ repeatList thì quay lại bài hát đầu tiên
       if (repeatModeRef.current === "repeatList") {
         return player.setId(player.ids[0]);
       } else {
         return;
       }
     }
+    // Nếu đang bật chế độ repeat thì quay lại bài hát hiện tại
     if (repeatModeRef.current === "repeat") {
-      // console.log("setProgress", 0);
       setProgress(0);
       soundRef.current?.seek(0);
       soundRef.current?.play();
@@ -99,6 +101,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       player.setId(nextSong);
     }
   };
+
+  // Next song (click next button)
   const handlePlayNext = () => {
     if (player.ids.length === 0) {
       return;
@@ -113,15 +117,15 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     } else {
       nextSong = player.ids[currentIndex + 1];
     }
-    // console.log("player.ids", player.ids);
-    // console.log("nextSong", nextSong);
-    // console.log("playedSongs", playedSongs);
 
+    // Nếu không có bài hát tiếp theo thì quay lại bài hát đầu tiên
     if (!nextSong) {
       return player.setId(player.ids[0]);
     }
     player.setId(nextSong);
   };
+
+  // Previous song
   const onPlayPrevious = () => {
     if (player.ids.length === 0) {
       return;
@@ -130,6 +134,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     const currentIndex = player.ids.findIndex((id) => id === player.activeId);
     const previousSong = player.ids[currentIndex - 1];
 
+    // Nếu không có bài hát trước đó thì quay lại bài hát cuối cùng
     if (!previousSong) {
       return player.setId(player.ids[player.ids.length - 1]);
     }
@@ -158,12 +163,10 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       },
       onpause: () => setIsPlaying(false),
       format: ["mp3"],
-      // loop: repeatMode === "repeat" ? true : false,
     });
 
     return () => {
       if (soundRef.current && repeatModeRef.current !== "repeat") {
-        // console.log("unmount");
         soundRef.current.unload();
       }
     };
@@ -364,17 +367,39 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
             onClick={() => setShuffleMode(!shuffleMode)}
           />
         </div>
-        <PlayerSlider
-          duration={soundRef.current?.duration()}
-          value={progress}
-          onChange={handleProgressChange}
-        />
+        {/* current duration */}
+        <div className="flex flex-row items-center gap-x-2 w-full justify-center">
+          <div className="text-white">
+            {new Date(progress * 1000).toISOString().substr(14, 5)}
+          </div>
+          <PlayerSlider
+            duration={soundRef.current?.duration()}
+            value={progress}
+            onChange={handleProgressChange}
+          />
+          <div className="text-white">
+            {soundRef.current?.duration() &&
+              new Date(soundRef.current?.duration() * 1000)
+                .toISOString()
+                .substr(14, 5)}
+          </div>
+        </div>
       </div>
 
       <div
         className={cn(" w-full justify-end pr-2", isMobile ? "hidden" : "flex")}
       >
-        <div className="flex items-center gap-x-2 w-[120px]">
+        <div className="flex items-center gap-x-2 min-w-[180px]">
+          <PlaySquare
+            onClick={isShow ? onHide : onShow}
+            size={36}
+            className={
+              (isShow
+                ? "text-green-400 hover:text-green-300"
+                : "text-neutral-400 hover:text-white") +
+              " cursor-pointer transition mx-4 "
+            }
+          />
           <VolumeIcon
             onClick={toggleMute}
             className="cursor-pointer"
@@ -383,6 +408,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           <Slider value={volume} onChange={handleVolumeChange} />
         </div>
       </div>
+
+      {isShow && <NowPlaying song={song} artists={artistRecord} />}
     </div>
   );
 };

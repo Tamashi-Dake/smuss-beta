@@ -23,6 +23,7 @@ import { MdCategory } from "react-icons/md";
 import { cn } from "@/lib/utils";
 import { MenuIcon, X } from "lucide-react";
 import Image from "next/image";
+import useNowPlaying from "@/hooks/usePlaying";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   const currentUser = useCurrentUser();
   const [role, setRole] = useState("");
   const player = usePlayer();
+  const { isShow: nowPlayingOpen } = useNowPlaying();
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isResizingRef = useRef(false);
@@ -238,10 +240,11 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
       <main
         ref={mainRef}
         className={cn(
-          "absolute top-0 left-60 w-[calc(100%-240px)] flex-1 flex flex-col bg-black ",
+          "absolute top-0 left-60 flex-1 flex flex-col bg-black ",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "left-0 w-full",
-          player.activeId ? "h-[calc(100%-100px)]" : "h-full"
+          player.activeId ? "h-[calc(100%-100px)]" : "h-full",
+          nowPlayingOpen ? "w-[calc(100%-540px)]" : "w-[calc(100%-240px)]"
         )}
       >
         {isCollapsed && (
@@ -257,20 +260,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
         )}
         {children}
       </main>
-      {/* Now Playing Detail */}
-      {/* <div
-        className="
-        bg-black
-        min-w-[300px]
-        max-w-[500px]
-        p-2 
-        h-full
-        text-white
-        rounded-lg
-      "
-      >
-        Song Lyrics Artist
-      </div> */}
     </div>
   );
 };

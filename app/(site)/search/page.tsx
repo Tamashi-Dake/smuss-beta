@@ -1,4 +1,5 @@
 import getSearchResult from "@/acitons/getSearchQuery";
+import getSongInPlaylist from "@/acitons/getSongInPlaylist";
 import SearchContent from "@/components/home/search/searchContent";
 import SearchInput from "@/components/home/search/searchInput";
 import React from "react";
@@ -11,6 +12,7 @@ const Search = async ({ searchParams }: SearchProps) => {
   const { songs, playlists, artists, categories } = await getSearchResult(
     searchParams.query
   );
+  const relatedSong = await getSongInPlaylist();
   return (
     <div
       className="
@@ -31,6 +33,7 @@ const Search = async ({ searchParams }: SearchProps) => {
         playlists={playlists}
         artists={artists}
         categories={categories}
+        relatedSong={relatedSong}
       />
     </div>
   );

@@ -2,11 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 
-import { ArtistRecord } from "@/types";
+import { Artist, ArtistRecord } from "@/types";
 
 const useGetArtistBySongId = (id?: string) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [artist, setArtist] = useState<ArtistRecord[]>([]);
+  const [artist, setArtist] = useState<Artist[]>([]);
   const { supabaseClient } = useSessionContext();
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const useGetArtistBySongId = (id?: string) => {
     const fetchArtist = async () => {
       const { data, error } = await supabaseClient
         .from("rel_song_artist")
-        .select("*, artist!inner(id,name)")
+        .select("*, artist!inner(*)")
         .eq("song_id", id)
         .order("created_at", { ascending: true });
 

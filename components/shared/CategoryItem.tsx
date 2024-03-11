@@ -3,7 +3,6 @@ import useLoadImage from "@/hooks/useLoadImage";
 import { Category } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { use } from "react";
 
 interface CategoryProps {
   data: Category;
@@ -14,10 +13,7 @@ const CategoryItem: React.FC<CategoryProps> = ({ data }) => {
   const imageUrl = useLoadImage(data);
   return (
     <div
-      onClick={
-        () => router.push(`/category/${data.id}`)
-        // console.log(data.id)
-      }
+      onClick={() => router.push(`/category/${data.id}`)}
       className="relative 
       group 
       items-center 
@@ -30,7 +26,7 @@ const CategoryItem: React.FC<CategoryProps> = ({ data }) => {
       cursor-pointer 
       transition 
       min-w-28
-      max-w-52
+      max-w-60
       select-none "
       style={{ backgroundColor: data.color }}
     >
@@ -44,13 +40,13 @@ const CategoryItem: React.FC<CategoryProps> = ({ data }) => {
           overflow-hidden
         "
       >
-        <p className="absolute top-4 left-4 text-2xl font-semibold truncate w-full">
+        <p className="p-4 text-2xl font-semibold truncate w-full">
           {data.name}
         </p>
 
         <Image
           draggable={false}
-          className="absolute -bottom-4 -right-4 w-24 h-24 rounded-sm overflow-hidden transform rotate-[30deg] group-hover:rotate-0 group-hover:scale-125 group-hover:-translate-x-10 group-hover:-translate-y-10 transition-all duration-500 ease-out"
+          className="absolute -bottom-4 -right-4 size-20 lg:size-24 rounded-sm overflow-hidden transform rotate-[30deg] group-hover:rotate-0 group-hover:scale-125 group-hover:-translate-x-9 group-hover:-translate-y-9 transition-all duration-500 ease-out"
           src={
             imageUrl && imageUrl.endsWith("null")
               ? "/liked.png"

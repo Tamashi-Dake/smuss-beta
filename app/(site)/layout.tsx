@@ -58,7 +58,6 @@ export default async function RootLayout({
                 <Header>Header</Header>
                 {children}
               </div>
-              {/* <Detail /> */}
             </Sidebar>
             <Player />
           </UserProvider>
