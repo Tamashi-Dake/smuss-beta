@@ -5,6 +5,7 @@ import { Playlist, Song, Artist, Category } from "@/types";
 
 interface SearchResult {
   playlists: Playlist[];
+  albums: Playlist[];
   songs: Song[];
   artists: Artist[];
   categories: Category[];
@@ -18,6 +19,7 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
   });
 
   let playlists: Playlist[] = [];
+  let albums: Playlist[] = [];
   let songs: Song[] = [];
   let artists: Artist[] = [];
   let categories: Category[] = [];
@@ -25,6 +27,7 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
     const defaultSearchView = await getCategories();
     return {
       playlists,
+      albums,
       songs,
       artists,
       categories: defaultSearchView,
@@ -45,6 +48,15 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
     .select("*, users!inner(*)")
     .limit(6)
     .eq("users.role", "admin")
+    .is("artist_id", null)
+    .ilike("name", `%${query}%`)
+    .order("created_at", { ascending: false });
+
+  // Tìm kiếm danh sách các Album (Playlist có artist_id)
+  const albumSearchResult = await supabase
+    .from("playlist")
+    .select("*, artist!inner(*)")
+    .limit(6)
     .ilike("name", `%${query}%`)
     .order("created_at", { ascending: false });
 
@@ -59,12 +71,14 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
   // Kiểm tra lỗi trong quá trình tìm kiếm
   if (
     playlistSearchResult.error ||
+    albumSearchResult.error ||
     songSearchResult.error ||
     artistSearchResult.error
   ) {
     console.log("Error occurred during search.");
     console.log(
       playlistSearchResult.error ??
+        albumSearchResult.error ??
         songSearchResult.error ??
         artistSearchResult.error
     );
@@ -73,6 +87,10 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
 
   if (playlistSearchResult.data) {
     playlists = playlistSearchResult.data;
+  }
+
+  if (albumSearchResult.data) {
+    albums = albumSearchResult.data;
   }
 
   if (songSearchResult.data) {
@@ -85,6 +103,7 @@ const getSearchResult = async (query: string): Promise<SearchResult> => {
 
   return {
     playlists,
+    albums,
     songs,
     artists,
     categories,

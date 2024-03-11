@@ -1,4 +1,5 @@
 import getFavorite from "@/acitons/getFavorite";
+import getRandomPublicPlaylists from "@/acitons/getRandomPublicPlaylists";
 import FavoriteContent from "@/components/favorite/FavoriteContent";
 import Image from "next/image";
 import React from "react";
@@ -7,41 +8,47 @@ import React from "react";
 
 const Favorites: React.FC = async () => {
   const favoritesSongs = await getFavorite();
-
+  const randomPlaylist = await getRandomPublicPlaylists();
   return (
     <>
       <div className=" flex flex-col m-auto gap-y-10 max-w-wide-screen px-4 text-white">
-        <div className="mt-20">
-          <div
-            className="
+        <div className="bg flex items-end h-60 bg-gradient-to-b from-purple-900/80 via-yellow-800/30 to-[#171717]">
+          <div className="">
+            <div
+              className="
               flex 
               flex-col 
               md:flex-row 
               items-center 
               gap-x-5
+              p-4
             "
-          >
-            <div className="relative h-32 w-32 lg:h-44 lg:w-44">
-              <Image
-                className="object-cover rounded-sm"
-                fill
-                src="/liked.png"
-                alt="Playlist"
-              />
-            </div>
-            <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
-              <p className="hidden md:block font-semibold text-sm">Playlist</p>
-              <h1
-                className="
+            >
+              <div className="relative h-32 w-32 lg:h-44 lg:w-44">
+                <Image
+                  className="object-cover rounded-sm"
+                  fill
+                  src="/liked.png"
+                  alt="Playlist"
+                />
+              </div>
+              <div className="flex flex-col gap-y-2 mt-4 md:mt-0">
+                <p className="hidden md:block font-semibold text-sm">
+                  Playlist
+                </p>
+                <h1
+                  className="
                   text-white 
                   text-4xl 
                   sm:text-5xl 
                   lg:text-7xl 
                   font-bold
                 "
-              >
-                Favorite Songs
-              </h1>
+                >
+                  Favorite Songs
+                </h1>
+                <p className="text-sm pl-2">{favoritesSongs.length} songs</p>
+              </div>
             </div>
           </div>
         </div>

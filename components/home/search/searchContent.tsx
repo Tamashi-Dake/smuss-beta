@@ -9,6 +9,7 @@ import ArtistsWrapper from "../ArtistWapper";
 import useOnPlay from "@/hooks/useOnPlay";
 
 interface SearchContentProps {
+  albums: Playlist[];
   songs: Song[];
   playlists: Playlist[];
   artists: Artist[];
@@ -17,6 +18,7 @@ interface SearchContentProps {
 }
 
 const SearchContent: React.FC<SearchContentProps> = ({
+  albums,
   songs,
   playlists,
   artists,
@@ -38,7 +40,12 @@ const SearchContent: React.FC<SearchContentProps> = ({
       </div>
     );
   }
-  if (playlists.length === 0 && songs.length === 0 && artists.length === 0) {
+  if (
+    albums.length === 0 &&
+    playlists.length === 0 &&
+    songs.length === 0 &&
+    artists.length === 0
+  ) {
     return (
       <div
         className="
@@ -73,6 +80,13 @@ const SearchContent: React.FC<SearchContentProps> = ({
         </div>
       ))}
       {/* TODO: add album */}
+      {albums.length > 0 ? (
+        <h3 className="text-2xl font-bold text-neutral-100">Albums</h3>
+      ) : (
+        ""
+      )}
+      <PlaylistWrapper data={albums} related={relatedSong} />
+
       {playlists.length > 0 ? (
         <h3 className="text-2xl font-bold text-neutral-100">Playlists</h3>
       ) : (

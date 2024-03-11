@@ -9,9 +9,8 @@ interface SearchProps {
 }
 
 const Search = async ({ searchParams }: SearchProps) => {
-  const { songs, playlists, artists, categories } = await getSearchResult(
-    searchParams.query
-  );
+  const { albums, songs, playlists, artists, categories } =
+    await getSearchResult(searchParams.query);
   const relatedSong = await getSongInPlaylist();
   return (
     <div
@@ -29,6 +28,7 @@ const Search = async ({ searchParams }: SearchProps) => {
         <SearchInput />
       </div>
       <SearchContent
+        albums={albums}
         songs={songs}
         playlists={playlists}
         artists={artists}

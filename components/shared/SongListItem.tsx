@@ -25,8 +25,11 @@ import {
 import { useRouter } from "next/navigation";
 import { useAuthModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
+import {
+  useSessionContext,
+  useSupabaseClient,
+} from "@supabase/auth-helpers-react";
+import React, { useEffect, useState } from "react";
 import { FaPlay } from "react-icons/fa";
 import {
   DropdownMenu,
@@ -38,6 +41,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
+import Link from "next/link";
 
 interface SongListItemProps {
   songData: Song;
@@ -49,15 +54,16 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
   const imageUrl = useLoadImage(songData);
   const authModal = useAuthModal();
   const { user } = useUser();
+  const supabase = useSupabaseClient();
   const { supabaseClient } = useSessionContext();
   const [playlists, setPlaylists] = useState<any[]>([]);
-  const [relationship, setRelationship] = useState<any[]>([]);
-
+  const [relPlaylist, setRelPlaylist] = useState<any[]>([]);
+  const { artist: artists } = useGetArtistBySongId(songData.id);
   useEffect(() => {
     if (!user?.id) {
       return;
     }
-    const fetchPlaylistData = async () => {
+    const fetchUserPlaylistData = async () => {
       const { data, error } = await supabaseClient
         .from("playlist")
         .select("id,name")
@@ -68,18 +74,19 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
         setPlaylists(data);
       }
     };
-    const fetchRelationshipData = async () => {
+    const fetchPlaylistData = async () => {
       const { data, error } = await supabaseClient
         .from("rel_song_playlist")
         .select("playlist_id,playlist!inner(id,name)")
         .eq("song_id", songData.id);
 
       if (!error && data) {
-        setRelationship(data);
+        setRelPlaylist(data);
       }
     };
+
+    fetchUserPlaylistData();
     fetchPlaylistData();
-    fetchRelationshipData();
   }, [songData.id, supabaseClient, user?.id]);
 
   const handleClick = () => {
@@ -89,7 +96,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
     if (!user) {
       return authModal.onOpen();
     }
-    if (relationship.some((rel) => rel.playlist_id === id)) {
+    if (relPlaylist.some((rel) => rel.playlist_id === id)) {
       const { error } = await supabaseClient
         .from("rel_song_playlist")
         .delete()
@@ -98,7 +105,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
       if (error) {
         toast.error(error.message);
       } else {
-        setRelationship(relationship.filter((rel) => rel.playlist_id !== id));
+        setRelPlaylist(relPlaylist.filter((rel) => rel.playlist_id !== id));
         toast.success("Removed from playlist!");
       }
     } else {
@@ -109,8 +116,8 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
       if (error) {
         toast.error(error.message);
       } else {
-        setRelationship([
-          ...relationship,
+        setRelPlaylist([
+          ...relPlaylist,
           {
             playlist_id: id,
             playlist: {
@@ -146,90 +153,116 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
         rounded-md
       "
       >
-        <div
-          className="
+        <div className="flex w-full gap-4 overflow-hidden">
+          <div
+            className="
           relative 
           rounded-md 
           min-h-[48px] 
           min-w-[48px] 
           overflow-hidden
         "
-        >
-          <Image
-            fill
-            sizes="48px"
-            src={
-              imageUrl && imageUrl.endsWith("null")
-                ? "/liked.png"
-                : imageUrl || "/liked.png"
-            }
-            alt="SongListItem"
-            className="object-cover"
-          />
-          <div
-            className="
+          >
+            <Image
+              fill
+              sizes="48px"
+              src={
+                imageUrl && imageUrl.endsWith("null")
+                  ? "/liked.png"
+                  : imageUrl || "/liked.png"
+              }
+              alt="SongListItem"
+              className="object-cover"
+            />
+            <div
+              className="
           absolute group top-0 left-0 w-full h-full bg-black bg-opacity-0 flex justify-center items-center transition-all ease-in-out duration-200 hover:bg-opacity-50
           "
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick(songData.id);
-            }}
-          >
-            <FaPlay className=" text-white text-2xl opacity-0 group-hover:opacity-100" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-y-1 overflow-hidden max-w-28 md:max-w-52 lg:max-w-96">
-          <p className="text-white truncate">{songData.title}</p>
-          <p className="text-neutral-400 text-sm truncate">{songData.time}</p>
-        </div>
-        <div className="flex gap-x-4 ml-auto px-2 h-full">
-          <LikeButton songId={songData.id} refresh={true} />
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <MoreHorizontal className="size-10 text-white hover:bg-neutral-600/90 rounded-full p-2" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
               onClick={(e) => {
                 e.stopPropagation();
+                onClick(songData.id);
               }}
-              onContextMenu={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              className="bg-neutral-800 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 "
             >
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <PlusSquare className="w-4 h-4 mr-2" />
-                  Add to Playlist
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 ">
-                    {playlists.map((playlist) => (
-                      <DropdownMenuItem
-                        key={playlist.id}
-                        onClick={() => handleAddToPlaylist(playlist.id)}
+              <FaPlay className=" text-white text-2xl opacity-0 group-hover:opacity-100" />
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-1 overflow-hidden w-52 lg:w-80">
+            <p className="text-white truncate">{songData.title}</p>
+            <p className="text-neutral-400 text-sm truncate">
+              {artists.length === 0
+                ? "Unknown"
+                : artists.map((artist, index) => (
+                    <React.Fragment key={artist.id}>
+                      <Link
+                        href={`/artist/${artist.id}`}
+                        className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none"
                       >
-                        {relationship.some(
-                          (rel) => rel.playlist_id === playlist.id
-                        ) ? (
-                          <span className="w-2 mr-2">✓</span>
-                        ) : (
-                          <span className="w-2 mr-2"> </span>
-                        )}
-                        <p>{playlist.name}</p>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-              <DropdownMenuItem onClick={handleShare}>
-                {" "}
-                <Share2Icon className="w-4 h-4 mr-2" />
-                Share
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                        {artist.name}
+                      </Link>
+                      {index < artists.length - 1 && ", "}
+                    </React.Fragment>
+                  ))}
+            </p>
+          </div>
+          <div className="flex flex-col gap-y-1 m-auto">
+            <p className="text-white truncate">{songData.time}</p>
+          </div>
+          <div className="flex gap-x-4 ml-auto px-2 h-full">
+            <LikeButton songId={songData.id} refresh={true} />
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <MoreHorizontal className="size-10 text-white hover:bg-neutral-600/90 rounded-full p-2" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                className="bg-neutral-800 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 "
+              >
+                {user ? (
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <PlusSquare className="w-4 h-4 mr-2" />
+                      Add to Playlist
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 ">
+                        {playlists.map((playlist) => (
+                          <DropdownMenuItem
+                            key={playlist.id}
+                            onClick={() => handleAddToPlaylist(playlist.id)}
+                          >
+                            {relPlaylist.some(
+                              (rel) => rel.playlist_id === playlist.id
+                            ) ? (
+                              <span className="w-2 mr-2">✓</span>
+                            ) : (
+                              <span className="w-2 mr-2"> </span>
+                            )}
+                            <p>{playlist.name}</p>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                ) : (
+                  <DropdownMenuItem onClick={authModal.onOpen}>
+                    <PlusSquare className="w-4 h-4 mr-2" />
+                    Add to Playlist
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleShare}>
+                  {" "}
+                  <Share2Icon className="w-4 h-4 mr-2" />
+                  Share
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent
@@ -251,7 +284,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
                   key={playlist.id}
                   onClick={() => handleAddToPlaylist(playlist.id)}
                 >
-                  {relationship.some(
+                  {relPlaylist.some(
                     (rel) => rel.playlist_id === playlist.id
                   ) ? (
                     <span className="w-2 mr-2">✓</span>
