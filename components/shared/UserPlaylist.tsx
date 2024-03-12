@@ -116,7 +116,7 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({
         onContextMenu={(e) => {
           e.preventDefault();
         }}
-        className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 "
+        className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 z-[1002]"
       >
         <ContextMenuItem onClick={() => updateModal.onOpen(playlistData.id)}>
           <Edit className="w-4 h-4 mr-2" />

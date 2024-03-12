@@ -214,8 +214,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     >
       <div
         className={cn(
-          "grid gap-x-1 ",
-          isMobile ? "grid-cols-[1fr,auto] mr-4" : "grid-cols-2"
+          "grid gap-x-1 mr-auto ",
+          isMobile ? "grid-cols-[1fr,auto]" : "grid-cols-2"
         )}
       >
         <PlayerSong song={song} artists={artistRecord} />
@@ -369,19 +369,22 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         </div>
         {/* current duration */}
         <div className="flex flex-row items-center gap-x-2 w-full justify-center">
-          <div className="text-white">
+          <div className="text-white w-10 flex-shrink-0">
             {new Date(progress * 1000).toISOString().substr(14, 5)}
           </div>
-          <PlayerSlider
-            duration={soundRef.current?.duration()}
-            value={progress}
-            onChange={handleProgressChange}
-          />
-          <div className="text-white">
-            {soundRef.current?.duration() &&
-              new Date(soundRef.current?.duration() * 1000)
-                .toISOString()
-                .substr(14, 5)}
+          <div className="flex-shrink-0 w-full h-10">
+            <PlayerSlider
+              duration={soundRef.current?.duration()}
+              value={progress}
+              onChange={handleProgressChange}
+            />
+          </div>
+          <div className="text-white w-10 flex-shrink-0">
+            {soundRef.current?.duration()
+              ? new Date(soundRef.current?.duration() * 1000)
+                  .toISOString()
+                  .substr(14, 5)
+              : "??:??"}
           </div>
         </div>
       </div>

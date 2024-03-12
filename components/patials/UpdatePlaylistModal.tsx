@@ -200,10 +200,12 @@ const UpdatePlaylistModal = ({
 
   return (
     <Modal
-      title="Update a playlist"
-      description={
-        pathname === "/dashboard/playlists" ? "" : "Create your own playlist!"
+      title={
+        pathname === "/dashboard/playlists"
+          ? "Update playlist"
+          : "Update your playlist!"
       }
+      description=""
       isOpen={isOpen}
       onChange={onChange}
     >

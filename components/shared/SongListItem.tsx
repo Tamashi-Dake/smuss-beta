@@ -186,7 +186,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
               <FaPlay className=" text-white text-2xl opacity-0 group-hover:opacity-100" />
             </div>
           </div>
-          <div className="flex flex-col gap-y-1 overflow-hidden w-52 lg:w-80">
+          <div className="flex flex-col gap-y-1 overflow-hidden w-28 sm:min-w-52  lg:w-80">
             <p className="text-white truncate">{songData.title}</p>
             <p className="text-neutral-400 text-sm truncate">
               {artists.length === 0
@@ -204,7 +204,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
                   ))}
             </p>
           </div>
-          <div className="flex flex-col gap-y-1 m-auto">
+          <div className="hidden sm:flex flex-col gap-y-1 m-auto">
             <p className="text-white truncate">{songData.time}</p>
           </div>
           <div className="flex gap-x-4 ml-auto px-2 h-full">
