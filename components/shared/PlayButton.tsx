@@ -24,8 +24,8 @@ const PlayButton: React.FC<PlayButtonProps> = ({ songIds }) => {
   return (
     <div
       className={cn(
-        "absolute transition-all rounded-full flex items-center justify-center bg-green-500 p-5 drop-shadow-md hover:bg-green-400 cursor-pointer",
-        isMobile ? " top-6 m-auto left-0 right-0 max-w-14" : "top-10"
+        "w-14 transition-all rounded-full flex items-center justify-center bg-green-500 p-5 drop-shadow-md hover:bg-green-400 cursor-pointer"
+        // isMobile ? "" : " absolute top-10"
       )}
       onClick={handleFavPlay}
     >

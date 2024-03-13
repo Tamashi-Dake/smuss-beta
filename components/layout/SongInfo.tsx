@@ -1,0 +1,244 @@
+"use client";
+import Image from "next/image";
+import { Dot, MoreHorizontal, PlusSquare, Share2Icon } from "lucide-react";
+import useLoadImage from "@/hooks/useLoadImage";
+import React, { use, useEffect, useState } from "react";
+import Link from "next/link";
+import { useUser } from "@/hooks/useUser";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useAuthModal } from "@/hooks/useModal";
+import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
+import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
+import PlayButton from "../shared/PlayButton";
+import LikeButton from "../shared/LikeButton";
+import { useMediaQuery } from "usehooks-ts";
+
+const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
+  const songImage = useLoadImage(song);
+  const { artist: artists } = useGetArtistBySongId(song.id);
+  const { user } = useUser();
+  const { supabaseClient } = useSessionContext();
+  const authModal = useAuthModal();
+  const [playlists, setPlaylists] = useState<any[]>([]);
+  const [relPlaylist, setRelPlaylist] = useState<any[]>([]);
+  //   merge song id with randomSongs ids (song is the first element, randomSongs is the rest)
+  const allSongs = [song.id, ...randomSongs.map((song) => song.id)];
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  useEffect(() => {
+    if (!user?.id) {
+      return;
+    }
+    const fetchUserPlaylistData = async () => {
+      const { data, error } = await supabaseClient
+        .from("playlist")
+        .select("id,name")
+        .eq("user_id", user.id)
+        .order("name", { ascending: true });
+
+      if (!error && data) {
+        setPlaylists(data);
+      }
+    };
+    const fetchPlaylistData = async () => {
+      const { data, error } = await supabaseClient
+        .from("rel_song_playlist")
+        .select("playlist_id,playlist!inner(id,name)")
+        .eq("song_id", song.id);
+
+      if (!error && data) {
+        setRelPlaylist(data);
+      }
+    };
+
+    fetchUserPlaylistData();
+    fetchPlaylistData();
+  }, [song.id, supabaseClient, user?.id]);
+
+  const handleAddToPlaylist = async (id: string) => {
+    if (!user) {
+      return authModal.onOpen();
+    }
+    if (relPlaylist.some((rel) => rel.playlist_id === id)) {
+      const { error } = await supabaseClient
+        .from("rel_song_playlist")
+        .delete()
+        .eq("playlist_id", id)
+        .eq("song_id", song.id);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        setRelPlaylist(relPlaylist.filter((rel) => rel.playlist_id !== id));
+        toast.success("Removed from playlist!");
+      }
+    } else {
+      const { error } = await supabaseClient.from("rel_song_playlist").insert({
+        song_id: song.id,
+        playlist_id: id,
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        setRelPlaylist([
+          ...relPlaylist,
+          {
+            playlist_id: id,
+            playlist: {
+              id,
+              name: playlists.find((playlist) => playlist.id === id)?.name,
+            },
+          },
+        ]);
+      }
+      toast.success("Added to playlist!");
+    }
+  };
+  const handleShare = (event: any) => {
+    event.stopPropagation();
+    navigator.clipboard.writeText(
+      `https://smuss-beta.vercel.app/song/${song.id}`
+    );
+    toast.success("Copied to clipboard!");
+  };
+  return (
+    <div
+      className="
+                    flex 
+                    flex-col 
+                    justify-center
+                    md:justify-start
+                    md:flex-row 
+                    items-center 
+                    gap-x-5
+                    md:p-4
+                  "
+    >
+      <div className="relative h-32 w-32 lg:h-44 lg:w-44">
+        <Image
+          className="object-cover rounded-sm"
+          fill
+          src={songImage || "/liked.png"}
+          alt="Song image"
+        />
+      </div>
+      <div className="flex flex-col gap-y-2 m-4 md:mt-0">
+        <p className="hidden md:block font-semibold text-sm">Song</p>
+        <h1
+          className="
+                        text-white 
+                        text-4xl 
+                        lg:text-6xl 
+                        font-bold
+                      "
+        >
+          {song.title}
+        </h1>
+        <div className="flex flex-col">
+          <div className="flex items-center gap-y-2 sm:flex-row">
+            {artists.length === 0
+              ? "Unknown"
+              : artists.map((artist, index) => (
+                  <React.Fragment key={artist.id}>
+                    <Link
+                      href={`/artist/${artist.id}`}
+                      className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none px-1"
+                    >
+                      {artist.name}
+                    </Link>
+
+                    {isMobile ? (
+                      <Dot size={20} className="block md:hidden text-white" />
+                    ) : (
+                      index < artists.length - 1 && ", "
+                    )}
+                  </React.Fragment>
+                ))}
+
+            <Dot size={20} className="md:block hidden text-white" />
+
+            <p className="text-sm">{song.time}</p>
+          </div>
+          <div className="relative flex justify-start gap-x-20 items-center">
+            {isMobile ? (
+              <>
+                <LikeButton songId={song.id} refresh={true} />
+                <PlayButton songIds={allSongs} />
+              </>
+            ) : (
+              <>
+                <PlayButton songIds={allSongs} />
+                <LikeButton songId={song.id} refresh={true} />
+              </>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <MoreHorizontal
+                  className={cn(
+                    " transition-all size-10 text-white hover:bg-neutral-600/90 rounded-full cursor-pointer"
+                  )}
+                />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                }}
+                className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48"
+              >
+                {user ? (
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                      <PlusSquare className="w-4 h-4 mr-2" />
+                      Add to Playlist
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 ">
+                        {playlists.map((playlist) => (
+                          <DropdownMenuItem
+                            key={playlist.id}
+                            onClick={() => handleAddToPlaylist(playlist.id)}
+                          >
+                            {relPlaylist.some(
+                              (rel) => rel.playlist_id === playlist.id
+                            ) ? (
+                              <span className="w-2 mr-2">✓</span>
+                            ) : (
+                              <span className="w-2 mr-2"> </span>
+                            )}
+                            <p>{playlist.name}</p>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                ) : (
+                  <DropdownMenuItem onClick={authModal.onOpen}>
+                    <PlusSquare className="w-4 h-4 mr-2" />
+                    Add to Playlist
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleShare}>
+                  {" "}
+                  <Share2Icon className="w-4 h-4 mr-2" />
+                  Share
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SongInfo;

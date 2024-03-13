@@ -1,5 +1,5 @@
 import getFavorite from "@/acitons/getFavorite";
-import FavoriteContent from "@/components/favorite/FavoriteContent";
+import PlaylistContent from "@/components/layout/PlaylistContent";
 import PlayButton from "@/components/shared/PlayButton";
 import { formatTotalTime } from "@/utils/time";
 import { Dot } from "lucide-react";
@@ -58,14 +58,16 @@ const Favorites: React.FC = async () => {
                       {favoritesSongs.length} songs
                     </p>
                     <Dot size={20} className="text-white" />
-                    <p className="text-sm ">{formatTotalTime(totalTime)}</p>
+                    <p className="text-sm ">
+                      about {formatTotalTime(totalTime)}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <FavoriteContent songs={favoritesSongs} />
+        <PlaylistContent songs={favoritesSongs} />
       </div>
     </>
   );

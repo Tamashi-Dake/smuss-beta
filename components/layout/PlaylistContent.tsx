@@ -7,14 +7,13 @@ import { Song } from "@/types";
 import { useUser } from "@/hooks/useUser";
 import SongListItem from "../shared/SongListItem";
 import useOnPlay from "@/hooks/useOnPlay";
-import Image from "next/image";
 import { Music, PenSquare, Timer } from "lucide-react";
 
-interface FavoriteContentProps {
+interface PlaylistContentProps {
   songs: Song[];
 }
 
-const FavoriteContent: React.FC<FavoriteContentProps> = ({ songs }) => {
+const PlaylistContent: React.FC<PlaylistContentProps> = ({ songs }) => {
   const router = useRouter();
   const { isLoading, user } = useUser();
   const onPlay = useOnPlay(songs);
@@ -36,7 +35,8 @@ const FavoriteContent: React.FC<FavoriteContentProps> = ({ songs }) => {
           text-neutral-400
         "
       >
-        No Favorite songs.
+        <h1 className="text-3xl font-bold">No songs found</h1>
+        <p>You should add some songs to this playlist! 👍</p>
       </div>
     );
   }
@@ -56,23 +56,23 @@ const FavoriteContent: React.FC<FavoriteContentProps> = ({ songs }) => {
         rounded-md
       "
           >
-            <div className="flex w-full gap-4 overflow-hidden">
-              <div className="flex gap-x-2">
-                <h3 className="text-white">
-                  <Music size={16} className="inline" />
+            <div className="flex w-full gap-4 overflow-hidden ">
+              <div className="flex gap-x-2 items-center">
+                <h3 className="">
+                  <Music size={16} />
                 </h3>
                 <h4 className="inline">Title</h4>
               </div>
               <div className="w-0 sm:min-w-52 lg:w-80"></div>
-              <div className="hidden sm:flex flex-row gap-x-2 m-auto">
-                <h3 className="text-white truncate">
-                  <Timer size={16} className="inline" />
+              <div className="hidden sm:flex flex-row gap-x-2 m-auto items-center">
+                <h3 className="">
+                  <Timer size={16} className="" />
                 </h3>
                 <h4 className="inline ">Duration</h4>
               </div>
-              <div className="flex gap-x-2 ml-auto px-2 h-full">
-                <h3 className="text-white">
-                  <PenSquare size={16} className="inline" />
+              <div className="flex gap-x-2 ml-auto px-2 h-full items-center">
+                <h3 className="">
+                  <PenSquare size={16} className="" />
                 </h3>
                 <h4 className="inline">Action</h4>
               </div>
@@ -92,4 +92,4 @@ const FavoriteContent: React.FC<FavoriteContentProps> = ({ songs }) => {
   );
 };
 
-export default FavoriteContent;
+export default PlaylistContent;

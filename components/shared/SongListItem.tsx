@@ -54,7 +54,6 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
   const imageUrl = useLoadImage(songData);
   const authModal = useAuthModal();
   const { user } = useUser();
-  const supabase = useSupabaseClient();
   const { supabaseClient } = useSessionContext();
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relPlaylist, setRelPlaylist] = useState<any[]>([]);
