@@ -78,7 +78,7 @@ const PlaylistInfo = ({
     >
       <div className="relative h-32 w-32 lg:h-44 lg:w-44">
         <Image
-          className="object-cover rounded-sm"
+          className="object-cover rounded-sm "
           fill
           src={playlistImage || "/liked.png"}
           alt="Playlist image"
@@ -94,29 +94,33 @@ const PlaylistInfo = ({
                         text-4xl 
                         lg:text-6xl 
                         font-bold
+                        text-center
+                        md:text-left
                       "
         >
           {playlist.name}
         </h1>
-        <div className="flex flex-col">
-          <div className="flex flex-col gap-y-2 sm:flex-row">
+        <div className="flex flex-col justify-center items-center md:items-start">
+          <div className="flex flex-row ">
             {artist?.name ? (
-              <Link
-                className="text-sm hover:text-gray-300 text-white"
-                href={`/artist/${playlist.artist_id}`}
-              >
-                {artist.name}
-              </Link>
+              <>
+                <Link
+                  className="text-sm hover:text-gray-300 text-white"
+                  href={`/artist/${playlist.artist_id}`}
+                >
+                  {artist.name}
+                </Link>
+              </>
             ) : (
               <p className="text-sm">Various Artists</p>
             )}
 
-            <Dot size={20} className="hidden sm:block text-white" />
+            <Dot size={20} className="block text-white" />
 
             <p className="text-sm">
               {songs.length} {songs.length > 1 ? "songs" : "song"}
             </p>
-            <Dot size={20} className="hidden sm:block text-white" />
+            <Dot size={20} className="block text-white" />
             <p className="text-sm ">about {formatTotalTime(totalTime)}</p>
           </div>
           <div className="relative flex justify-start gap-x-20 items-center">

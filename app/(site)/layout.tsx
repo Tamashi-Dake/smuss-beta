@@ -54,7 +54,7 @@ export default async function RootLayout({
               relationshipSongPlaylist={relationshipSongPlaylist}
             />
             <Sidebar playlists={userPlaylist}>
-              <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
+              <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto md:[&::-webkit-scrollbar]:block [&::-webkit-scrollbar]:hidden">
                 <Header>Header</Header>
                 {children}
               </div>

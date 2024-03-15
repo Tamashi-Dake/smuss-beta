@@ -335,7 +335,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
       {/* lyric box */}
       <Box classname="mt-4 p-2">
         <h3 className="text-lg font-bold">Lyrics</h3>
-        <p className="text-sm text-neutral-400 whitespace-pre-line">
+        <p className="text-sm text-neutral-200 whitespace-pre-line">
           {song.lyric || "No lyrics available"}
         </p>
       </Box>

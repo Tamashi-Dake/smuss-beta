@@ -114,11 +114,11 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
   return (
     <div
       className="
-                    flex 
-                    flex-col 
-                    justify-center
-                    md:justify-start
-                    md:flex-row 
+                    grid
+                    grid-cols-1
+                    md:grid-cols-[auto,1fr] 
+                    place-items-center
+                    md:place-content-start
                     items-center 
                     gap-x-5
                     md:p-4
@@ -132,7 +132,7 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
           alt="Song image"
         />
       </div>
-      <div className="flex flex-col gap-y-2 m-4 md:mt-0">
+      <div className="flex flex-col gap-y-2 mt-4 m-2 md:m-0">
         <p className="hidden md:block font-semibold text-sm">Song</p>
         <h1
           className="
@@ -146,30 +146,35 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
         </h1>
         <div className="flex flex-col">
           <div className="flex items-center gap-y-2 sm:flex-row">
-            {artists.length === 0
-              ? "Unknown"
-              : artists.map((artist, index) => (
-                  <React.Fragment key={artist.id}>
-                    <Link
-                      href={`/artist/${artist.id}`}
-                      className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none px-1"
-                    >
-                      {artist.name}
-                    </Link>
+            {artists.length === 0 ? (
+              <>
+                <p className="text-neutral-400">Unknown Artist</p>
+                <Dot size={20} className="hidden md:block text-white" />
+              </>
+            ) : (
+              artists.map((artist, index) => (
+                <React.Fragment key={artist.id}>
+                  <Link
+                    href={`/artist/${artist.id}`}
+                    className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none md:px-1"
+                  >
+                    {artist.name}
+                  </Link>
 
-                    {isMobile ? (
-                      <Dot size={20} className="block md:hidden text-white" />
-                    ) : (
-                      index < artists.length - 1 && ", "
-                    )}
-                  </React.Fragment>
-                ))}
+                  {isMobile ? (
+                    index < artists.length - 1 && ", "
+                  ) : (
+                    <Dot size={20} className=" hidden md:block text-white" />
+                  )}
+                </React.Fragment>
+              ))
+            )}
 
-            <Dot size={20} className="md:block hidden text-white" />
+            <Dot size={20} className="md:hidden text-white" />
 
             <p className="text-sm">{song.time}</p>
           </div>
-          <div className="relative flex justify-start gap-x-20 items-center">
+          <div className="relative flex justify-between md:justify-start gap-x-20 items-center">
             {isMobile ? (
               <>
                 <LikeButton songId={song.id} refresh={true} />
