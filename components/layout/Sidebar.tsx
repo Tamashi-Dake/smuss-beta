@@ -20,7 +20,7 @@ import { AiOutlineDashboard } from "react-icons/ai";
 import { TbPlaylist } from "react-icons/tb";
 import { FaItunesNote, FaUser, FaUsers } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { MenuIcon, X } from "lucide-react";
 import Image from "next/image";
 import useNowPlaying from "@/hooks/usePlaying";

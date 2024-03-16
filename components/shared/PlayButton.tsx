@@ -1,7 +1,7 @@
 "use client";
 import useOnPlay from "@/hooks/useOnPlay";
 import usePlayer from "@/hooks/usePlayer";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { FaPlay } from "react-icons/fa";
 import { useMediaQuery } from "usehooks-ts";
 

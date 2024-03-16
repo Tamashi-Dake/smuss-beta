@@ -18,7 +18,7 @@ import {
 } from "../ui/dropdown-menu";
 import { useAuthModal } from "@/hooks/useModal";
 import toast from "react-hot-toast";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
 import PlayButton from "../shared/PlayButton";
 import LikeButton from "../shared/LikeButton";

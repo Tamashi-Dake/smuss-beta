@@ -81,8 +81,7 @@ const AddPlaylistModal = ({
           description: values.description,
           image_path: imageData.path,
           user_id: user.id,
-          artist_id: artistOption!.value,
-          // user_id: currentUser?.role === "admin" ? user.id : "admin",
+          artist_id: artistOption ? artistOption.value : null,
         })
         .select();
       // insert relationship
@@ -110,7 +109,7 @@ const AddPlaylistModal = ({
       reset();
       onClose();
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error((error as Error).message);
     } finally {
       setIsLoading(false);
     }

@@ -16,6 +16,7 @@ import getRelationSongArtist from "@/acitons/getRelationSongArtist";
 import getRelationSongPlaylist from "@/acitons/getRelationSongPlaylist";
 import getRelationSongCategory from "@/acitons/getRelationSongCategory";
 import Player from "@/components/layout/Player";
+import getActiveProductsWithPrices from "@/acitons/getActiveProductsWithPrices";
 
 const font = Figtree({ subsets: ["latin"] });
 
@@ -29,6 +30,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const products = await getActiveProductsWithPrices();
   const userPlaylist = await getUserPlaylists();
   const categories = await getCategories();
   const artists = await getArtists();
@@ -52,6 +54,7 @@ export default async function RootLayout({
               relationshipSongArtist={relationshipSongArtist}
               relationshipSongCategory={relationshipSongCategory}
               relationshipSongPlaylist={relationshipSongPlaylist}
+              products={products}
             />
             <Sidebar playlists={userPlaylist}>
               <div className="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto md:[&::-webkit-scrollbar]:block [&::-webkit-scrollbar]:hidden">

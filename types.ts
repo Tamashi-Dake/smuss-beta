@@ -48,21 +48,21 @@ export interface UserDetails {
   billing_address?: Stripe.Address;
   payment_method?: Stripe.PaymentMethod[Stripe.PaymentMethod.Type];
   role?: string;
-  // stripe_customer_id: string;
-  // stripe_customer: Stripe.Customer;
-  // stripe_subscription: Stripe.Subscription;
-  // stripe_portal_session: Stripe.BillingPortal.Session;
 }
+
 export interface Product {
   id: string;
   active?: boolean;
+  name?: string;
   description?: string;
-  images?: string;
+  image?: string;
   metadata?: Stripe.Metadata;
 }
+
 export interface Price {
   id: string;
   product_id?: string;
+  active?: boolean;
   description?: string;
   unit_amount?: number;
   currency?: string;
@@ -71,7 +71,16 @@ export interface Price {
   interval_count?: number;
   trial_period_days?: number | null;
   metadata?: Stripe.Metadata;
-  product?: Product;
+  products?: Product;
+}
+
+export interface Customer {
+  id: string;
+  stripe_customer_id?: string;
+}
+
+export interface ProductWithPrice extends Product {
+  prices?: Price[];
 }
 
 export interface Subscription {

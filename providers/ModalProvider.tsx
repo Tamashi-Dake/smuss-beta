@@ -9,14 +9,19 @@ import AddCategoryModal from "@/components/patials/AddCategoryModal";
 import { Play } from "next/font/google";
 import Song from "@/components/shared/Song";
 import AddSongModal from "@/components/patials/AddSongModal";
-import { Artist, Category, Playlist, Song as SongType } from "@/types";
+import {
+  Artist,
+  Category,
+  Playlist,
+  ProductWithPrice,
+  Song as SongType,
+} from "@/types";
 import UpdateSongModal from "@/components/patials/UpdateSongModal";
 import DeleteModal from "@/components/patials/DeleteModal";
 import UpdateArtistModal from "@/components/patials/UpdateArtistModal";
 import UpdateCategoryModal from "@/components/patials/UpdateCategoryModal";
 import UpdatePlaylistModal from "@/components/patials/UpdatePlaylistModal";
-// import SubscribeModal from "@/components/SubscribeModal";
-// import { ProductWithPrice } from "@/types_stripe";
+import SubscribeModal from "@/components/patials/SubscribeModal";
 
 interface ModalProviderProps {
   artists: Artist[];
@@ -27,7 +32,7 @@ interface ModalProviderProps {
   relationshipSongArtist: any[];
   relationshipSongCategory: any[];
   relationshipSongPlaylist: any[];
-  //   products: ProductWithPrice[];
+  products: ProductWithPrice[];
 }
 
 const ModalProvider: React.FC<ModalProviderProps> = ({
@@ -39,7 +44,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
   relationshipSongArtist,
   relationshipSongPlaylist,
   relationshipSongCategory,
-  //   products
+  products,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -57,7 +62,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({
       <AddArtistModal />
       <AddCategoryModal />
       <AddPlaylistModal artists={artists} songs={songs} />
-      {/* <SubscribeModal products={products} /> */}
+      <SubscribeModal products={products} />
       <AddSongModal
         categories={categories}
         artists={artists}

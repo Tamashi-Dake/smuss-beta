@@ -23,7 +23,7 @@ import {
 } from "../ui/dropdown-menu";
 import { useDeleteModal, useUpdateArtistModal } from "@/hooks/useModal";
 import toast from "react-hot-toast";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 // import { useMediaQuery } from "usehooks-ts";
 
 const ArtistInfo = ({ artist, songs }: { artist: any; songs: any }) => {

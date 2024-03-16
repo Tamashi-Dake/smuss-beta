@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Playlist } from "@/types";
 
-import { useAuthModal } from "@/hooks/useModal";
+import { useAuthModal, useSubscribeModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
 import { useAddPlaylistModal } from "@/hooks/useModal";
 import usePlayer from "@/hooks/usePlayer";
@@ -29,7 +29,9 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const router = useRouter();
   const player = usePlayer();
   const authModal = useAuthModal();
+  const subscribeModal = useSubscribeModal();
   const addPlaylistModal = useAddPlaylistModal();
+
   // Lấy danh sách bài hát từ hook và cập nhật state songList
   useEffect(() => {
     // get related songs in liked_songs
@@ -45,6 +47,7 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
     };
     fetchFavData();
   }, [user?.id]);
+
   const handleFavPlay = (e: any) => {
     e.stopPropagation();
     if (songList.length > 0) {
@@ -61,6 +64,10 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const handleAddPlaylist = () => {
     if (!user) {
       return authModal.onOpen();
+    }
+    // if user is not subscribed and number playlist is greater or equal 5
+    if (subscription?.status !== "active" && playlists.length >= 5) {
+      return subscribeModal.onOpen();
     }
     return addPlaylistModal.onOpen();
   };

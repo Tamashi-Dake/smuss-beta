@@ -10,7 +10,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { Artist, Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
 import useNowPlaying from "@/hooks/usePlaying";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 
 import LikeButton from "../shared/LikeButton";
 import Slider from "../shared/Slider";
