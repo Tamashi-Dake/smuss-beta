@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "../shared/Box";
 import { Artist, ArtistRecord, Song } from "@/types";
 import { useRouter } from "next/navigation";
@@ -43,9 +43,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-
-import Lyric from "lrc-file-parser";
-import { formatTimeInMs } from "@/utils/time";
+import { LyrixCard } from "../LyricCard";
 
 interface NowPlayingProps {
   song: Song;
@@ -69,34 +67,6 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
-  const [currentLyric, setCurrentLyric] = useState<string>("");
-  useEffect(() => {
-    const lrc = new Lyric({
-      onPlay: function (line, text) {
-        // Listening play event
-        console.log(line, text); // line is line number of current play
-        // text is lyric text of current play line
-        setCurrentLyric(text);
-      },
-      onSetLyric: function (lines) {
-        // listening lyrics seting event
-        console.log(lines); // lines is array of all lyric text
-      },
-      offset: 0, // offset time(ms), default is 150 ms
-      playbackRate: 1, // playback rate, default is 1
-      isRemoveBlankLine: true, // is remove blank line, default is true
-    });
-    // var extendedLyricStrs = [translationLyricStr]
-    lrc.setLyric(
-      song.lyric
-      // , extendedLyricStrs
-    ); // set lyric, lyricStr is lyric file text, extendedLyricStrs is extended lyric file text array (optional)
-    // note: Setting the lyrics will automatically pause the lyrics playback
-    // console.log(formatTimeInMs(song.time));
-    // lrc.play(); // play lyric, prop is curent play time, unit: ms
-    // lrc.pause() // pause lyric
-    // lrc.setPlaybackRate(1.2) // set playback rate to 1.2x
-  }, [song.id]);
 
   useEffect(() => {
     if (artists.length > 0) {
@@ -365,13 +335,13 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
       </Box>
 
       {/* lyric box */}
-      <Box classname="mt-4 p-2">
+      {/* <Box classname="mt-4 p-2">
         <h3 className="text-lg font-bold">Lyrics</h3>
         <p className="text-sm text-neutral-200 whitespace-pre-line">
-          {/* {song.lyric || "No lyrics available"} */}
-          {currentLyric}
+          {song.lyric || "No lyrics available"}
         </p>
-      </Box>
+      </Box> */}
+      <LyrixCard lrc={song.lyric} />
     </div>
   );
 };
