@@ -1,38 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import toast from "react-hot-toast";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
 
+import { insertRelationship } from "@/utils/insertRelationship";
 import { useAddSongModal } from "@/hooks/useModal";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useUser } from "@/hooks/useUser";
+import useFetchArtists from "@/hooks/useFetchArtists";
+import useFetchCategories from "@/hooks/useFetchCategories";
+import useFetchAlbumAndPlaylist from "@/hooks/useFetchAlbum&Playlist";
+
 import Modal from "../Modal";
 import HeaderButton from "../layout/HeaderButton";
 import Input from "../shared/Input";
 import Textarea from "../shared/Textarea";
 import MutipleSelect from "../shared/MutipleSelect";
-import { Artist, Category } from "@/types";
-import { insertRelationship } from "@/utils/insertRelationship";
+import Link from "next/link";
 
-const AddSongModal = ({
-  categories,
-  artists,
-  playlists,
-}: {
-  categories: Category[];
-  artists: Artist[];
-  playlists: any;
-}) => {
-  const router = useRouter();
-  const { onClose, isOpen } = useAddSongModal();
+const AddSongModal = () => {
   const supabaseClient = useSupabaseClient();
-  const currentUser = useCurrentUser();
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const { onClose, isOpen } = useAddSongModal();
   const { user } = useUser();
+  const currentUser = useCurrentUser();
+  const artistsResult = useFetchArtists({ isOpen });
+  const categoriesResult = useFetchCategories({ isOpen });
+  const playlistsResult = useFetchAlbumAndPlaylist({ isOpen });
+
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       name: "",
@@ -42,7 +42,7 @@ const AddSongModal = ({
       lyrics: "",
     },
   });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [categoryOption, setCategoryOption] = useState(null);
   const [artistOption, setArtistOption] = useState(null);
   const [playlistOption, setPlaylistOption] = useState(null);
@@ -179,7 +179,7 @@ const AddSongModal = ({
           <label htmlFor="artist">Song Artist</label>
           <MutipleSelect
             id="artist"
-            options={artists.map((artist) => ({
+            options={artistsResult.artists.map((artist) => ({
               value: artist.id.toString(),
               label: artist.name,
             }))}
@@ -194,7 +194,7 @@ const AddSongModal = ({
             id="category"
             defaultValue={categoryOption}
             onChange={handleCategoryChange}
-            options={categories.map((category) => ({
+            options={categoriesResult.categories.map((category) => ({
               value: category.id.toString(),
               label: category.name,
             }))}
@@ -206,7 +206,7 @@ const AddSongModal = ({
           <label htmlFor="playlist">Add to Playlist</label>
           <MutipleSelect
             id="playlist"
-            options={playlists.map((playlist: any) => ({
+            options={playlistsResult.playlists.map((playlist: any) => ({
               value: playlist.id.toString(),
               label: playlist.name,
             }))}
@@ -255,7 +255,17 @@ const AddSongModal = ({
           </div>
         </div>
         <div className=" flex flex-col space-y-2">
-          <label htmlFor="lyric">Song Lyric</label>
+          <label htmlFor="lyric">
+            Song Lyric (
+            <Link
+              href={"https://en.wikipedia.org/wiki/LRC_(file_format)"}
+              target="_blank"
+              className="font-semibold text-red-200"
+            >
+              LRC format
+            </Link>
+            )
+          </label>
           <Textarea
             id="lyric"
             disabled={isLoading}

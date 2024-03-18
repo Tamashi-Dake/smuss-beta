@@ -181,7 +181,7 @@ const SongItem: React.FC<SongProps> = ({ songData, onClick }) => {
           {songData.title}
         </h1>
         <div
-          className="absolute transition-all opacity-0 rounded-full flex items-center justify-center bg-green-500 p-3 drop-shadow-md group-hover:opacity-100 hover:scale-110 right-5 "
+          className="absolute transition-all opacity-100 md:opacity-0 rounded-full flex items-center justify-center bg-green-500 p-3 drop-shadow-md group-hover:opacity-100 hover:scale-110 right-5 "
           onClick={(e) => {
             e.stopPropagation();
             onClick(songData.id);

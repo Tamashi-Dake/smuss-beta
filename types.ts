@@ -20,9 +20,13 @@ export interface Playlist {
   user_id: string;
   artist_id: string;
 }
-export interface ArtistRecord {
+export interface Record {
   id: string;
   name: string;
+}
+export interface SongRecord {
+  id: string;
+  title: string;
 }
 export interface Artist {
   id: string;

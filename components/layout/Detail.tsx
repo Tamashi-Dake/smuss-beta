@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Box from "../shared/Box";
-import { Artist, ArtistRecord, Song } from "@/types";
+import { Artist, Record, Song } from "@/types";
 import { useRouter } from "next/navigation";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";

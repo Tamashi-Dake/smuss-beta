@@ -15,39 +15,26 @@ import HeaderButton from "../layout/HeaderButton";
 import Input from "../shared/Input";
 import Textarea from "../shared/Textarea";
 import MutipleSelect from "../shared/MutipleSelect";
-import { Artist, Category, Playlist, Song } from "@/types";
-import {
-  filterRelationships,
-  mapRelationshipToOption,
-  filterPreviousOptions,
-} from "@/utils/mappingRelationship";
+import { Song } from "@/types";
+import { mapRelationshipToOption } from "@/utils/mappingRelationship";
 import { compareObjects } from "@/utils/compareRelationship";
+import useFetchAlbumAndPlaylist from "@/hooks/useFetchAlbum&Playlist";
+import useFetchCategories from "@/hooks/useFetchCategories";
+import useFetchArtists from "@/hooks/useFetchArtists";
 
-const UpdateSongModal = ({
-  categories,
-  artists,
-  playlists,
-  songs,
-  relationshipSongArtist,
-  relationshipSongCategory,
-  relationshipSongPlaylist,
-}: {
-  categories: Category[];
-  artists: Artist[];
-  playlists: Playlist[];
-  songs: Song[];
-  relationshipSongArtist: any[];
-  relationshipSongCategory: any[];
-  relationshipSongPlaylist: any[];
-}) => {
-  const router = useRouter();
-  const { onClose, isOpen, id } = useUpdateSongModal();
+const UpdateSongModal = () => {
   const supabaseClient = useSupabaseClient();
-  const currentUser = useCurrentUser();
-  const [isLoading, setIsLoading] = useState(false);
-  const { user } = useUser();
-  const song = songs.find((song) => song.id === id);
+  const router = useRouter();
 
+  const { onClose, isOpen, id } = useUpdateSongModal();
+  const { user } = useUser();
+  const currentUser = useCurrentUser();
+  const artistsResult = useFetchArtists({ isOpen });
+  const categoriesResult = useFetchCategories({ isOpen });
+  const playlistsResult = useFetchAlbumAndPlaylist({ isOpen });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [song, setSong] = useState<Song>();
   const [relationshipArtist, setRelationshipArtist] = useState<any[]>([]);
   const [relationshipCategory, setRelationshipCategory] = useState<any[]>([]);
   const [relationshipPlaylist, setRelationshipPlaylist] = useState<any[]>([]);
@@ -57,6 +44,7 @@ const UpdateSongModal = ({
   const [tempArtistOption, setTempArtistOption] = useState<any[]>([]);
   const [tempCategoryOption, setTempCategoryOption] = useState<any[]>([]);
   const [tempPlaylistOption, setTempPlaylistOption] = useState<any[]>([]);
+
   // set default value for form
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: useMemo(() => {
@@ -64,63 +52,82 @@ const UpdateSongModal = ({
     }, [song]),
   });
 
+  useEffect(() => {
+    const fetchCurrentSong = async (id: string) => {
+      const { data, error } = await supabaseClient
+        .from("songs")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) {
+        return toast.error(error.message);
+      }
+      setSong(data);
+    };
+    const fetchRelationships = async (id: string) => {
+      const { data: artistData, error: artistError } = await supabaseClient
+        .from("rel_song_artist")
+        .select("*")
+        .eq("song_id", id);
+      if (artistError) {
+        return toast.error(artistError.message);
+      }
+      const { data: categoryData, error: categoryError } = await supabaseClient
+        .from("rel_song_category")
+        .select("*")
+        .eq("song_id", id);
+      if (categoryError) {
+        return toast.error(categoryError.message);
+      }
+      const { data: playlistData, error: playlistError } = await supabaseClient
+        .from("rel_song_playlist")
+        .select("*")
+        .eq("song_id", id);
+      if (playlistError) {
+        return toast.error(playlistError.message);
+      }
+      setRelationshipArtist(artistData);
+      setRelationshipCategory(categoryData);
+      setRelationshipPlaylist(playlistData);
+    };
+    if (isOpen) {
+      fetchCurrentSong(id);
+      fetchRelationships(id);
+    }
+  }, [id, isOpen, supabaseClient]);
+
   // rerender form to update default value
   useEffect(() => {
     reset(song);
     // console.log(song);
   }, [reset, song]);
 
-  // get relationship by song id
-  useEffect(() => {
-    const filteredRelationshipArtist = filterRelationships(
-      relationshipSongArtist,
-      id
-    );
-    setRelationshipArtist(filteredRelationshipArtist);
-  }, [id, relationshipSongArtist]);
-
-  useEffect(() => {
-    const filteredRelationshipCategory = filterRelationships(
-      relationshipSongCategory,
-      id
-    );
-    setRelationshipCategory(filteredRelationshipCategory);
-  }, [id, relationshipSongCategory]);
-
-  useEffect(() => {
-    const filteredRelationshipPlaylist = filterRelationships(
-      relationshipSongPlaylist,
-      id
-    );
-    setRelationshipPlaylist(filteredRelationshipPlaylist);
-  }, [id, relationshipSongPlaylist]);
-
   // map previous option
   useEffect(() => {
     const updatedArtistOption = mapRelationshipToOption(
       relationshipArtist,
       "artist_id",
-      artists
+      artistsResult.artists
     );
     setArtistOption(updatedArtistOption);
     setTempArtistOption(updatedArtistOption);
-  }, [relationshipArtist, artists]);
+  }, [relationshipArtist, artistsResult.artists]);
 
   useEffect(() => {
     const updatedCategoryOption = mapRelationshipToOption(
       relationshipCategory,
       "category_id",
-      categories
+      categoriesResult.categories
     );
     setCategoryOption(updatedCategoryOption);
     setTempCategoryOption(updatedCategoryOption);
-  }, [relationshipCategory, categories]);
+  }, [relationshipCategory, categoriesResult.categories]);
 
   useEffect(() => {
     const updatedPlaylistOption = mapRelationshipToOption(
       relationshipPlaylist,
       "playlist_id",
-      playlists
+      playlistsResult.playlists
     );
     // filter out option with label = null
     setPlaylistOption(
@@ -129,18 +136,18 @@ const UpdateSongModal = ({
     setTempPlaylistOption(
       updatedPlaylistOption.filter((option) => option.label !== "")
     );
-  }, [relationshipPlaylist, playlists]);
+  }, [relationshipPlaylist, playlistsResult.playlists]);
 
   // map all option to select
-  const allArtistOption = artists.map((artist) => ({
+  const allArtistOption = artistsResult.artists.map((artist) => ({
     value: artist.id.toString(),
     label: artist.name,
   }));
-  const allCategoryOption = categories.map((category) => ({
+  const allCategoryOption = categoriesResult.categories.map((category) => ({
     value: category.id.toString(),
     label: category.name,
   }));
-  const allPlaylistOption = playlists.map((playlist) => ({
+  const allPlaylistOption = playlistsResult.playlists.map((playlist) => ({
     value: playlist.id.toString(),
     label: playlist.name,
   }));

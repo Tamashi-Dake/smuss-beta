@@ -5,8 +5,8 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { usePathname, useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import toast from "react-hot-toast";
-import { FieldValues, SubmitHandler, set, useForm } from "react-hook-form";
-import { Artist, Playlist, Song } from "@/types";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { Playlist } from "@/types";
 
 import { useUpdatePlaylistModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
@@ -19,44 +19,64 @@ import MutipleSelect from "../shared/MutipleSelect";
 import { deleteStogare } from "@/utils/deleteRecord";
 import { mapRelationshipToOption } from "@/utils/mappingRelationship";
 import { compareObjects } from "@/utils/compareRelationship";
+import useFetchArtists from "@/hooks/useFetchArtists";
+import useFetchSongs from "@/hooks/useFetchSongs";
 
-const UpdatePlaylistModal = ({
-  artists,
-  songs,
-  playlists,
-  userPlaylist,
-  relationshipSongPlaylist,
-}: {
-  artists: Artist[];
-  playlists: Playlist[];
-  userPlaylist: Playlist[];
-  songs: Song[];
-  relationshipSongPlaylist: any[];
-}) => {
+const UpdatePlaylistModal = () => {
+  const supabaseClient = useSupabaseClient();
   const router = useRouter();
   const pathname = usePathname();
+
   const { user } = useUser();
   const { onClose, isOpen, id } = useUpdatePlaylistModal();
-  const supabaseClient = useSupabaseClient();
+  const artistsResult = useFetchArtists({ isOpen });
+  const songsResult = useFetchSongs({ isOpen });
+
   const [isLoading, setIsLoading] = useState(false);
-
-  // if pathname not /dashboard/playlists, playlist will be map from userPlaylist, else from playlists
-  const playlist =
-    pathname !== "/dashboard/playlists"
-      ? userPlaylist.find((playlist) => playlist.id === id)
-      : playlists.find((playlist) => playlist.id === id);
-
+  const [playlist, setPlaylist] = useState<Playlist>();
+  const [relationshipSongPlaylist, setRelationshipSongPlaylist] = useState<
+    any[]
+  >([]);
   const [artistOption, setArtistOption] = useState<any>(null);
   const [songOption, setSongOption] = useState<any>(null);
-  const [relationshipSong, setRelationshipSong] = useState<any[]>([]);
   const [tempSongOption, setTempSongOption] = useState<any[]>([]);
 
-  // const currentUser = useCurrentUser();
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: useMemo(() => {
       return playlist;
     }, [playlist]),
   });
+
+  useEffect(() => {
+    const fetchCurrentPlaylist = async (id: string) => {
+      const { data, error } = await supabaseClient
+        .from("playlist")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) {
+        return toast.error(error.message);
+      }
+      setPlaylist(data);
+    };
+    const fetchRelationshipSongPlaylist = async (id: string) => {
+      const { data, error } = await supabaseClient
+        .from("rel_song_playlist")
+        .select("*")
+        .eq("playlist_id", id);
+      if (error) {
+        return toast.error(error.message);
+      }
+      setRelationshipSongPlaylist(data || []);
+    };
+    if (isOpen) {
+      setIsLoading(true);
+      fetchCurrentPlaylist(id);
+      fetchRelationshipSongPlaylist(id);
+      setIsLoading(false);
+    }
+  }, [id, isOpen, supabaseClient]);
+
   // rerender form to update default value
   useEffect(() => {
     reset(playlist);
@@ -64,34 +84,32 @@ const UpdatePlaylistModal = ({
 
   // get relationship by playlist id
   useEffect(() => {
-    const artist = artists.find((artist) => artist.id === playlist?.artist_id);
+    const artist = artistsResult.artists.find(
+      (artist) => artist.id === playlist?.artist_id
+    );
     setArtistOption({
       value: artist?.id.toString(),
       label: artist?.name,
     });
-    const filteredRelationshipPlaylist = relationshipSongPlaylist.filter(
-      (rel) => rel.playlist_id === id
-    );
-    setRelationshipSong(filteredRelationshipPlaylist);
-  }, [id, relationshipSongPlaylist]);
+  }, [artistsResult.artists, id, playlist?.artist_id]);
 
   // map previous options
   useEffect(() => {
     const updatedPlaylistOption = mapRelationshipToOption(
-      relationshipSong,
+      relationshipSongPlaylist,
       "song_id",
-      songs
+      songsResult.songs
     );
     setSongOption(updatedPlaylistOption);
     setTempSongOption(updatedPlaylistOption);
-  }, [relationshipSong, songs]);
+  }, [relationshipSongPlaylist, songsResult.songs]);
 
   // map all option to select
-  const allArtistOption = artists.map((artist) => ({
+  const allArtistOption = artistsResult.artists.map((artist) => ({
     value: artist.id.toString(),
     label: artist.name,
   }));
-  const allSongOption = songs.map((song) => ({
+  const allSongOption = songsResult.songs.map((song) => ({
     value: song.id.toString(),
     label: song.title,
   }));
@@ -112,6 +130,7 @@ const UpdatePlaylistModal = ({
   const handleSongChange = (songOption: any) => {
     setSongOption(songOption);
   };
+
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     // upload to supabase
     try {

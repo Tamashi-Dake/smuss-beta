@@ -1,6 +1,6 @@
 "use client";
 import useLoadImage from "@/hooks/useLoadImage";
-import { ArtistRecord, Song } from "@/types";
+import { Record, Song } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ import React from "react";
 
 interface PlaylistProps {
   song: Song;
-  artists: ArtistRecord[];
+  artists: Record[];
 }
 
 const PlayerSong: React.FC<PlaylistProps> = ({ song, artists }) => {

@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { usePathname, useRouter } from "next/navigation";
 import uniqid from "uniqid";
 import toast from "react-hot-toast";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { Artist, Song } from "@/types";
+import { Record, SongRecord } from "@/types";
 
 import { useAddPlaylistModal } from "@/hooks/useModal";
 import { useUser } from "@/hooks/useUser";
@@ -14,23 +14,24 @@ import Modal from "../Modal";
 import HeaderButton from "../layout/HeaderButton";
 import Input from "../shared/Input";
 import MutipleSelect from "../shared/MutipleSelect";
+import useFetchArtists from "@/hooks/useFetchArtists";
+import useFetchSongs from "@/hooks/useFetchSongs";
 
-const AddPlaylistModal = ({
-  artists,
-  songs,
-}: {
-  artists: Artist[];
-  songs: Song[];
-}) => {
+const AddPlaylistModal = () => {
+  const supabaseClient = useSupabaseClient();
   const router = useRouter();
   const pathname = usePathname();
+
   const { user } = useUser();
   const { onClose, isOpen } = useAddPlaylistModal();
-  const supabaseClient = useSupabaseClient();
+  const artistsResult = useFetchArtists({ isOpen });
+  const songsResult = useFetchSongs({ isOpen });
+
   const [isLoading, setIsLoading] = useState(false);
   const [artistOption, setArtistOption] = useState<any>(null);
   const [songOption, setSongOption] = useState<any>(null);
   // const currentUser = useCurrentUser();
+
   const { register, handleSubmit, reset } = useForm<FieldValues>({
     defaultValues: {
       name: "",
@@ -169,7 +170,7 @@ const AddPlaylistModal = ({
             <label htmlFor="artist">Artist (if this is an Album)</label>
             <MutipleSelect
               id="artist"
-              options={artists.map((artist) => ({
+              options={artistsResult.artists.map((artist) => ({
                 value: artist.id.toString(),
                 label: artist.name,
               }))}
@@ -182,7 +183,7 @@ const AddPlaylistModal = ({
           <label htmlFor="song">Add Songs</label>
           <MutipleSelect
             id="song"
-            options={songs.map((song) => ({
+            options={songsResult.songs.map((song) => ({
               value: song.id.toString(),
               label: song.title,
             }))}
