@@ -31,8 +31,6 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
   const authModal = useAuthModal();
   const supabaseClient = useSupabaseClient();
 
-  const [account, setAccount] = useState<any>([]);
-
   const { user } = useUser();
 
   const handleLogout = async () => {
@@ -47,20 +45,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
       toast.success("Logged out successfully");
     }
   };
-  useEffect(() => {
-    const getUser = async () => {
-      if (user?.id) {
-        const { data } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-        setAccount(data);
-      }
-    };
 
-    getUser();
-  }, [user]);
   return (
     <div
       className={twMerge(`
@@ -89,37 +74,11 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
           onClick={() => router.forward()}
         />
       </div>
-      {/* small screen nav */}
-      {/* <div className="flex md:hidden gap-x-2 items-center">
-        <HiHome
-          className="rounded-full p-2  flex items-center justify-center opacity-75 hover:opacity-100 transition-all bg-white text-neutral-900 cursor-pointer"
-          size={35}
-          onClick={() => router.push("/")}
-        />
-        <BiSearch
-          className="rounded-full p-2  flex items-center justify-center opacity-75 hover:opacity-100 transition-all bg-white text-neutral-900 cursor-pointer"
-          size={35}
-          onClick={() => router.push("/search")}
-        />
-        <AiOutlineDashboard
-          className="rounded-full p-2  flex items-center justify-center opacity-75 hover:opacity-100 transition-all bg-white text-neutral-900 cursor-pointer"
-          size={35}
-          onClick={() => router.push("/dashboard")}
-        />
-      </div> */}
 
       {/* Authentication */}
       <div className="flex flex-row items-center justify-between gap-x-2 px-3">
         {user ? (
           <>
-            {/* {account.role === "admin" && (
-              <HeaderButton
-                className="bg-green-500 text-white"
-                onClick={() => router.push("/dashboard")}
-              >
-                Dashboard
-              </HeaderButton>
-            )} */}
             <HeaderButton
               className="bg-white text-black"
               onClick={handleLogout}
@@ -161,9 +120,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
                   <ListMusic size={20} className="mr-2" />
                   <p>Library</p>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                // onClick={() => console.log(user.user_metadata)}
-                >
+                <DropdownMenuItem onClick={() => router.push("/account")}>
                   <Stars size={20} className="mr-2" />
                   <p>Upgrade to Premium</p>
                 </DropdownMenuItem>
@@ -172,13 +129,6 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
           </>
         ) : (
           <>
-            {/* <HeaderButton onClick={authModal.onOpen}>Sign up</HeaderButton>
-            <HeaderButton
-              onClick={authModal.onOpen}
-              className="bg-white text-black  "
-            >
-              Log in
-            </HeaderButton> */}
             <HeaderButton onClick={authModal.onOpen}>
               Let&apos;s start
             </HeaderButton>

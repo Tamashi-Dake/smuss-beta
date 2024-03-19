@@ -22,15 +22,16 @@ interface LibraryProps {
 }
 
 const Library: React.FC<LibraryProps> = ({ playlists }) => {
-  const [songList, setSongList] = useState<any[]>([]);
-  const { subscription, user } = useUser();
   const { supabaseClient } = useSessionContext();
-
   const router = useRouter();
+
+  const { subscription, user } = useUser();
   const player = usePlayer();
   const authModal = useAuthModal();
   const subscribeModal = useSubscribeModal();
   const addPlaylistModal = useAddPlaylistModal();
+
+  const [songList, setSongList] = useState<any[]>([]);
 
   // Lấy danh sách bài hát từ hook và cập nhật state songList
   useEffect(() => {
@@ -45,7 +46,7 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
         setSongList(data);
       }
     };
-    fetchFavData();
+    if (user?.id) fetchFavData();
   }, [user?.id]);
 
   const handleFavPlay = (e: any) => {
