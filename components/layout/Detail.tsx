@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Box from "../shared/Box";
 import { Artist, ArtistRecord, Song } from "@/types";
@@ -44,7 +43,9 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { LyrixCard } from "../LyricCard";
-
+import { cn } from "@/libs/utils";
+import { Lrc, useRecoverAutoScrollImmediately } from "react-lrc";
+import useTimer from "@/hooks/useTimer";
 interface NowPlayingProps {
   song: Song;
   // songList: string[];
@@ -155,7 +156,10 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
     );
     toast.success("Copied to clipboard!");
   };
-
+  const { currentMillisecond, setCurrentMillisecond, reset, play, pause } =
+    useTimer();
+  const { signal, recoverAutoScrollImmediately } =
+    useRecoverAutoScrollImmediately();
   return (
     <div
       className="
@@ -341,7 +345,23 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
           {song.lyric || "No lyrics available"}
         </p>
       </Box> */}
-      <LyrixCard lrc={song.lyric} />
+      {/* <LyrixCard lrc={song.lyric} /> */}
+      <Lrc
+        lrc={song.lyric}
+        lineRenderer={({ active, line: { content } }) => (
+          <p
+            className={cn(
+              "min-h-3 pt-1 px-4 text-xl text-center",
+              active ? "text-green-400" : "text-neutral-400"
+            )}
+          >
+            {content}
+          </p>
+        )}
+        currentMillisecond={currentMillisecond}
+        verticalSpace={true}
+        recoverAutoScrollSingal={signal}
+      />
     </div>
   );
 };
