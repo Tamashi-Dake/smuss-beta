@@ -21,6 +21,7 @@ import { PlaySquare, Repeat, Repeat1, Shuffle } from "lucide-react";
 import { TbRepeatOff } from "react-icons/tb";
 import NowPlaying from "./Detail";
 import { on } from "events";
+import { Button } from "../ui/button";
 
 interface PlayerContentProps {
   song: Song;
@@ -175,9 +176,11 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   useEffect(() => {
     setArtistRecord(artists);
   }, [artists]);
+
   useEffect(() => {
     const updateProgress = () => {
       const seek = soundRef.current?.seek() || 0;
+      console.log(seek, isPlaying);
       setProgress(seek);
       requestAnimationFrame(updateProgress);
     };
@@ -192,6 +195,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       soundRef.current?.play();
     } else {
       soundRef.current?.pause();
+      setIsPlaying(false);
     }
   };
 
@@ -392,7 +396,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       <div
         className={cn(" w-full justify-end pr-2", isMobile ? "hidden" : "flex")}
       >
-        <div className="flex items-center gap-x-2 min-w-[180px]">
+        <div className="flex items-center gap-x-2 min-w-[200px]">
           <PlaySquare
             onClick={isShow ? onHide : onShow}
             size={36}
@@ -403,6 +407,13 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
               " cursor-pointer transition mx-4 "
             }
           />
+          <Button
+            onClick={() => {
+              soundRef.current?.seek(10.1);
+            }}
+          >
+            Set Seek
+          </Button>
           <VolumeIcon
             onClick={toggleMute}
             className="cursor-pointer"
@@ -412,7 +423,15 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         </div>
       </div>
 
-      {isShow && <NowPlaying song={song} artists={artistRecord} />}
+      {isShow && (
+        <NowPlaying
+          song={song}
+          artists={artistRecord}
+          songUrl={songUrl}
+          songRef={soundRef}
+          isPlaying={isPlaying}
+        />
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Box from "../shared/Box";
 import { Artist, ArtistRecord, Song } from "@/types";
 import { useRouter } from "next/navigation";
@@ -44,18 +44,26 @@ import {
 } from "../ui/dropdown-menu";
 import { LyrixCard } from "../LyricCard";
 import { cn } from "@/libs/utils";
-import { Lrc, useRecoverAutoScrollImmediately } from "react-lrc";
-import useTimer from "@/hooks/useTimer";
+// import { Lrc, useRecoverAutoScrollImmediately } from "react-lrc";
+// import useTimer from "@/hooks/useTimer";
+
+import { Lrc, Runner } from "lrc-kit";
 interface NowPlayingProps {
   song: Song;
   // songList: string[];
+  songRef: any;
+  songUrl: string;
   artists: Artist[];
+  isPlaying: boolean;
 }
 
 const NowPlaying: React.FC<NowPlayingProps> = ({
   song,
+  songRef,
+  songUrl,
   // songList,
   artists,
+  isPlaying,
 }) => {
   const router = useRouter();
   const imagePath = useLoadImage(song);
@@ -68,6 +76,30 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
+
+  const [lrc, setLrc] = useState<Lrc | null>(null);
+  const [runner, setRunner] = useState<Runner | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  useEffect(() => {
+    const parsedLrc = Lrc.parse(song.lyric);
+    const lrcRunner = new Runner(parsedLrc);
+    setLrc(parsedLrc);
+    setRunner(lrcRunner);
+  }, [songUrl, song.lyric]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      setCurrentTime(songRef.current.seek());
+      runner.timeUpdate(songRef.current.seek());
+    }
+  }, [isPlaying]);
+
+  const handleLyricClick = (index) => {
+    const lyric = lrc.lyrics[index];
+    if (lyric) {
+      songRef.current.seek(lyric.timestamp);
+    }
+  };
 
   useEffect(() => {
     if (artists.length > 0) {
@@ -156,10 +188,12 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
     );
     toast.success("Copied to clipboard!");
   };
-  const { currentMillisecond, setCurrentMillisecond, reset, play, pause } =
-    useTimer();
-  const { signal, recoverAutoScrollImmediately } =
-    useRecoverAutoScrollImmediately();
+  // const { currentMillisecond, setCurrentMillisecond, reset, play, pause } =
+  //   useTimer();
+  // const { signal, recoverAutoScrollImmediately } =
+  //   useRecoverAutoScrollImmediately();
+  // const lrc = Lrc.parse(song.lyric);
+  // console.log(lrc.lyrics);
   return (
     <div
       className="
@@ -346,7 +380,7 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
         </p>
       </Box> */}
       {/* <LyrixCard lrc={song.lyric} /> */}
-      <Lrc
+      {/* <Lrc
         lrc={song.lyric}
         lineRenderer={({ active, line: { content } }) => (
           <p
@@ -361,7 +395,28 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
         currentMillisecond={currentMillisecond}
         verticalSpace={true}
         recoverAutoScrollSingal={signal}
-      />
+      /> */}
+      <div>
+        {/* Your audio player component */}
+
+        {/* Render the lyrics */}
+        <ul>
+          {lrc &&
+            lrc.lyrics.map((lyric, index) => (
+              <li
+                key={index}
+                className={
+                  runner && runner.curIndex() === index
+                    ? "active text-green-600"
+                    : ""
+                }
+                onClick={() => handleLyricClick(index)}
+              >
+                {lyric.content}
+              </li>
+            ))}
+        </ul>
+      </div>
     </div>
   );
 };
