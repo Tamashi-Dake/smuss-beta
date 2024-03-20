@@ -17,7 +17,7 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import useNowPlaying from "@/hooks/usePlaying";
+import { useNowPlaying } from "@/hooks/usePlaying";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -42,29 +42,13 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { LyrixCard } from "../LyricCard";
-import { cn } from "@/libs/utils";
-// import { Lrc, useRecoverAutoScrollImmediately } from "react-lrc";
-// import useTimer from "@/hooks/useTimer";
 
-import { Lrc, Runner } from "lrc-kit";
 interface NowPlayingProps {
   song: Song;
-  // songList: string[];
-  songRef: any;
-  songUrl: string;
   artists: Artist[];
-  isPlaying: boolean;
 }
 
-const NowPlaying: React.FC<NowPlayingProps> = ({
-  song,
-  songRef,
-  songUrl,
-  // songList,
-  artists,
-  isPlaying,
-}) => {
+const NowPlaying: React.FC<NowPlayingProps> = ({ song, artists }) => {
   const router = useRouter();
   const imagePath = useLoadImage(song);
   const [artistImage, setArtistImage] = useState<string[]>([]);
@@ -73,33 +57,8 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   const { user } = useUser();
   const authModal = useAuthModal();
   const { supabaseClient: sesionContext } = useSessionContext();
-  const [isLiked, setIsLiked] = useState<boolean>(false);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
-
-  const [lrc, setLrc] = useState<Lrc | null>(null);
-  const [runner, setRunner] = useState<Runner | null>(null);
-  const [currentTime, setCurrentTime] = useState(0);
-  useEffect(() => {
-    const parsedLrc = Lrc.parse(song.lyric);
-    const lrcRunner = new Runner(parsedLrc);
-    setLrc(parsedLrc);
-    setRunner(lrcRunner);
-  }, [songUrl, song.lyric]);
-
-  useEffect(() => {
-    if (isPlaying) {
-      setCurrentTime(songRef.current.seek());
-      runner.timeUpdate(songRef.current.seek());
-    }
-  }, [isPlaying]);
-
-  const handleLyricClick = (index) => {
-    const lyric = lrc.lyrics[index];
-    if (lyric) {
-      songRef.current.seek(lyric.timestamp);
-    }
-  };
 
   useEffect(() => {
     if (artists.length > 0) {
@@ -188,28 +147,18 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
     );
     toast.success("Copied to clipboard!");
   };
-  // const { currentMillisecond, setCurrentMillisecond, reset, play, pause } =
-  //   useTimer();
-  // const { signal, recoverAutoScrollImmediately } =
-  //   useRecoverAutoScrollImmediately();
-  // const lrc = Lrc.parse(song.lyric);
-  // console.log(lrc.lyrics);
+
   return (
     <div
       className="
-      hidden
-      md:block
-      fixed 
-      top-0
-      right-0
       w-[350px]
       py-2 
-      h-[calc(100%-100px)]
       px-4
       bg-black 
         text-white
         z-[1001]
         overflow-y-auto
+        shrink-0
       "
     >
       <ContextMenu>
@@ -371,52 +320,6 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
               ))}
         </h3>
       </Box>
-
-      {/* lyric box */}
-      {/* <Box classname="mt-4 p-2">
-        <h3 className="text-lg font-bold">Lyrics</h3>
-        <p className="text-sm text-neutral-200 whitespace-pre-line">
-          {song.lyric || "No lyrics available"}
-        </p>
-      </Box> */}
-      {/* <LyrixCard lrc={song.lyric} /> */}
-      {/* <Lrc
-        lrc={song.lyric}
-        lineRenderer={({ active, line: { content } }) => (
-          <p
-            className={cn(
-              "min-h-3 pt-1 px-4 text-xl text-center",
-              active ? "text-green-400" : "text-neutral-400"
-            )}
-          >
-            {content}
-          </p>
-        )}
-        currentMillisecond={currentMillisecond}
-        verticalSpace={true}
-        recoverAutoScrollSingal={signal}
-      /> */}
-      <div>
-        {/* Your audio player component */}
-
-        {/* Render the lyrics */}
-        <ul>
-          {lrc &&
-            lrc.lyrics.map((lyric, index) => (
-              <li
-                key={index}
-                className={
-                  runner && runner.curIndex() === index
-                    ? "active text-green-600"
-                    : ""
-                }
-                onClick={() => handleLyricClick(index)}
-              >
-                {lyric.content}
-              </li>
-            ))}
-        </ul>
-      </div>
     </div>
   );
 };

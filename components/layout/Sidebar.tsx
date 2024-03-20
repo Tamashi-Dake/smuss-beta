@@ -23,7 +23,7 @@ import { MdCategory } from "react-icons/md";
 import { cn } from "@/libs/utils";
 import { MenuIcon, X } from "lucide-react";
 import Image from "next/image";
-import useNowPlaying from "@/hooks/usePlaying";
+import useResize from "@/hooks/useResize";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -35,7 +35,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   const currentUser = useCurrentUser();
   const [role, setRole] = useState("");
   const player = usePlayer();
-  const { isShow: nowPlayingOpen } = useNowPlaying();
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isResizingRef = useRef(false);
@@ -43,6 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
   const mainRef = useRef<ElementRef<"main">>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
+  const resize = useResize();
 
   const routes = useMemo(
     () => [
@@ -144,6 +144,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
 
     if (sidebarRef.current && mainRef.current) {
       sidebarRef.current.style.width = `${newWidth}px`;
+      resize.onResize(newWidth);
       mainRef.current.style.setProperty("left", `${newWidth}px`);
       mainRef.current.style.setProperty("width", `calc(100% - ${newWidth}px)`);
     }
@@ -243,8 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
           "absolute top-0 left-60 flex-1 flex flex-col bg-black ",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "left-0 w-full",
-          player.activeId ? "h-[calc(100%-100px)]" : "h-full",
-          nowPlayingOpen ? "w-[calc(100%-540px)]" : "w-[calc(100%-240px)]"
+          player.activeId ? "h-[calc(100%-100px)]" : "h-full"
         )}
       >
         {isCollapsed && (

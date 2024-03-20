@@ -1,8 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
-import {
-  Lyrix,
-  // ActionsHandle
-} from "lyr-ix";
+import { Lyrix, ActionsHandle } from "lyr-ix";
 import {
   HiOutlinePlay,
   HiOutlinePause,
@@ -72,8 +69,7 @@ export const LyrixCard = forwardRef<LyrixCardElement, LyrixCardProps>(
     const [usePlayIcon, setUsePlayIcon] = useState(true);
     const [muted, setMuted] = useState(mute);
     const audioRef = useRef<HTMLAudioElement>(null);
-    const lyrixRef = useRef<any>(null);
-    // ActionsHandle
+    const lyrixRef = useRef<ActionsHandle>(null);
 
     useImperativeHandle(ref, () => ({
       play: () => {
