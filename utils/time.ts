@@ -15,9 +15,3 @@ export const formatTotalTime = (times: string[]): string => {
     return `${hours} hours ${minutes} minutes`;
   }
 };
-
-// Minutes:Seconds -> ms
-export const formatTimeInMs = (time: string): number => {
-  const [minutes, seconds]: number[] = time.split(":").map(Number);
-  return minutes * 60 * 1000 + seconds * 1000;
-};

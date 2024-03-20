@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "../shared/Box";
-import { Artist, ArtistRecord, Song } from "@/types";
+import { Artist, Song } from "@/types";
 import { useRouter } from "next/navigation";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";
@@ -10,13 +10,7 @@ import {
   useSessionContext,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import {
-  MoreHorizontal,
-  PlusSquare,
-  Share2Icon,
-  UserPlus,
-  X,
-} from "lucide-react";
+import { MoreHorizontal, PlusSquare, Share2Icon, X } from "lucide-react";
 import { useNowPlaying } from "@/hooks/usePlaying";
 import {
   ContextMenu,
@@ -34,9 +28,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
-  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,

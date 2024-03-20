@@ -19,9 +19,7 @@ import PlayerSlider from "../shared/PlayerSlider";
 
 import { Mic2, PlaySquare, Repeat, Repeat1, Shuffle } from "lucide-react";
 import { TbRepeatOff } from "react-icons/tb";
-import NowPlaying from "./Detail";
-import { on } from "events";
-import { Button } from "../ui/button";
+import NowPlaying from "./NowPlaying";
 import LyricCard from "./Lyric";
 import useResize from "@/hooks/useResize";
 
