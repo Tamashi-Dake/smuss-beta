@@ -1,8 +1,8 @@
 ## Todo:
 
-- [ ] weird router bug async/await in client
-- [ ] sub page
-- [ ] context menu
+- [ ] View
+- [ ] History
+- [ ] Cron Job
 
 ## Getting Started
 

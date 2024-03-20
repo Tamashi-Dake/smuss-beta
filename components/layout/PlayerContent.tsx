@@ -9,7 +9,7 @@ import { useMediaQuery } from "usehooks-ts";
 
 import { Artist, Song } from "@/types";
 import usePlayer from "@/hooks/usePlayer";
-import useNowPlaying from "@/hooks/usePlaying";
+import { useLyrics, useNowPlaying } from "@/hooks/usePlaying";
 import { cn } from "@/libs/utils";
 
 import LikeButton from "../shared/LikeButton";
@@ -17,10 +17,11 @@ import Slider from "../shared/Slider";
 import PlayerSong from "./PlayerSong";
 import PlayerSlider from "../shared/PlayerSlider";
 
-import { PlaySquare, Repeat, Repeat1, Shuffle } from "lucide-react";
+import { Mic2, PlaySquare, Repeat, Repeat1, Shuffle } from "lucide-react";
 import { TbRepeatOff } from "react-icons/tb";
-import NowPlaying from "./Detail";
-import { on } from "events";
+import NowPlaying from "./NowPlaying";
+import LyricCard from "./Lyric";
+import useResize from "@/hooks/useResize";
 
 interface PlayerContentProps {
   song: Song;
@@ -43,10 +44,39 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   const [shuffleMode, setShuffleMode] = useState(false);
   const repeatModeRef = useRef("none");
   const soundRef = useRef<Howl | null>(null);
-  const { isShow, onShow, onHide } = useNowPlaying();
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const nowPlaying = useNowPlaying();
+  const lyrics = useLyrics();
+  const resize = useResize();
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
 
+  useEffect(() => {
+    if (isMobile) {
+      nowPlaying.onHide();
+      lyrics.onHide();
+    }
+    if (containerRef.current) {
+      if (nowPlaying.isShow && lyrics.isShow) {
+        containerRef.current.style.setProperty("left", `${resize.width}px`);
+        containerRef.current.style.setProperty(
+          "width",
+          `calc(100% - ${resize.width}px)`
+        );
+      } else if (nowPlaying.isShow) {
+        containerRef.current.style.width = "350px";
+        containerRef.current.style.setProperty("left", "auto");
+      } else if (lyrics.isShow) {
+        containerRef.current.style.setProperty("left", `${resize.width}px`);
+        containerRef.current.style.setProperty(
+          "width",
+          `calc(100% - ${resize.width}px)`
+        );
+      } else containerRef.current.style.width = "0";
+    }
+  }, [isMobile, lyrics, nowPlaying, resize.width]);
+  // containerRef.current.style.setProperty("left", `${resize.width}px`);
   const toggleRepeatMode = () => {
     // Chuyển đổi giá trị repeatModeRef
     switch (repeatModeRef.current) {
@@ -107,6 +137,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     if (player.ids.length === 0) {
       return;
     }
+    soundRef.current?.unload();
+
     const currentIndex = player.ids.findIndex((id) => id === player.activeId);
     let nextSong;
 
@@ -149,6 +181,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   const handleProgressChange = (newValue: number) => {
     setProgress(newValue);
     soundRef.current?.seek(newValue);
+    if (audioRef.current) audioRef.current.currentTime = newValue;
   };
 
   useEffect(() => {
@@ -156,7 +189,11 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       src: [songUrl],
       autoplay: true,
       volume: volume,
-      onplay: () => setIsPlaying(true),
+      onplay: () => {
+        setIsPlaying(true);
+        if (audioRef.current)
+          audioRef.current.currentTime = soundRef.current?.seek() || 0;
+      },
       onend: () => {
         repeatModeRef.current !== "repeat" && setIsPlaying(false);
         onPlayNext();
@@ -175,6 +212,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   useEffect(() => {
     setArtistRecord(artists);
   }, [artists]);
+
   useEffect(() => {
     const updateProgress = () => {
       const seek = soundRef.current?.seek() || 0;
@@ -192,6 +230,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       soundRef.current?.play();
     } else {
       soundRef.current?.pause();
+      setIsPlaying(false);
     }
   };
 
@@ -204,7 +243,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       soundRef.current?.volume(0);
     }
   };
-
   return (
     <div
       className={cn(
@@ -392,17 +430,34 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       <div
         className={cn(" w-full justify-end pr-2", isMobile ? "hidden" : "flex")}
       >
-        <div className="flex items-center gap-x-2 min-w-[180px]">
+        <div className="flex items-center gap-x-2 min-w-[200px]">
           <PlaySquare
-            onClick={isShow ? onHide : onShow}
+            onClick={nowPlaying.isShow ? nowPlaying.onHide : nowPlaying.onShow}
             size={36}
             className={
-              (isShow
+              (nowPlaying.isShow
                 ? "text-green-400 hover:text-green-300"
                 : "text-neutral-400 hover:text-white") +
               " cursor-pointer transition mx-4 "
             }
           />
+          <Mic2
+            onClick={lyrics.isShow ? lyrics.onHide : lyrics.onShow}
+            size={36}
+            className={
+              (lyrics.isShow
+                ? "text-green-400 hover:text-green-300"
+                : "text-neutral-400 hover:text-white") +
+              " cursor-pointer transition mx-4 "
+            }
+          />
+          {/* <Button
+            onClick={() => {
+              soundRef.current?.seek(17.259923);
+            }}
+          >
+            Seek
+          </Button> */}
           <VolumeIcon
             onClick={toggleMute}
             className="cursor-pointer"
@@ -411,8 +466,23 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
           <Slider value={volume} onChange={handleVolumeChange} />
         </div>
       </div>
-
-      {isShow && <NowPlaying song={song} artists={artistRecord} />}
+      <div
+        ref={containerRef}
+        className={cn(
+          "containter bg-neutral-500 hidden md:flex justify-end flex-row fixed top-0 right-0 h-[calc(100%-100px)] z-[1001] overflow-hidden"
+        )}
+      >
+        {lyrics.isShow && (
+          <LyricCard
+            song={song}
+            songUrl={songUrl}
+            songRef={soundRef}
+            isPlaying={isPlaying}
+            ref={audioRef}
+          />
+        )}
+        {nowPlaying.isShow && <NowPlaying song={song} artists={artistRecord} />}
+      </div>
     </div>
   );
 };

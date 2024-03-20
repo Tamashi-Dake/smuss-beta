@@ -13,5 +13,13 @@ const toggleNowPlaying = () => {
     onHide: () => set({ isShow: false }),
   }));
 };
+const toggleLyrics = () => {
+  return create<NowPlayingStore>((set) => ({
+    isShow: false,
+    onShow: () => set({ isShow: true }),
+    onHide: () => set({ isShow: false }),
+  }));
+};
 const useNowPlaying = toggleNowPlaying();
-export default useNowPlaying;
+const useLyrics = toggleLyrics();
+export { useNowPlaying, useLyrics };

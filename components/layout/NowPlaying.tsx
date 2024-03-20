@@ -1,8 +1,7 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Box from "../shared/Box";
-import { Artist, Record, Song } from "@/types";
+import { Artist, Song } from "@/types";
 import { useRouter } from "next/navigation";
 import useLoadImage from "@/hooks/useLoadImage";
 import Image from "next/image";
@@ -11,14 +10,8 @@ import {
   useSessionContext,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import {
-  MoreHorizontal,
-  PlusSquare,
-  Share2Icon,
-  UserPlus,
-  X,
-} from "lucide-react";
-import useNowPlaying from "@/hooks/usePlaying";
+import { MoreHorizontal, PlusSquare, Share2Icon, X } from "lucide-react";
+import { useNowPlaying } from "@/hooks/usePlaying";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -35,9 +28,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
-  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -46,15 +37,10 @@ import {
 
 interface NowPlayingProps {
   song: Song;
-  // songList: string[];
   artists: Artist[];
 }
 
-const NowPlaying: React.FC<NowPlayingProps> = ({
-  song,
-  // songList,
-  artists,
-}) => {
+const NowPlaying: React.FC<NowPlayingProps> = ({ song, artists }) => {
   const router = useRouter();
   const imagePath = useLoadImage(song);
   const [artistImage, setArtistImage] = useState<string[]>([]);
@@ -63,7 +49,6 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   const { user } = useUser();
   const authModal = useAuthModal();
   const { supabaseClient: sesionContext } = useSessionContext();
-  const [isLiked, setIsLiked] = useState<boolean>(false);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
 
@@ -158,19 +143,14 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
   return (
     <div
       className="
-      hidden
-      md:block
-      fixed 
-      top-0
-      right-0
       w-[350px]
       py-2 
-      h-[calc(100%-100px)]
       px-4
       bg-black 
         text-white
         z-[1001]
         overflow-y-auto
+        shrink-0
       "
     >
       <ContextMenu>
@@ -331,13 +311,6 @@ const NowPlaying: React.FC<NowPlayingProps> = ({
                 </React.Fragment>
               ))}
         </h3>
-      </Box>
-      {/* lyric box */}
-      <Box classname="mt-4 p-2">
-        <h3 className="text-lg font-bold">Lyrics</h3>
-        <p className="text-sm text-neutral-200 whitespace-pre-line">
-          {song.lyric || "No lyrics available"}
-        </p>
       </Box>
     </div>
   );
