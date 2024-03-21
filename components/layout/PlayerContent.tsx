@@ -53,10 +53,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
 
   useEffect(() => {
-    if (isMobile) {
-      nowPlaying.onHide();
-      lyrics.onHide();
-    }
     if (containerRef.current) {
       if (nowPlaying.isShow && lyrics.isShow) {
         containerRef.current.style.setProperty("left", `${resize.width}px`);
@@ -75,7 +71,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         );
       } else containerRef.current.style.width = "0";
     }
-  }, [isMobile, lyrics, nowPlaying, resize.width]);
+  }, [lyrics, nowPlaying, resize.width]);
   // containerRef.current.style.setProperty("left", `${resize.width}px`);
   const toggleRepeatMode = () => {
     // Chuyển đổi giá trị repeatModeRef
@@ -246,14 +242,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   return (
     <div
       className={cn(
-        "grid h-full",
+        "grid h-full w-full ",
         isMobile ? "grid-cols-[1fr,auto]" : "grid-cols-3"
       )}
     >
       <div
         className={cn(
-          "grid gap-x-1 mr-auto ",
-          isMobile ? "grid-cols-[1fr,auto]" : "grid-cols-2"
+          "grid gap-x-1 grid-cols-[1fr,auto] place-content-center mr-auto ",
+          isMobile ? "" : ""
         )}
       >
         <PlayerSong song={song} artists={artistRecord} />
@@ -264,13 +260,23 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
        */}
       <div
         className={cn(
-          " flex gap-x-4 w-full justify-end items-center",
+          " flex gap-x-2 w-full justify-end items-center",
           isMobile ? "" : "hidden"
         )}
       >
+        {/* <Mic2
+          onClick={lyrics.isShow ? lyrics.onHide : lyrics.onShow}
+          size={20}
+          className={
+            (lyrics.isShow
+              ? "text-green-400 hover:text-green-300"
+              : "text-neutral-400 hover:text-white") +
+            " cursor-pointer transition mx-4 "
+          }
+        /> */}
         <AiFillStepBackward
           onClick={onPlayPrevious}
-          size={30}
+          size={20}
           className="
               text-neutral-400 
               cursor-pointer 
@@ -281,8 +287,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         <div
           onClick={handlePlay}
           className="
-              h-10
-              w-10
+              h-8
+              w-8
               flex 
               items-center 
               justify-center 
@@ -292,11 +298,11 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
               cursor-pointer
             "
         >
-          <Icon size={30} className="text-black" />
+          <Icon size={20} className="text-black" />
         </div>
         <AiFillStepForward
           onClick={handlePlayNext}
-          size={30}
+          size={20}
           className="
               text-neutral-400 
               cursor-pointer 
@@ -405,12 +411,13 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
             onClick={() => setShuffleMode(!shuffleMode)}
           />
         </div>
+
         {/* current duration */}
         <div className="flex flex-row items-center gap-x-2 w-full justify-center">
           <div className="text-white w-10 flex-shrink-0">
             {new Date(progress * 1000).toISOString().substr(14, 5)}
           </div>
-          <div className="flex-shrink-0 w-full h-10">
+          <div className=" w-full h-10">
             <PlayerSlider
               duration={soundRef.current?.duration()}
               value={progress}
@@ -430,39 +437,26 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       <div
         className={cn(" w-full justify-end pr-2", isMobile ? "hidden" : "flex")}
       >
-        <div className="flex items-center gap-x-2 min-w-[200px]">
+        <div className="flex items-center gap-x-6">
           <PlaySquare
             onClick={nowPlaying.isShow ? nowPlaying.onHide : nowPlaying.onShow}
-            size={36}
             className={
               (nowPlaying.isShow
                 ? "text-green-400 hover:text-green-300"
                 : "text-neutral-400 hover:text-white") +
-              " cursor-pointer transition mx-4 "
+              " cursor-pointer transition size-12"
             }
           />
           <Mic2
             onClick={lyrics.isShow ? lyrics.onHide : lyrics.onShow}
-            size={36}
             className={
               (lyrics.isShow
                 ? "text-green-400 hover:text-green-300"
                 : "text-neutral-400 hover:text-white") +
-              " cursor-pointer transition mx-4 "
+              " cursor-pointer transition size-12"
             }
           />
-          {/* <Button
-            onClick={() => {
-              soundRef.current?.seek(17.259923);
-            }}
-          >
-            Seek
-          </Button> */}
-          <VolumeIcon
-            onClick={toggleMute}
-            className="cursor-pointer"
-            size={34}
-          />
+          <VolumeIcon onClick={toggleMute} className="cursor-pointer size-12" />
           <Slider value={volume} onChange={handleVolumeChange} />
         </div>
       </div>

@@ -187,7 +187,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
     <div
       className={twMerge(
         "sidebar flex h-full bg-black",
-        player.activeId && "h-[calc(100%-100px)]"
+        player.activeId && "md:h-[calc(100%-100px)] h-[calc(100%-80px)]"
       )}
     >
       <aside
@@ -244,7 +244,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
           "absolute top-0 left-60 flex-1 flex flex-col bg-black ",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "left-0 w-full",
-          player.activeId ? "h-[calc(100%-100px)]" : "h-full"
+          player.activeId
+            ? "md:h-[calc(100%-100px)] h-[calc(100%-80px)]"
+            : "h-full"
         )}
       >
         {isCollapsed && (

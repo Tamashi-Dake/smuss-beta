@@ -1,8 +1,10 @@
 "use client";
+import { useLyrics } from "@/hooks/usePlaying";
 import { useWindowScrollPositions } from "@/hooks/useScroll";
 import { cn } from "@/libs/utils";
 import { Song } from "@/types";
 import { Lrc, Runner } from "lrc-kit";
+import { X } from "lucide-react";
 import { forwardRef, useEffect, useRef, useState } from "react";
 interface LyricCardProps {
   song: Song;
@@ -17,6 +19,7 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
     const [lrc, setLrc] = useState<Lrc | null>(null);
     const [runner, setRunner] = useState<Runner | null>(null);
     const [currentTime, setCurrentTime] = useState(0);
+    const { onHide } = useLyrics();
     const fallbackRef = useRef<HTMLAudioElement>(null);
     const ref: any = audioRef || fallbackRef;
     useEffect(() => {
@@ -101,9 +104,15 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
 
         <div
           className={cn(
-            "bg-neutral-500 flex flex-col items-center m-auto overflow-y-auto h-full py-10 px-5 w-full"
+            "bg-neutral-500 flex flex-col items-center m-auto overflow-y-auto h-full p-5 md:py-10 w-full relative"
           )}
         >
+          <button
+            onClick={onHide}
+            className="text-white hover:bg-gray-300 absolute top-3 left-3 rounded-full transition-all duration-300 p-2 "
+          >
+            <X size={24} />
+          </button>
           <ul>
             {lrc ? (
               lrc.lyrics.map((lyric, index) => (

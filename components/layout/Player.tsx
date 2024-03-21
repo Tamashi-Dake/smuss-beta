@@ -24,10 +24,13 @@ const Player = () => {
         bg-black 
         w-full 
         py-2 
-        min-h-[100px] 
+        min-h-[80px]
+        md:min-h-[100px] 
         px-4
         text-white
         z-[1001]
+        flex items-center
+
       "
     >
       <PlayerContent song={song} songUrl={songUrl} artists={artist} />

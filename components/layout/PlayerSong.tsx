@@ -38,14 +38,15 @@ select-none
     >
       <div
         className="
-        min-h-[64px] min-w-[64px]
+        min-h-10 min-w-10
+        md:min-h-16 md:min-w-16
     rounded-md 
     overflow-hidden
   "
       >
         <Image
           draggable={false}
-          className="object-cover size-16 rounded-md overflow-hidden"
+          className="object-cover size-10 md:size-16 rounded-md overflow-hidden"
           src={imagePath || "/liked.png"}
           width={200}
           height={200}
@@ -53,16 +54,17 @@ select-none
         />
       </div>
       <div
-        className="flex flex-col items-start w-full pt-4 gap-y-1 
+        className="flex flex-col items-start w-full  gap-y-1 
          md:max-w-40 lg:max-w-52 truncate
 "
       >
-        <p className="font-semibold truncate w-full">{song.title}</p>
+        <p className="text-sm md:text-base font-semibold truncate w-full">
+          {song.title}
+        </p>
         <p
           className="
       text-neutral-400 
-      text-sm 
-      pb-4 
+      text-xs md:text-sm 
       w-full 
       truncate
     "
