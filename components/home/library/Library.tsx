@@ -62,6 +62,12 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
       player.setId(songIDs[0].song_id);
     }
   };
+  const handleLibrary = () => {
+    if (!user) {
+      return authModal.onOpen();
+    }
+    router.push("/library");
+  };
   const handleAddPlaylist = () => {
     if (!user) {
       return authModal.onOpen();
@@ -75,13 +81,13 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-between px-5 pt-4">
-        <Link
-          href="/library"
+        <div
+          onClick={handleLibrary}
           className="inline-flex items-center gap-x-4 px-2 text-neutral-400 cursor-pointer hover:text-white transition-all"
         >
           <TbPlaylist size={20} />
           <h3 className="text-md font-semibold">Your Library</h3>
-        </Link>
+        </div>
         <AiOutlinePlus
           className="cursor-pointer text-neutral-400 hover:text-white transition-all"
           size={20}

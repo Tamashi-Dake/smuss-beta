@@ -20,6 +20,7 @@ const PlaylistContent: React.FC<PlaylistContentProps> = ({ songs }) => {
 
   useEffect(() => {
     if (!isLoading && !user) {
+      // TODO: Remove this to fix when user is not logged in
       router.replace("/");
     }
   }, [isLoading, user, router]);

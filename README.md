@@ -1,8 +1,6 @@
 ## Todo:
 
-- [ ] View
-- [ ] History
-- [ ] Cron Job
+- [ ] History (add to history table, if exist, update the time)
 
 ## Getting Started
 

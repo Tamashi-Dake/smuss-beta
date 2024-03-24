@@ -121,6 +121,11 @@ export const columnType: ColumnDef<Song>[] = [
     header: "Lyrics",
   },
   {
+    accessorKey: "view",
+    id: "Views",
+    header: "Views",
+  },
+  {
     accessorKey: "created_at",
     header: ({ column }) => {
       return (

@@ -9,6 +9,7 @@ export interface Song {
   user_id: string;
   time: string;
   lyric: string;
+  view: number;
 }
 
 export interface Playlist {

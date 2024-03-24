@@ -22,6 +22,8 @@ import { TbRepeatOff } from "react-icons/tb";
 import NowPlaying from "./NowPlaying";
 import LyricCard from "./Lyric";
 import useResize from "@/hooks/useResize";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useUser } from "@/hooks/useUser";
 
 interface PlayerContentProps {
   song: Song;
@@ -34,24 +36,34 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   songUrl,
   artists,
 }) => {
-  const [artistRecord, setArtistRecord] = useState<Artist[]>([]);
-  const player = usePlayer();
+  const { supabaseClient } = useSessionContext();
+
+  const { user } = useUser();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const player = usePlayer();
+  const nowPlaying = useNowPlaying();
+  const lyrics = useLyrics();
+  const resize = useResize();
+
+  const [artistRecord, setArtistRecord] = useState<Artist[]>([]);
   const [volume, setVolume] = useState(0.5);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [repeatMode, setRepeatMode] = useState("none");
   const [shuffleMode, setShuffleMode] = useState(false);
+  const [viewTime, setViewTime] = useState(0);
+  const [isWatched, setIsWatched] = useState(false);
+
+  const updateProgressRef = useRef<number | null>(null);
   const repeatModeRef = useRef("none");
   const soundRef = useRef<Howl | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const nowPlaying = useNowPlaying();
-  const lyrics = useLyrics();
-  const resize = useResize();
+
   const Icon = isPlaying ? BsPauseFill : BsPlayFill;
   const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
 
+  // update container width when resize
   useEffect(() => {
     if (containerRef.current) {
       if (nowPlaying.isShow && lyrics.isShow) {
@@ -72,7 +84,116 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       } else containerRef.current.style.width = "0";
     }
   }, [lyrics, nowPlaying, resize.width]);
-  // containerRef.current.style.setProperty("left", `${resize.width}px`);
+
+  useEffect(() => {
+    setViewTime(0);
+    const fetchView = async () => {
+      const { data, error } = await supabaseClient
+        .from("views")
+        .select("*")
+        .eq("song_id", song.id)
+        .eq("user_id", user?.id)
+        .single();
+      if (error) {
+        setIsWatched(false);
+      } else if (data) {
+        setIsWatched(true);
+      }
+    };
+    fetchView();
+    soundRef.current = new Howl({
+      src: [songUrl],
+      autoplay: true,
+      volume: volume,
+      onplay: () => {
+        setIsPlaying(true);
+        if (audioRef.current)
+          audioRef.current.currentTime = soundRef.current?.seek() || 0;
+      },
+      onend: () => {
+        repeatModeRef.current !== "repeat" && setIsPlaying(false);
+        onPlayNext();
+      },
+      onpause: () => setIsPlaying(false),
+      format: ["mp3"],
+    });
+
+    return () => {
+      if (soundRef.current && repeatModeRef.current !== "repeat") {
+        soundRef.current.unload();
+      }
+    };
+  }, [songUrl]);
+
+  useEffect(() => {
+    setArtistRecord(artists);
+  }, [artists]);
+
+  // useEffect(() => {
+  //   const updateProgress = () => {
+  //     const seek = soundRef.current?.seek() || 0;
+  //     setProgress(seek);
+  //     // requestAnimationFrame(updateProgress);
+  //     setTimeout(
+  //       () => {
+  //         setViewTime((prev) => prev + 1);
+  //         updateProgress();
+  //       },
+  //       1000
+  //     );
+  //   };
+
+  //   if (isPlaying) {
+  //     requestAnimationFrame(updateProgress);
+  //   }
+  // }, [isPlaying]);
+
+  useEffect(() => {
+    // console.log("isPlaying", isPlaying);
+    const updateProgress = () => {
+      const seek = soundRef.current?.seek() || 0;
+      setProgress(seek);
+      updateProgressRef.current = requestAnimationFrame(updateProgress);
+    };
+
+    if (isPlaying) {
+      updateProgressRef.current = requestAnimationFrame(updateProgress);
+    }
+
+    return () => {
+      if (updateProgressRef.current)
+        cancelAnimationFrame(updateProgressRef.current);
+    };
+  }, [isPlaying]);
+
+  useEffect(() => {
+    let interval: string | number | NodeJS.Timeout | undefined;
+    if (!isWatched && isPlaying && viewTime < 31) {
+      interval = setInterval(() => {
+        setViewTime(viewTime + 1);
+      }, 1000);
+    }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isPlaying, viewTime]);
+
+  useEffect(() => {
+    if (viewTime === 30 && !isWatched) {
+      const insertView = async () => {
+        const { data, error } = await supabaseClient
+          .from("views")
+          .insert([{ song_id: song.id, user_id: user?.id }]);
+        if (error) {
+          console.log("error", error);
+        } else {
+          setIsWatched(true);
+        }
+      };
+      insertView();
+    }
+  }, [isWatched, song.id, supabaseClient, user?.id, viewTime]);
+
   const toggleRepeatMode = () => {
     // Chuyển đổi giá trị repeatModeRef
     switch (repeatModeRef.current) {
@@ -179,47 +300,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     soundRef.current?.seek(newValue);
     if (audioRef.current) audioRef.current.currentTime = newValue;
   };
-
-  useEffect(() => {
-    soundRef.current = new Howl({
-      src: [songUrl],
-      autoplay: true,
-      volume: volume,
-      onplay: () => {
-        setIsPlaying(true);
-        if (audioRef.current)
-          audioRef.current.currentTime = soundRef.current?.seek() || 0;
-      },
-      onend: () => {
-        repeatModeRef.current !== "repeat" && setIsPlaying(false);
-        onPlayNext();
-      },
-      onpause: () => setIsPlaying(false),
-      format: ["mp3"],
-    });
-
-    return () => {
-      if (soundRef.current && repeatModeRef.current !== "repeat") {
-        soundRef.current.unload();
-      }
-    };
-  }, [songUrl]);
-
-  useEffect(() => {
-    setArtistRecord(artists);
-  }, [artists]);
-
-  useEffect(() => {
-    const updateProgress = () => {
-      const seek = soundRef.current?.seek() || 0;
-      setProgress(seek);
-      requestAnimationFrame(updateProgress);
-    };
-
-    if (isPlaying) {
-      requestAnimationFrame(updateProgress);
-    }
-  }, [isPlaying]);
 
   const handlePlay = () => {
     if (!isPlaying) {
