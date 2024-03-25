@@ -1,9 +1,5 @@
 ## Todo:
 
-- [ ] Auto scroll when lyric is playing
-- [ ] Update the lyrics playing
-- [ ] Show lyrics in mobile view
-
 - [ ] Add advertisement in layout
 - [ ] Add advertisement in player
 

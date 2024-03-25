@@ -3,7 +3,7 @@ import Lottie from "lottie-react";
 import loadingAnimation from "@/public/loading.json";
 const Loading: React.FC = () => {
   return (
-    <div className="text-center">
+    <div className="text-center w-full">
       <Lottie
         animationData={loadingAnimation}
         loop={true}

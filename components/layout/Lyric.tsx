@@ -48,21 +48,30 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
       }
     }, [audioRef, isPlaying, songRef]);
 
-    // useEffect(() => {
-    //   if (runner) {
-    //     const index = runner.curIndex();
-    //     const lyric = lrc?.lyrics[index];
-    //     if (lyric) {
-    //       const element = document.querySelector(`li:nth-child(${index + 1})`);
-    //       if (element) {
-    //         element.scrollIntoView({
-    //           behavior: "smooth",
-    //           block: "center",
-    //         });
-    //       }
-    //     }
-    //   }
-    // }, [lrc?.lyrics, runner]);
+    useEffect(() => {
+      if (runner) {
+        const index = runner.curIndex();
+        const lyric = lrc?.lyrics[index];
+        if (lyric) {
+          const element = document.querySelector(`li:nth-child(${index + 1})`);
+          if (element) {
+            if (index < 5 || index >= lrc?.lyrics.length - 5) {
+              // TODO: not working
+              element.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            } else {
+              element.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+            }
+          }
+        }
+      }
+      // console.log("lyric", runner?.curIndex());
+    }, [lrc?.lyrics, runner?.curIndex()]);
     // audioRef.current.currentTime = songRef.current.seek();
     // runner?.timeUpdate(songRef.current.seek());
     const handleTimeUpdate = () => {
@@ -83,13 +92,6 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
         }
       }
     };
-    // const handleLyricClick = (index) => {
-    //   const lyric = lrc.lyrics[index];
-    //   if (lyric) {
-    //     audioRef.current.currentTime = lyric.timestamp;
-    //     audioRef.current.play();
-    //   }
-    // };
     return (
       <>
         <audio
@@ -122,6 +124,8 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
                     "font-bold text-2xl py-2 w-11/12 text-left cursor-pointer hover:text-green-200",
                     runner && runner.curIndex() === index
                       ? "active text-green-400"
+                      : runner && runner?.curIndex() > index
+                      ? "text-neutral-400"
                       : ""
                   )}
                   onClick={() => handleLyricClick(index)}
