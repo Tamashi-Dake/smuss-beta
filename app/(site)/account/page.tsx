@@ -7,6 +7,7 @@ import { useUser } from "@/hooks/useUser";
 import { useSubscribeModal } from "@/hooks/useModal";
 import { postData } from "@/libs/helpers";
 import HeaderButton from "@/components/layout/HeaderButton";
+import toast from "react-hot-toast";
 
 const AccountContent = () => {
   const router = useRouter();
@@ -18,6 +19,7 @@ const AccountContent = () => {
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace("/");
+      toast.error("You need to login first.");
     }
   }, [isLoading, user, router]);
 

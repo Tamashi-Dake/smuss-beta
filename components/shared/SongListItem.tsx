@@ -144,7 +144,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
         className="
         flex 
         items-center 
-        gap-x-3 
+        gap-x-2 
         cursor-pointer 
         hover:bg-neutral-600/50 
         w-full 
@@ -152,7 +152,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
         rounded-md
       "
       >
-        <div className="flex w-full gap-4 overflow-hidden">
+        <div className="grid grid-cols-[auto,1fr,1fr] sm:grid-cols-[auto,1fr,1fr,1fr] md:grid-cols-[auto,1fr,1fr,1fr,1fr] w-full gap-2 overflow-hidden">
           <div
             className="
           relative 
@@ -185,7 +185,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
               <FaPlay className=" text-white text-2xl opacity-0 group-hover:opacity-100" />
             </div>
           </div>
-          <div className="flex flex-col gap-y-1 overflow-hidden w-28 sm:min-w-52  lg:w-80">
+          <div className="flex flex-col gap-y-1 overflow-hidden">
             <p className="text-white truncate">{songData.title}</p>
             <p className="text-neutral-400 text-sm truncate">
               {artists.length === 0
@@ -205,6 +205,9 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
           </div>
           <div className="hidden sm:flex flex-col gap-y-1 m-auto">
             <p className="text-white truncate">{songData.time}</p>
+          </div>
+          <div className="hidden md:flex flex-col gap-y-1 m-auto">
+            <p className="text-white truncate">{songData.view}</p>
           </div>
           <div className="flex gap-x-4 ml-auto px-2 h-full">
             <LikeButton songId={songData.id} refresh={true} />

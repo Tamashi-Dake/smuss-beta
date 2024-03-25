@@ -86,7 +86,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   }, [lyrics, nowPlaying, resize.width]);
 
   useEffect(() => {
-    setViewTime(0);
     const fetchView = async () => {
       const { data, error } = await supabaseClient
         .from("views")
@@ -100,7 +99,21 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         setIsWatched(true);
       }
     };
+
+    // console.log("id changed", song.id);
+    // TODO: refactor checkinga in storage (modals) to UPSERT
+    const upsertHistory = async () => {
+      const { data, error } = await supabaseClient
+        .from("history")
+        .upsert({ song_id: song.id, user_id: user?.id });
+      if (error) {
+        console.log("error", error);
+      }
+    };
+
+    setViewTime(0);
     fetchView();
+    upsertHistory();
     soundRef.current = new Howl({
       src: [songUrl],
       autoplay: true,
@@ -128,25 +141,6 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   useEffect(() => {
     setArtistRecord(artists);
   }, [artists]);
-
-  // useEffect(() => {
-  //   const updateProgress = () => {
-  //     const seek = soundRef.current?.seek() || 0;
-  //     setProgress(seek);
-  //     // requestAnimationFrame(updateProgress);
-  //     setTimeout(
-  //       () => {
-  //         setViewTime((prev) => prev + 1);
-  //         updateProgress();
-  //       },
-  //       1000
-  //     );
-  //   };
-
-  //   if (isPlaying) {
-  //     requestAnimationFrame(updateProgress);
-  //   }
-  // }, [isPlaying]);
 
   useEffect(() => {
     // console.log("isPlaying", isPlaying);

@@ -1,6 +1,14 @@
 ## Todo:
 
-- [ ] History (add to history table, if exist, update the time)
+- [ ] Auto scroll when lyric is playing
+- [ ] Update the lyrics playing
+- [ ] Show lyrics in mobile view
+
+- [ ] Add advertisement in layout
+- [ ] Add advertisement in player
+
+- [ ] fix layout on fisrt load
+- [ ] fix redirect to home page
 
 ## Getting Started
 

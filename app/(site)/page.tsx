@@ -9,17 +9,18 @@ import NewHits from "@/components/home/NewHits";
 import getAlbums from "@/acitons/getAlbum";
 import getTopArtists from "@/acitons/getTopArtist";
 import ArtistsWrapper from "@/components/home/ArtistWapper";
+import getHistory from "@/acitons/getHistory";
 
 // export const revalidate = 0;
 
 export default async function Home() {
   // TODO: get all user playlists (for now, will change to get artists playlists later)
   const newHits = await getNewHits();
-  const randomSongs = await getRandomSongs();
+  const recentlyPlayed = await getHistory();
   const playlists = await getRandomPublicPlaylists();
   const topArtists = await getTopArtists();
-  const randomSongs1 = await getRandomSongs();
   const album = await getAlbums();
+  const randomSongs = await getRandomSongs();
   const relatedSong = await getSongInPlaylist();
 
   // console.log(album);
@@ -34,8 +35,10 @@ export default async function Home() {
           <NewHits songs={newHits} />
         </SectionList>
         <SectionList>
-          <h1 className="text-2xl font-bold ">Recently Played</h1>
-          <SongsWrapper songs={randomSongs1} />
+          {recentlyPlayed.length > 0 && (
+            <h1 className="text-2xl font-bold ">Recently Played</h1>
+          )}
+          <SongsWrapper songs={recentlyPlayed} />
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">New Albums</h1>
