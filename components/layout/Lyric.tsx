@@ -27,6 +27,8 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
       const lrcRunner = new Runner(parsedLrc);
       setLrc(parsedLrc);
       setRunner(lrcRunner);
+      // TODO: add scroll to top when change song
+      // window.scrollTo({ top: 0, behavior: "smooth" });
     }, [songUrl, song.lyric]);
 
     useEffect(() => {
@@ -105,23 +107,21 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
         />
 
         <div
-          className={cn(
-            "bg-neutral-500 flex flex-col items-center m-auto overflow-y-auto h-full p-5 md:py-10 w-full relative"
-          )}
+          className={cn("bg-neutral-500 m-auto overflow-y-auto h-full  w-full")}
         >
           <button
             onClick={onHide}
-            className="text-white hover:bg-gray-300 absolute top-3 left-3 rounded-full transition-all duration-300 p-2 "
+            className="text-white hover:bg-gray-300 sticky top-3 left-3 rounded-full transition-all duration-300 p-2 "
           >
             <X size={24} />
           </button>
-          <ul>
-            {lrc ? (
+          <ul className="p-5">
+            {lrc && lrc.lyrics.length > 0 ? (
               lrc.lyrics.map((lyric, index) => (
                 <li
                   key={index}
                   className={cn(
-                    "font-bold text-2xl py-2 w-11/12 text-left cursor-pointer hover:text-green-200",
+                    "font-bold text-2xl py-2 px-8 text-left cursor-pointer hover:text-green-200",
                     runner && runner.curIndex() === index
                       ? "active text-green-400"
                       : runner && runner?.curIndex() > index
@@ -134,7 +134,7 @@ const LyricCard = forwardRef<HTMLAudioElement, LyricCardProps>(
                 </li>
               ))
             ) : (
-              <li className="font-bold text-5xl py-2 w-11/12 text-center hover:text-neutral-200">
+              <li className="font-bold text-5xl w-3/6 hover:text-neutral-200 leading-relaxed transform translate-x-1/2 translate-y-1/2">
                 Look like we don&apos;t have lyric for this song
               </li>
             )}

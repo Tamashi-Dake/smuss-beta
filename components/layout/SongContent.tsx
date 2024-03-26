@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Lrc, Runner } from "lrc-kit";
 
 import { Song } from "@/types";
 import { useUser } from "@/hooks/useUser";
@@ -21,15 +22,20 @@ interface SongContentProps {
 const SongContent: React.FC<SongContentProps> = ({ song, songList }) => {
   const router = useRouter();
   const { isLoading, user } = useUser();
+  const [lrc, setLrc] = useState<Lrc | null>(null);
   const { artist: artists } = useGetArtistBySongId(song.id);
   //   const onPlay = useOnPlay(songList);
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace("/");
-    }
-  }, [isLoading, user, router]);
+  // useEffect(() => {
+  //   if (!isLoading && !user) {
+  //     router.replace("/");
+  //   }
+  // }, [isLoading, user, router]);
 
+  useEffect(() => {
+    const parsedLrc = Lrc.parse(song.lyric);
+    setLrc(parsedLrc);
+  }, [song.lyric]);
   return (
     <div className="flex flex-col gap-y-2 w-full max-w-screen-xl  bg-neutral-900">
       <SectionList>
@@ -38,9 +44,24 @@ const SongContent: React.FC<SongContentProps> = ({ song, songList }) => {
             <PenSquare size={20} />
             <h1 className="text-2xl font-bold">Lyrics</h1>
           </div>
-          <p className="text-sm text-neutral-200 whitespace-pre-line">
-            {song.lyric || "No lyrics available"}
-          </p>
+          <ul>
+            {lrc && lrc.lyrics.length > 0 ? (
+              lrc.lyrics.map((lyric, index) => (
+                <li
+                  key={index}
+                  className={
+                    "font-bold text-xl py-2 hover:text-green-200 text-neutral-200"
+                  }
+                >
+                  {lyric.content}
+                </li>
+              ))
+            ) : (
+              <li className="font-bold text-2xl hover:text-neutral-200 text-neutral-200">
+                No lyrics available
+              </li>
+            )}
+          </ul>
         </Box>
       </SectionList>
 

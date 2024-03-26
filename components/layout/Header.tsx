@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
   const authModal = useAuthModal();
   const supabaseClient = useSupabaseClient();
 
-  const { user } = useUser();
+  const { user, subscription } = useUser();
 
   const handleLogout = async () => {
     const { error } = await supabaseClient.auth.signOut();
@@ -122,7 +122,11 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/account")}>
                   <Stars size={20} className="mr-2" />
-                  <p>Upgrade to Premium</p>
+                  {subscription ? (
+                    <p>Your Account</p>
+                  ) : (
+                    <p>Upgrade to Premium</p>
+                  )}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
