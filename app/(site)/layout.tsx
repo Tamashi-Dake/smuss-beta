@@ -45,9 +45,23 @@ export default async function RootLayout({
         </Script>
         <Script
           async
+          strategy="lazyOnload"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8454362361421232"
           crossOrigin="anonymous"
         ></Script>
+        {/* Hydration Error? 
+        Hydration failed because the initial UI does not match what was rendered on the server */}
+        {/* <ins
+          className="adsbygoogle"
+          style={{ display: "block" }}
+          data-ad-format="fluid"
+          data-ad-layout-key="+1i+s2-10-1k+6v"
+          data-ad-client="ca-pub-8454362361421232"
+          data-ad-slot="9703072887"
+        ></ins> */}
+        {/* <Script id="adsbygoogle">
+          {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+        </Script> */}
       </head>
       <body className={font.className}>
         <ToastProvider />

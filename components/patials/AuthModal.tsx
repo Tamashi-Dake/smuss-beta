@@ -7,13 +7,14 @@ import {
   useSessionContext,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAuthModal } from "@/hooks/useModal";
 
 import Modal from "../Modal";
 
 const AuthModal = () => {
+  // const pathname = usePathname();
   const { session } = useSessionContext();
   const router = useRouter();
   const { onClose, isOpen } = useAuthModal();
@@ -23,7 +24,7 @@ const AuthModal = () => {
   useEffect(() => {
     if (session) {
       onClose();
-      router.push("/");
+      // router.push("/");
       router.refresh();
     }
   }, [session, router, onClose]);

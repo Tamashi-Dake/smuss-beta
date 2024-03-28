@@ -24,6 +24,7 @@ import { cn } from "@/libs/utils";
 import { MenuIcon, X } from "lucide-react";
 import Image from "next/image";
 import useResize from "@/hooks/useResize";
+import Footer from "./Footer";
 
 interface SidebarProps {
   children: React.ReactNode;
@@ -252,15 +253,16 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
         {isCollapsed && (
           <div
             onClick={resetWidth}
-            className="h-6 w-6 flex justify-center items-center md:hidden z-[1002] text-muted-foreground rounded-full active:bg-white absolute top-3 left-2 opacity-75 hover:opacity-100 transition-all"
+            className="m-2 h-8 w-8 flex justify-center items-center md:hidden z-[1002] text-muted-foreground rounded-full active:bg-white absolute top-3 left-2 opacity-75 hover:opacity-100 transition-all"
           >
             <MenuIcon
               role="button"
-              className="h-5 w-5 text-white active:text-green-400"
+              className="h-6 w-6 text-white active:text-green-400"
             />
           </div>
         )}
         {children}
+        <Footer />
       </main>
     </div>
   );

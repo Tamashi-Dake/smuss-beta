@@ -1,10 +1,10 @@
 ## Todo:
 
-- [ ] Add advertisement in layout
-- [ ] Add advertisement in player
+- [ ] Footer
+- [ ] Add default page for 404, route pages
 
+- [ ] fix authentification (anonymous user still can play music on playlist/song page)
 - [ ] fix layout on fisrt load
-- [ ] fix redirect to home page
 
 ## Getting Started
 
