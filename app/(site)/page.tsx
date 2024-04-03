@@ -10,6 +10,7 @@ import getAlbums from "@/acitons/getAlbum";
 import getTopArtists from "@/acitons/getTopArtist";
 import ArtistsWrapper from "@/components/home/ArtistWapper";
 import getHistory from "@/acitons/getHistory";
+import Footer from "@/components/layout/Footer";
 
 // export const revalidate = 0;
 
@@ -59,6 +60,7 @@ export default async function Home() {
           <PlaylistWrapper data={playlists} related={relatedSong} />
         </SectionList>
       </div>
+      <Footer />
     </>
   );
 }

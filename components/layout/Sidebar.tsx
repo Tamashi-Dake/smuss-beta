@@ -262,7 +262,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children, playlists }) => {
           </div>
         )}
         {children}
-        <Footer />
       </main>
     </div>
   );
