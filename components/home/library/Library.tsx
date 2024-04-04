@@ -26,6 +26,8 @@ const Library: React.FC<LibraryProps> = ({ playlists }) => {
   const router = useRouter();
 
   const { subscription, user } = useUser();
+  // console.log("subscription", subscription);
+  // console.log("user", user?.id);
   const player = usePlayer();
   const authModal = useAuthModal();
   const subscribeModal = useSubscribeModal();

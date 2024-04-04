@@ -14,6 +14,7 @@ import UpdateArtistModal from "@/components/patials/UpdateArtistModal";
 import UpdateCategoryModal from "@/components/patials/UpdateCategoryModal";
 import UpdatePlaylistModal from "@/components/patials/UpdatePlaylistModal";
 import SubscribeModal from "@/components/patials/SubscribeModal";
+import AdModal from "@/components/patials/AdModal";
 
 interface ModalProviderProps {
   products: ProductWithPrice[];
@@ -43,6 +44,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ products }) => {
       <UpdatePlaylistModal />
       <UpdateSongModal />
       <DeleteModal />
+      <AdModal products={products} />
     </>
   );
 };

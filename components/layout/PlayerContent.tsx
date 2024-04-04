@@ -24,6 +24,7 @@ import LyricCard from "./Lyric";
 import useResize from "@/hooks/useResize";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
+import { useAdModal } from "@/hooks/useModal";
 
 interface PlayerContentProps {
   song: Song;
@@ -38,12 +39,13 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
 }) => {
   const { supabaseClient } = useSessionContext();
 
-  const { user } = useUser();
+  const { subscription, user } = useUser();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const player = usePlayer();
   const nowPlaying = useNowPlaying();
   const lyrics = useLyrics();
   const resize = useResize();
+  const adModal = useAdModal();
 
   const [artistRecord, setArtistRecord] = useState<Artist[]>([]);
   const [volume, setVolume] = useState(0.5);
@@ -53,6 +55,7 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
   const [shuffleMode, setShuffleMode] = useState(false);
   const [viewTime, setViewTime] = useState(0);
   const [isWatched, setIsWatched] = useState(false);
+  const [adCount, setAdCount] = useState(0);
 
   const updateProgressRef = useRef<number | null>(null);
   const repeatModeRef = useRef("none");
@@ -241,8 +244,13 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     } else {
       player.setId(nextSong);
     }
+    setAdCount(adCount + 1);
+    if (subscription?.status !== "active" && adCount > 2) {
+      adModal.onOpen();
+      setAdCount(0);
+    }
   };
-
+  // console.log("adCount", adCount);
   // Next song (click next button)
   const handlePlayNext = () => {
     if (player.ids.length === 0) {

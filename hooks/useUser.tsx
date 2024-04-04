@@ -36,13 +36,18 @@ export const MyUserContextProvider = (props: Props) => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
 
-  const getUserDetails = () => supabase.from("users").select("*").single();
-  const getSubscription = () =>
-    supabase
+  const getUserDetails = () =>
+    supabase.from("users").select("*").eq("id", user?.id).single();
+  const getSubscription = async () =>
+    await supabase
       .from("subscriptions")
       .select("*, prices(*, products(*))")
       .in("status", ["trialing", "active"])
+      .eq("user_id", user?.id)
       .single();
+
+  // if (user?.id === subscription?.user_id)
+  //   console.log("user id trung", user?.id);
 
   useEffect(() => {
     if (user && !isLoadingData && !userDetails && !subscription) {

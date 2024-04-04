@@ -54,6 +54,7 @@ const useAddArtistModal = toggleModalHook();
 const useAddCategoryModal = toggleModalHook();
 const useAddSongModal = toggleModalHook();
 const useSubscribeModal = toggleModalHook();
+const useAdModal = toggleModalHook();
 
 const useUpdateArtistModal = toggleUpdateModalHook();
 const useUpdateCategoryModal = toggleUpdateModalHook();
@@ -74,4 +75,5 @@ export {
   useUpdateSongModal,
   useDeleteModal,
   useSubscribeModal,
+  useAdModal,
 };

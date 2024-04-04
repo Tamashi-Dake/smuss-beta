@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useUser } from "@/hooks/useUser";
-import { useSubscribeModal } from "@/hooks/useModal";
+import { useAdModal } from "@/hooks/useModal";
 import { postData } from "@/libs/helpers";
 import HeaderButton from "@/components/layout/HeaderButton";
 import toast from "react-hot-toast";
 
 const AccountContent = () => {
   const router = useRouter();
-  const subscribeModal = useSubscribeModal();
+  const adModal = useAdModal();
   const { isLoading, subscription, user } = useUser();
 
   const [loading, setLoading] = useState(false);
@@ -41,8 +41,8 @@ const AccountContent = () => {
       {!subscription && (
         <div className="flex flex-col gap-y-4">
           <p>No active plan.</p>
-          <HeaderButton onClick={subscribeModal.onOpen} className="w-[300px]">
-            Subscribe
+          <HeaderButton onClick={adModal.onOpen} className="w-[300px]">
+            Subscribe now
           </HeaderButton>
         </div>
       )}
