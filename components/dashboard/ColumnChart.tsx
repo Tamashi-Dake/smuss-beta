@@ -1,7 +1,8 @@
 "use client";
 // import { ApexOptions } from "apexcharts";
 import { useState } from "react";
-import ReactApexChart from "react-apexcharts";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 // remove type ApexOptions cus it take >500KB
 const options: any = {
@@ -46,7 +47,7 @@ const options: any = {
   },
 
   xaxis: {
-    categories: ["M", "T", "W", "T", "F", "S", "S"],
+    categories: ["Free", "Premium"],
   },
   legend: {
     position: "top",
@@ -71,16 +72,24 @@ interface ColumnChartState {
   }[];
 }
 
-const ColumnChart: React.FC = () => {
+interface ColumnChartProps {
+  freeUsers: number;
+  premiumUsers: number;
+}
+
+const ColumnChart: React.FC<ColumnChartProps> = ({
+  freeUsers,
+  premiumUsers,
+}) => {
   const [state, setState] = useState<ColumnChartState>({
     series: [
       {
-        name: "Free",
-        data: [44, 55, 41, 67, 22, 43, 65],
+        name: "Premium",
+        data: [0, premiumUsers],
       },
       {
-        name: "Premium",
-        data: [13, 23, 20, 8, 13, 27, 15],
+        name: "Free",
+        data: [freeUsers, 0],
       },
     ],
   });
@@ -97,14 +106,14 @@ const ColumnChart: React.FC = () => {
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            New Users this week
+            User Overview
           </h4>
         </div>
       </div>
 
       <div>
         <div id="chartTwo" className="-mb-9 -ml-5">
-          <ReactApexChart
+          <Chart
             options={options}
             series={state.series}
             type="bar"

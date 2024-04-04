@@ -1,7 +1,8 @@
 "use client";
 // import { ApexOptions } from "apexcharts";
 import { useState } from "react";
-import ReactApexChart from "react-apexcharts";
+import dynamic from "next/dynamic";
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 // remove type ApexOptions cus it take >500KB
 const options: any = {
@@ -129,12 +130,7 @@ const LineChart: React.FC = () => {
     series: [
       {
         name: "Premium Plan",
-        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 45],
-      },
-
-      {
-        name: "Advertising",
-        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
+        data: [0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
       },
     ],
   });
@@ -156,7 +152,7 @@ const LineChart: React.FC = () => {
             </span>
             <div className="w-full">
               <p className="font-semibold text-primary">Total Revenue</p>
-              <p className="text-sm font-medium">Last 30 days</p>
+              {/* <p className="text-sm font-medium">Last 30 days</p> */}
             </div>
           </div>
         </div>
@@ -164,7 +160,7 @@ const LineChart: React.FC = () => {
 
       <div>
         <div id="chartOne" className="-ml-5">
-          <ReactApexChart
+          <Chart
             options={options}
             series={state.series}
             type="area"

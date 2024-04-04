@@ -76,11 +76,11 @@ const Footer: React.FC = () => {
             </Link>
           </div>
         </div>
-        <div className="contact flex flex-col justify-between items-center h-full gap-5 ">
+        <div className="contact flex flex-col justify-between items-center h-full gap-5 text-white w-full md:w-auto">
           {!isSent ? (
-            <div>
-              <div className="flex flex-col xl:flex-row gap-2 ">
-                <div className="relative lg:w-full">
+            <>
+              <div className="flex flex-col xl:flex-row gap-5 w-full">
+                <div className="relative ">
                   <input
                     type="text"
                     value={email}
@@ -90,8 +90,8 @@ const Footer: React.FC = () => {
           bg-transparent 
           outline-none transition-all duration-200 ease-linear 
           focus:placeholder:opacity-100  
-          data-[te-input-state-active]:placeholder:opacity-100 border-2 border-green-800/80  ${
-            email !== "" ? " border-primary-400" : " border-primary"
+          data-[te-input-state-active]:placeholder:opacity-100 border-2 w-full  ${
+            email !== "" ? "border-green-700" : " border-green-800/80"
           }`}
                     data-te-toggle="timepicker-just-input"
                     id="inputEmail"
@@ -99,16 +99,16 @@ const Footer: React.FC = () => {
                   />
                   <label
                     htmlFor="inputEmail"
-                    className={`absolute text-base md:text-xl left-3 top-0 mb-0 max-w-[90%] hover:cursor-text origin-[0_0] truncate pt-2 text-neutral-300 transition-all duration-200 ease-out  ${
+                    className={`absolute text-base md:text-xl left-3 top-0 mb-0 max-w-[90%] hover:cursor-text origin-[0_0] truncate pt-2 text-white transition-all duration-200 ease-out  ${
                       email !== ""
-                        ? "-translate-y-[1.1rem] scale-[0.7] text-primary peer-data-[te-input-state-active]:-translate-y-[1.1rem] peer-data-[te-input-state-active]:scale-[0.8] bg-neutral-900"
+                        ? "-translate-y-[1.1rem] scale-[0.7] text-primary peer-data-[te-input-state-active]:-translate-y-[1.1rem] peer-data-[te-input-state-active]:scale-[0.8] bg-transparent"
                         : ""
                     }`}
                   >
                     {email !== "" ? "Email" : "Email"}
                   </label>
                 </div>
-                <div className="relative lg:w-full">
+                <div className="relative">
                   <input
                     type="text"
                     value={message}
@@ -118,8 +118,8 @@ const Footer: React.FC = () => {
           bg-transparent 
           outline-none transition-all duration-200 ease-linear 
           focus:placeholder:opacity-100  
-          data-[te-input-state-active]:placeholder:opacity-100 border-2 border-green-800/80  ${
-            message !== "" ? " border-primary-400" : " border-primary"
+          data-[te-input-state-active]:placeholder:opacity-100 border-2 w-full  ${
+            message !== "" ? "border-green-700" : " border-green-800/80"
           }`}
                     data-te-toggle="timepicker-just-input"
                     id="inputMessage"
@@ -127,9 +127,9 @@ const Footer: React.FC = () => {
                   />
                   <label
                     htmlFor="inputMessage"
-                    className={`absolute text-base md:text-xl left-3 top-0 mb-0 max-w-[90%] hover:cursor-text origin-[0_0] truncate pt-2 text-neutral-300 transition-all duration-200 ease-out  ${
+                    className={`absolute text-base md:text-xl left-3 top-0 mb-0 max-w-[90%] hover:cursor-text origin-[0_0] truncate pt-2 text-white transition-all duration-200 ease-out  ${
                       message !== ""
-                        ? "-translate-y-[1.1rem] scale-[0.7] text-primary peer-data-[te-input-state-active]:-translate-y-[1.1rem] peer-data-[te-input-state-active]:scale-[0.8] bg-neutral-900"
+                        ? "-translate-y-[1.1rem] scale-[0.7] text-primary peer-data-[te-input-state-active]:-translate-y-[1.1rem] peer-data-[te-input-state-active]:scale-[0.8] bg-transparent"
                         : ""
                     }`}
                   >
@@ -137,7 +137,7 @@ const Footer: React.FC = () => {
                   </label>
                 </div>
                 <button
-                  className=" min-w-28 flex items-center justify-center bg-neutral-700/40 border border-green-700/50"
+                  className=" min-w-28 p-5 rounded-full flex items-center justify-center bg-neutral-700/40 border border-green-700/50"
                   onClick={handleSubmit}
                   disabled={isLoading}
                 >
@@ -145,12 +145,12 @@ const Footer: React.FC = () => {
                   {isLoading ? "Contacting..." : "Contact us"}
                 </button>
               </div>
-            </div>
+            </>
           ) : (
             <div className="text-white flex flex-col text-center ">
               {" "}
-              <h1 className=" md:text-xl lg:text-2xl font-bold ">
-                Thank you for contacting us!!
+              <h1 className=" md:text-xl lg:text-2xl font-bold text-green-400">
+                Thank you for contact with us!!
               </h1>
               <p className="mt-4 text-base lg:text-xl ">
                 We will get back to you as soon as possible

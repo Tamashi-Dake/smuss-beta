@@ -1,19 +1,24 @@
 import CardDataStats from "@/components/dashboard/CardDataStats";
 import LineChart from "@/components/dashboard/LineChart";
 import ColumnChart from "@/components/dashboard/ColumnChart";
+import getDashboardData from "@/acitons/getDashboardData";
 
 const DashboardPage: React.FC = async () => {
+  const data = await getDashboardData();
+  // get total views from aray of views [{views: 1}, {views: 2}]
+  const totalViews = data.views.reduce((acc, curr) => acc + curr.view, 0);
+  // get total profits from number of subscriptions multiplied by price (2$ per subscription)
+  const totalProfits = data.profits.length * 2;
+  // get total free users
+  const totalFreeUsers = data.usersFree.length;
+  // get total premium users
+  const totalPremiumUsers = data.usersPremium.length;
   return (
     <>
       <div className=" flex flex-col m-auto gap-y-10 max-w-wide-screen px-4">
         <h1 className="text-white text-3xl font-semibold">Dashboard</h1>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
-          <CardDataStats
-            title="Total views"
-            total="$3.456K"
-            rate="0.43%"
-            levelUp
-          >
+          <CardDataStats title="Total views" total={totalViews} rate="">
             <svg
               className="fill-[#3C50E0]  "
               width="25"
@@ -34,9 +39,8 @@ const DashboardPage: React.FC = async () => {
           </CardDataStats>
           <CardDataStats
             title="Total Profit"
-            total="$45,2K"
-            rate="4.35%"
-            levelUp
+            total={`$ ${Number(totalProfits).toLocaleString()}`}
+            rate=""
           >
             <svg
               className="fill-[#3C50E0] bg-neutral-200/40 "
@@ -60,7 +64,11 @@ const DashboardPage: React.FC = async () => {
               />
             </svg>
           </CardDataStats>
-          <CardDataStats title="Total Songs" total="2.450" rate="2.59%" levelUp>
+          <CardDataStats
+            title="Total Songs"
+            total={Number(data.views.length).toLocaleString()}
+            rate=""
+          >
             <svg
               className="fill-[#3C50E0] bg-neutral-200/40 "
               width="22"
@@ -81,9 +89,8 @@ const DashboardPage: React.FC = async () => {
           </CardDataStats>
           <CardDataStats
             title="Total Users"
-            total="3.456"
-            rate="0.95%"
-            levelDown
+            total={Number(totalFreeUsers).toLocaleString()}
+            rate=""
           >
             <svg
               className="fill-[#3C50E0] bg-neutral-200/40 "
@@ -110,7 +117,10 @@ const DashboardPage: React.FC = async () => {
         </div>
         <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
           <LineChart />
-          <ColumnChart />
+          <ColumnChart
+            freeUsers={totalFreeUsers}
+            premiumUsers={totalPremiumUsers}
+          />
         </div>
       </div>
     </>
