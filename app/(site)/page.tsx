@@ -28,7 +28,7 @@ export default async function Home() {
   return (
     <>
       <div
-        className=" flex flex-col m-auto gap-y-10 px-4 text-white max-w-[1500px]
+        className=" flex flex-col m-auto gap-y-10 p-4 text-white max-w-[1500px]
         mx-auto select-none"
       >
         <SectionList>

@@ -137,7 +137,7 @@ const Footer: React.FC = () => {
                   </label>
                 </div>
                 <button
-                  className=" min-w-28 p-5 rounded-full flex items-center justify-center bg-neutral-700/40 border border-green-700/50"
+                  className=" min-w-28 p-5 md:p-2 rounded-full flex items-center justify-center bg-neutral-700/40 border border-green-700/50"
                   onClick={handleSubmit}
                   disabled={isLoading}
                 >

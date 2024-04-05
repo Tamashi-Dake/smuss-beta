@@ -7,7 +7,7 @@ const getNewHits = async (): Promise<Song[]> => {
     .from("songs")
     .select("*")
     .limit(3)
-    .order("created_at", { ascending: false });
+    .order("view", { ascending: false });
   if (error) console.log("error", error);
   return (data as Song[]) || [];
 };
