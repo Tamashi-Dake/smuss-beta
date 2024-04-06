@@ -73,8 +73,8 @@ const AdModal: React.FC<AdModalProps> = ({ products }) => {
         <Image
           src="/noAds.svg"
           alt="Premium"
-          width={500}
-          height={500}
+          width={400}
+          height={400}
           className="mx-auto rounded-full m-2"
         />
         {products.map((product) => {

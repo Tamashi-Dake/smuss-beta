@@ -79,7 +79,7 @@ const SubscribeModal: React.FC<SubscribeModalProps> = ({ products }) => {
               key={price.id}
               onClick={() => handleCheckout(price)}
               disabled={isLoading || price.id === priceIdLoading}
-              className="mb-4"
+              className="mb-4 w-full bg-green-600"
             >
               {`Subscribe for ${formatPrice(price)} a ${price.interval}`}
             </Button>
