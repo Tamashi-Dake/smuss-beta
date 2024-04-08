@@ -8,13 +8,15 @@ import ArtistsWrapper from "@/components/home/ArtistWapper";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
 import getHistory from "@/acitons/getHistory";
 import PlaylistContent from "@/components/layout/PlaylistContent";
+import { Button } from "@/components/ui/button";
+import LibraryEmpty from "@/components/home/library/libraryEmpty";
 export const revalidate = 0;
 
 const LibraryPage: React.FC = async () => {
   const playlists = await getUserPlaylists();
   const relatedSong = await getSongInPlaylist();
   const recentlyPlayed = await getHistory();
-  const topArtists = await getTopArtists();
+  // const topArtists = await getTopArtists();
   return (
     <div
       className="
@@ -32,7 +34,11 @@ const LibraryPage: React.FC = async () => {
       </div>
       <SectionList>
         <h1 className="text-2xl font-bold ">Your Playlists</h1>
-        <PlaylistWrapper data={playlists} related={relatedSong} />
+        {playlists.length > 0 ? (
+          <PlaylistWrapper data={playlists} related={relatedSong} />
+        ) : (
+          <LibraryEmpty />
+        )}
       </SectionList>
       <SectionList>
         <h1 className="text-2xl font-bold ">Recently Played</h1>

@@ -4,7 +4,7 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "", {
   // @ts-ignore
   apiVersion: "2022-11-15",
   appInfo: {
-    name: "Spotify Clone",
+    name: "Smuss",
     version: "0.1.0",
   },
 });
