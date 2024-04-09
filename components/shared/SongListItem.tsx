@@ -1,48 +1,27 @@
 "use client";
 
 import Image from "next/image";
-
-import useLoadImage from "@/hooks/useLoadImage";
-import { Song } from "@/types";
-import toast from "react-hot-toast";
-import LikeButton from "./LikeButton";
-import {
-  MoreHorizontal,
-  MoreHorizontalIcon,
-  MoreVerticalIcon,
-  PlusSquare,
-  Share2Icon,
-} from "lucide-react";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from "../ui/context-menu";
-import { useRouter } from "next/navigation";
-import { useAuthModal } from "@/hooks/useModal";
-import { useUser } from "@/hooks/useUser";
-import {
-  useSessionContext,
-  useSupabaseClient,
-} from "@supabase/auth-helpers-react";
-import React, { useEffect, useState } from "react";
-import { FaPlay } from "react-icons/fa";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import React, { useEffect, useState } from "react";
+
+import { Song } from "@/types";
+
+import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
+import useLoadImage from "@/hooks/useLoadImage";
+import { useAddPlaylistModal, useAuthModal } from "@/hooks/useModal";
+import { useUser } from "@/hooks/useUser";
+
+import { ContextMenu, ContextMenuTrigger } from "../ui/context-menu";
+import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import LikeButton from "./LikeButton";
+import ContextMenuContentSongMin from "../patials/ContextMenuContentSongMin";
+import DropdownMenuContentSong from "../patials/DropdownMenuContentSong";
+
+import { MoreHorizontal } from "lucide-react";
+import { FaPlay } from "react-icons/fa";
 
 interface SongListItemProps {
   songData: Song;
@@ -53,6 +32,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
   const router = useRouter();
   const imageUrl = useLoadImage(songData);
   const authModal = useAuthModal();
+  const addPlaylist = useAddPlaylistModal();
   const { user } = useUser();
   const { supabaseClient } = useSessionContext();
   const [playlists, setPlaylists] = useState<any[]>([]);
@@ -136,7 +116,6 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
     );
     toast.success("Copied to clipboard!");
   };
-
   return (
     <ContextMenu>
       <ContextMenuTrigger
@@ -212,103 +191,31 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
           <div className="flex gap-x-4 ml-auto px-2 h-full">
             <LikeButton songId={songData.id} refresh={true} />
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger className="focus:border-neutral-600/90">
                 <MoreHorizontal className="size-10 text-white hover:bg-neutral-600/90 rounded-full p-2" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-                className="bg-neutral-800 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 "
-              >
-                {user ? (
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <PlusSquare className="w-4 h-4 mr-2" />
-                      Add to Playlist
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 ">
-                        {playlists.map((playlist) => (
-                          <DropdownMenuItem
-                            key={playlist.id}
-                            onClick={() => handleAddToPlaylist(playlist.id)}
-                          >
-                            {relPlaylist.some(
-                              (rel) => rel.playlist_id === playlist.id
-                            ) ? (
-                              <span className="w-2 mr-2">✓</span>
-                            ) : (
-                              <span className="w-2 mr-2"> </span>
-                            )}
-                            <p>{playlist.name}</p>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                ) : (
-                  <DropdownMenuItem onClick={authModal.onOpen}>
-                    <PlusSquare className="w-4 h-4 mr-2" />
-                    Add to Playlist
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={handleShare}>
-                  {" "}
-                  <Share2Icon className="w-4 h-4 mr-2" />
-                  Share
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+              <DropdownMenuContentSong
+                user={user}
+                authModal={authModal}
+                addPlaylist={addPlaylist}
+                handleShare={handleShare}
+                handleAddToPlaylist={handleAddToPlaylist}
+                playlists={playlists}
+                relationship={relPlaylist}
+              />
             </DropdownMenu>
           </div>
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent
-        onContextMenu={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-        }}
-        className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48"
-      >
-        {user ? (
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>
-              <PlusSquare className="w-4 h-4 mr-2" />
-              Add to Playlist
-            </ContextMenuSubTrigger>
-            <ContextMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48">
-              {playlists.map((playlist) => (
-                <ContextMenuItem
-                  key={playlist.id}
-                  onClick={() => handleAddToPlaylist(playlist.id)}
-                >
-                  {relPlaylist.some(
-                    (rel) => rel.playlist_id === playlist.id
-                  ) ? (
-                    <span className="w-2 mr-2">✓</span>
-                  ) : (
-                    <span className="w-2 mr-2"> </span>
-                  )}
-                  <p>{playlist.name}</p>
-                </ContextMenuItem>
-              ))}
-            </ContextMenuSubContent>
-          </ContextMenuSub>
-        ) : (
-          <ContextMenuItem onClick={authModal.onOpen}>
-            <PlusSquare className="w-4 h-4 mr-2" />
-            Add to Playlist
-          </ContextMenuItem>
-        )}
-        <ContextMenuItem onClick={handleShare}>
-          <Share2Icon className="w-4 h-4 mr-2" />
-          Share
-        </ContextMenuItem>
-      </ContextMenuContent>
+      <ContextMenuContentSongMin
+        user={user}
+        authModal={authModal}
+        addPlaylist={addPlaylist}
+        handleShare={handleShare}
+        handleAddToPlaylist={handleAddToPlaylist}
+        playlists={playlists}
+        relationship={relPlaylist}
+      />
     </ContextMenu>
   );
 };

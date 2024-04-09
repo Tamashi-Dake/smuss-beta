@@ -1,34 +1,13 @@
 "use client";
-import Image from "next/image";
-import PlayButton from "../shared/PlayButton";
-import { formatTotalTime } from "@/utils/time";
-import {
-  Dot,
-  Edit,
-  MoreHorizontal,
-  Share2,
-  Share2Icon,
-  Trash2,
-} from "lucide-react";
-import useLoadImage from "@/hooks/useLoadImage";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useUser } from "@/hooks/useUser";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { useDeleteModal, useUpdateArtistModal } from "@/hooks/useModal";
 import toast from "react-hot-toast";
-import { cn } from "@/libs/utils";
-// import { useMediaQuery } from "usehooks-ts";
+
+import useLoadImage from "@/hooks/useLoadImage";
+
+import PlayButton from "../shared/PlayButton";
+import { Share2 } from "lucide-react";
 
 const ArtistInfo = ({ artist, songs }: { artist: any; songs: any }) => {
   const artistImage = useLoadImage(artist);
-  const { supabaseClient } = useSessionContext();
   // const isMobile = useMediaQuery("(max-width: 768px)");
 
   const handleShare = (event: any) => {

@@ -14,16 +14,16 @@ interface PlaylistContentProps {
 }
 
 const PlaylistContent: React.FC<PlaylistContentProps> = ({ songs }) => {
-  const router = useRouter();
-  const { isLoading, user } = useUser();
+  // const router = useRouter();
+  // const { isLoading, user } = useUser();
   const onPlay = useOnPlay(songs);
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-      // TODO: Remove this to fix when user is not logged in
-      // router.replace("/");
-    }
-  }, [isLoading, user, router]);
+  // useEffect(() => {
+  //   if (!isLoading && !user) {
+  //     // TODO: Remove this to fix when user is not logged in
+  //     // router.replace("/");
+  //   }
+  // }, [isLoading, user, router]);
 
   if (songs.length === 0) {
     return (

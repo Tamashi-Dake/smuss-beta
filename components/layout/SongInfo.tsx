@@ -16,13 +16,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { useAuthModal } from "@/hooks/useModal";
+import { useAddPlaylistModal, useAuthModal } from "@/hooks/useModal";
 import toast from "react-hot-toast";
 import { cn } from "@/libs/utils";
 import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
 import PlayButton from "../shared/PlayButton";
 import LikeButton from "../shared/LikeButton";
 import { useMediaQuery } from "usehooks-ts";
+import DropdownMenuContentSong from "../patials/DropdownMenuContentSong";
 
 const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
   const songImage = useLoadImage(song);
@@ -30,6 +31,7 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
   const { user } = useUser();
   const { supabaseClient } = useSessionContext();
   const authModal = useAuthModal();
+  const addPlaylist = useAddPlaylistModal();
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relPlaylist, setRelPlaylist] = useState<any[]>([]);
   //   merge song id with randomSongs ids (song is the first element, randomSongs is the rest)
@@ -194,50 +196,15 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
                   )}
                 />
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                }}
-                className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48"
-              >
-                {user ? (
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <PlusSquare className="w-4 h-4 mr-2" />
-                      Add to Playlist
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 ">
-                        {playlists.map((playlist) => (
-                          <DropdownMenuItem
-                            key={playlist.id}
-                            onClick={() => handleAddToPlaylist(playlist.id)}
-                          >
-                            {relPlaylist.some(
-                              (rel) => rel.playlist_id === playlist.id
-                            ) ? (
-                              <span className="w-2 mr-2">✓</span>
-                            ) : (
-                              <span className="w-2 mr-2"> </span>
-                            )}
-                            <p>{playlist.name}</p>
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                ) : (
-                  <DropdownMenuItem onClick={authModal.onOpen}>
-                    <PlusSquare className="w-4 h-4 mr-2" />
-                    Add to Playlist
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={handleShare}>
-                  {" "}
-                  <Share2Icon className="w-4 h-4 mr-2" />
-                  Share
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+              <DropdownMenuContentSong
+                user={user}
+                authModal={authModal}
+                addPlaylist={addPlaylist}
+                handleShare={handleShare}
+                handleAddToPlaylist={handleAddToPlaylist}
+                playlists={playlists}
+                relationship={relPlaylist}
+              />
             </DropdownMenu>
           </div>
         </div>

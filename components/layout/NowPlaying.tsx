@@ -1,39 +1,28 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Box from "../shared/Box";
-import { Artist, Song } from "@/types";
-import { useRouter } from "next/navigation";
-import useLoadImage from "@/hooks/useLoadImage";
+import toast from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   useSessionContext,
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
-import { MoreHorizontal, PlusSquare, Share2Icon, X } from "lucide-react";
+
+import { Artist, Song } from "@/types";
+
+import useLoadImage from "@/hooks/useLoadImage";
 import { useNowPlaying } from "@/hooks/usePlaying";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-} from "../ui/context-menu";
-import { ContextMenuTrigger } from "@radix-ui/react-context-menu";
-import toast from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
-import { useAuthModal } from "@/hooks/useModal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { useAddPlaylistModal, useAuthModal } from "@/hooks/useModal";
+
+import Box from "../shared/Box";
+import { ContextMenu, ContextMenuTrigger } from "../ui/context-menu";
+import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import DropdownMenuContentSong from "../patials/DropdownMenuContentSong";
+import ContextMenuContentSongMin from "../patials/ContextMenuContentSongMin";
+
+import { MoreHorizontal, X } from "lucide-react";
 
 interface NowPlayingProps {
   song: Song;
@@ -41,14 +30,17 @@ interface NowPlayingProps {
 }
 
 const NowPlaying: React.FC<NowPlayingProps> = ({ song, artists }) => {
-  const router = useRouter();
-  const imagePath = useLoadImage(song);
-  const [artistImage, setArtistImage] = useState<string[]>([]);
+  const { supabaseClient: sesionContext } = useSessionContext();
   const supabaseClient = useSupabaseClient();
+  const router = useRouter();
+
+  const imagePath = useLoadImage(song);
   const { onHide } = useNowPlaying();
   const { user } = useUser();
   const authModal = useAuthModal();
-  const { supabaseClient: sesionContext } = useSessionContext();
+  const addPlaylist = useAddPlaylistModal();
+
+  const [artistImage, setArtistImage] = useState<string[]>([]);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);
 
@@ -201,88 +193,29 @@ const NowPlaying: React.FC<NowPlayingProps> = ({ song, artists }) => {
                   <DropdownMenuTrigger>
                     <MoreHorizontal className="size-10 hover:bg-neutral-600/90 rounded-full p-2" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    className="bg-neutral-800 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 z-[1002]"
-                  >
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <PlusSquare className="w-4 h-4 mr-2" />
-                        Add to Playlist
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 z-[1002]">
-                          {playlists.map((playlist) => (
-                            <DropdownMenuItem
-                              key={playlist.id}
-                              onClick={() => handleAddToPlaylist(playlist.id)}
-                            >
-                              {relationship.some(
-                                (rel) => rel.playlist_id === playlist.id
-                              ) ? (
-                                <span className="w-2 mr-2">✓</span>
-                              ) : (
-                                <span className="w-2 mr-2"> </span>
-                              )}
-                              <p>{playlist.name}</p>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                    <DropdownMenuItem onClick={handleShare}>
-                      {" "}
-                      <Share2Icon className="w-4 h-4 mr-2" />
-                      Share
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
+                  <DropdownMenuContentSong
+                    user={user}
+                    authModal={authModal}
+                    addPlaylist={addPlaylist}
+                    handleShare={handleShare}
+                    handleAddToPlaylist={handleAddToPlaylist}
+                    playlists={playlists}
+                    relationship={relationship}
+                  />
                 </DropdownMenu>
               </div>
             </div>
           </Box>
         </ContextMenuTrigger>
-        <ContextMenuContent
-          onContextMenu={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-          className="bg-neutral-800 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 z-[1002]"
-        >
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>
-              <PlusSquare className="w-4 h-4 mr-2" />
-              Add to Playlist
-            </ContextMenuSubTrigger>
-            <ContextMenuSubContent className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48">
-              {playlists.map((playlist) => (
-                <ContextMenuItem
-                  key={playlist.id}
-                  onClick={() => handleAddToPlaylist(playlist.id)}
-                >
-                  {relationship.some(
-                    (rel) => rel.playlist_id === playlist.id
-                  ) ? (
-                    <span className="w-2 mr-2">✓</span>
-                  ) : (
-                    <span className="w-2 mr-2"> </span>
-                  )}
-                  <p>{playlist.name}</p>
-                </ContextMenuItem>
-              ))}
-            </ContextMenuSubContent>
-          </ContextMenuSub>
-
-          <ContextMenuItem onClick={handleShare}>
-            <Share2Icon className="w-4 h-4 mr-2" />
-            Share
-          </ContextMenuItem>
-        </ContextMenuContent>
+        <ContextMenuContentSongMin
+          user={user}
+          authModal={authModal}
+          addPlaylist={addPlaylist}
+          handleShare={handleShare}
+          handleAddToPlaylist={handleAddToPlaylist}
+          playlists={playlists}
+          relationship={relationship}
+        />
       </ContextMenu>
 
       {/* credit box  */}

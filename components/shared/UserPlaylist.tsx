@@ -1,22 +1,18 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useEffect, useState } from "react";
+
+import { Playlist } from "@/types";
 
 import useLoadImage from "@/hooks/useLoadImage";
-import { Playlist } from "@/types";
-import { useRouter } from "next/navigation";
-import { FaPlay } from "react-icons/fa";
-import { ContextMenu } from "@radix-ui/react-context-menu";
-import {
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "../ui/context-menu";
-import { Edit, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useUser } from "@/hooks/useUser";
-import { useSessionContext } from "@supabase/auth-helpers-react";
-import { useDeleteModal, useUpdatePlaylistModal } from "@/hooks/useModal";
+
+import { ContextMenu, ContextMenuTrigger } from "../ui/context-menu";
+import { FaPlay } from "react-icons/fa";
+import ContextMenuContentPlaylist from "../patials/ContextMenuContentPlaylist";
 
 interface UserPlaylistProps {
   playlistData: Playlist;
@@ -30,8 +26,7 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({
   const router = useRouter();
   const { user } = useUser();
   const { supabaseClient } = useSessionContext();
-  const updateModal = useUpdatePlaylistModal();
-  const deleteModal = useDeleteModal();
+
   const imageUrl = useLoadImage(playlistData);
   const [songIDs, setSongIDs] = useState<any[]>([]);
 
@@ -112,23 +107,7 @@ const UserPlaylist: React.FC<UserPlaylistProps> = ({
           </p>
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent
-        onContextMenu={(e) => {
-          e.preventDefault();
-        }}
-        className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 z-[1002]"
-      >
-        <ContextMenuItem onClick={() => updateModal.onOpen(playlistData.id)}>
-          <Edit className="w-4 h-4 mr-2" />
-          Update Playlist
-        </ContextMenuItem>
-        <ContextMenuItem
-          onClick={() => deleteModal.onOpen(playlistData.id, "playlist")}
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Delete Playlist
-        </ContextMenuItem>
-      </ContextMenuContent>
+      <ContextMenuContentPlaylist playlistID={playlistData.id} />
     </ContextMenu>
   );
 };

@@ -1,11 +1,13 @@
 ## Todo:
 
-- [ ] Fix context menu, dropdown menu when user have no playlist
+- [x] Fix missing view on playlist page
+- [x] Remove focus effect on dropdown menu songListItem
 
+- [ ] Fix authentification (anonymous user still can play music on playlist/song page)
+- [ ] Fix layout on first load
+
+- [ ] Change log out button to Explore Premium
 - [ ] Add default page for 404, route pages
-
-- [ ] fix authentification (anonymous user still can play music on playlist/song page)
-- [ ] fix layout on fisrt load
 
 ## Getting Started
 

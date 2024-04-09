@@ -1,30 +1,20 @@
 "use client";
 import Image from "next/image";
-import PlayButton from "../shared/PlayButton";
-import { formatTotalTime } from "@/utils/time";
-import {
-  Dot,
-  Edit,
-  MoreHorizontal,
-  Share2,
-  Share2Icon,
-  Trash2,
-} from "lucide-react";
-import useLoadImage from "@/hooks/useLoadImage";
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useUser } from "@/hooks/useUser";
 import { useSessionContext } from "@supabase/auth-helpers-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { useDeleteModal, useUpdatePlaylistModal } from "@/hooks/useModal";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+
 import { cn } from "@/libs/utils";
-// import { useMediaQuery } from "usehooks-ts";
+import { formatTotalTime } from "@/utils/time";
+
+import useLoadImage from "@/hooks/useLoadImage";
+import { useUser } from "@/hooks/useUser";
+
+import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import DropdownMenuContentPlaylist from "../patials/DropdownMenuContentPlaylist";
+import PlayButton from "../shared/PlayButton";
+import { Dot, MoreHorizontal, Share2 } from "lucide-react";
 
 const PlaylistInfo = ({
   playlist,
@@ -39,9 +29,6 @@ const PlaylistInfo = ({
   const [artist, setArtist] = useState<any>([]);
   const { user } = useUser();
   const { supabaseClient } = useSessionContext();
-  const updateModal = useUpdatePlaylistModal();
-  const deleteModal = useDeleteModal();
-  // const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     if (playlist.artist_id) {
@@ -135,30 +122,10 @@ const PlaylistInfo = ({
                     )}
                   />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                  }}
-                  className="bg-neutral-800/90 rounded-md shadow-lg p-2 text-neutral-100/90 w-48 z-[1002]"
-                >
-                  <DropdownMenuItem
-                    onClick={() => updateModal.onOpen(playlist.id)}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Update Playlist
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => deleteModal.onOpen(playlist.id, "playlist")}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Playlist
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleShare}>
-                    {" "}
-                    <Share2Icon className="w-4 h-4 mr-2" />
-                    Share
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
+                <DropdownMenuContentPlaylist
+                  playlistID={playlist.id}
+                  handleShare={handleShare}
+                />
               </DropdownMenu>
             ) : (
               <div
