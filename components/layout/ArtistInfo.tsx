@@ -19,16 +19,16 @@ const ArtistInfo = ({ artist, songs }: { artist: any; songs: any }) => {
   };
   return (
     <div
-      className="bg flex justify-center
-    md:justify-start w-full items-end h-fit md:h-60 md:mb-4"
+      className="bg w-full items-end h-fit md:h-60 md:mb-4 relative"
       style={{
         backgroundImage: `url(${artistImage || "/liked.png"})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
+      <div className="backdrop absolute h-full w-full bg-black opacity-40 "></div>
       <div
-        className="
+        className=" relative
                     flex 
                     flex-col 
                     justify-center
@@ -38,6 +38,7 @@ const ArtistInfo = ({ artist, songs }: { artist: any; songs: any }) => {
                     gap-x-5
                     md:p-4
                     w-full
+                    z-100
                   "
       >
         <div className="flex flex-col gap-y-2 m-4 md:mt-0 w-full">

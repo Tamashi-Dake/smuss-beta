@@ -24,7 +24,6 @@ import { cn } from "@/libs/utils";
 import { MenuIcon, X } from "lucide-react";
 import Image from "next/image";
 import useResize from "@/hooks/useResize";
-import Footer from "./Footer";
 
 interface SidebarProps {
   children: React.ReactNode;

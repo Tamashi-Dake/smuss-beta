@@ -25,10 +25,12 @@ const PlaylistInfo = ({
   totalTime: any;
   songs: any;
 }) => {
-  const playlistImage = useLoadImage(playlist);
-  const [artist, setArtist] = useState<any>([]);
-  const { user } = useUser();
   const { supabaseClient } = useSessionContext();
+
+  const { user } = useUser();
+  const playlistImage = useLoadImage(playlist);
+
+  const [artist, setArtist] = useState<any>([]);
 
   useEffect(() => {
     if (playlist.artist_id) {

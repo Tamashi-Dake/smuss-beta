@@ -16,7 +16,7 @@ const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Smuss",
-  description: "Music player for everyone, anytime, anywhere",
+  description: "Music player for anyone, anytime, anywhere",
 };
 
 export default async function RootLayout({
@@ -26,6 +26,9 @@ export default async function RootLayout({
 }>) {
   const products = await getActiveProductsWithPrices();
   const userPlaylist = await getUserPlaylists();
+
+  // TODO: Add default page for 404, route pages
+  //       Fix layout on first load
   return (
     <html lang="en">
       <head>

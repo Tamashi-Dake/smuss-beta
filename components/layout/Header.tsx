@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Image from "next/image";
-import { Heart, ListMusic, Stars } from "lucide-react";
+import { Heart, ListMusic, LogOut, Stars } from "lucide-react";
 interface HeaderProps {
   children: React.ReactNode;
   className?: string;
@@ -79,12 +79,17 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
       <div className="flex flex-row items-center justify-between gap-x-2 px-3">
         {user ? (
           <>
-            <HeaderButton
-              className="bg-white text-black"
-              onClick={handleLogout}
-            >
-              Logout
-            </HeaderButton>
+            {subscription ? (
+              ""
+            ) : (
+              <HeaderButton
+                className="bg-white text-black"
+                onClick={() => router.push("/account")}
+              >
+                <Stars size={20} className="mx-1 inline-block" />
+                <p>Explore Premium</p>
+              </HeaderButton>
+            )}
 
             <DropdownMenu>
               <DropdownMenuTrigger>
@@ -127,6 +132,10 @@ const Header: React.FC<HeaderProps> = ({ children, className, ...props }) => {
                   ) : (
                     <p>Upgrade to Premium</p>
                   )}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut size={20} className="mr-2" />
+                  <p>Logout</p>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
