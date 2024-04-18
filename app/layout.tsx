@@ -8,7 +8,7 @@ import ModalProvider from "@/providers/ModalProvider";
 import ToastProvider from "@/providers/ToastProvider";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
 import Header from "@/components/layout/Header";
-import Player from "@/components/layout/Player";
+import Player from "@/components/player/Player";
 import getActiveProductsWithPrices from "@/acitons/getActiveProductsWithPrices";
 import Script from "next/script";
 

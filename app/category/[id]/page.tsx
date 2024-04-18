@@ -4,8 +4,8 @@ import getSongInPlaylist from "@/acitons/getSongInPlaylist";
 import getSongByCategoryID from "@/acitons/getSongsByCategoryID";
 import PlaylistWrapper from "@/components/home/PlaylistWrapper";
 import SectionList from "@/components/home/SectionList";
-import CategoryInfo from "@/components/layout/CategoryInfo";
-import PlaylistContent from "@/components/layout/PlaylistContent";
+import CategoryInfo from "@/components/patials/CategoryInfo";
+import PlaylistContent from "@/components/patials/PlaylistContent";
 import Box from "@/components/shared/Box";
 
 const CategoryPage = async ({ params }: { params: { id: string } }) => {

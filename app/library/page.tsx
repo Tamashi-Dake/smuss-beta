@@ -1,16 +1,12 @@
 import SectionList from "@/components/home/SectionList";
-import SongsWrapper from "@/components/home/SongsWrapper";
 import PlaylistWrapper from "@/components/home/PlaylistWrapper";
 import getSongInPlaylist from "@/acitons/getSongInPlaylist";
-import getRandomSongs from "@/acitons/getRandomSongs";
-import getTopArtists from "@/acitons/getTopArtist";
-import ArtistsWrapper from "@/components/home/ArtistWapper";
 import getUserPlaylists from "@/acitons/getUserPlaylists";
 import getHistory from "@/acitons/getHistory";
-import PlaylistContent from "@/components/layout/PlaylistContent";
-import { Button } from "@/components/ui/button";
-import LibraryEmpty from "@/components/home/library/libraryEmpty";
-export const revalidate = 0;
+import PlaylistContent from "@/components/patials/PlaylistContent";
+import LibraryEmpty from "@/components/patials/libraryEmpty";
+
+//export const revalidate = 0;
 
 const LibraryPage: React.FC = async () => {
   const playlists = await getUserPlaylists();

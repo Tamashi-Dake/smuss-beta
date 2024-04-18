@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useSessionContext } from "@supabase/auth-helpers-react";
 import React, { useEffect, useState } from "react";
@@ -30,14 +30,18 @@ interface SongListItemProps {
 
 const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
   const router = useRouter();
-  const imageUrl = useLoadImage(songData);
+  const { supabaseClient } = useSessionContext();
+  const pathname = usePathname();
+
+  const { user } = useUser();
+  const { artist: artists } = useGetArtistBySongId(songData.id);
   const authModal = useAuthModal();
   const addPlaylist = useAddPlaylistModal();
-  const { user } = useUser();
-  const { supabaseClient } = useSessionContext();
+  const imageUrl = useLoadImage(songData);
+
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relPlaylist, setRelPlaylist] = useState<any[]>([]);
-  const { artist: artists } = useGetArtistBySongId(songData.id);
+
   useEffect(() => {
     if (!user?.id) {
       return;
@@ -116,6 +120,23 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
     );
     toast.success("Copied to clipboard!");
   };
+
+  const handleDeleteHistory = async () => {
+    if (!user) {
+      return authModal.onOpen();
+    }
+    const { error } = await supabaseClient
+      .from("history")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("song_id", songData.id);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Deleted from history!");
+    }
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger
@@ -202,6 +223,8 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
                 handleAddToPlaylist={handleAddToPlaylist}
                 playlists={playlists}
                 relationship={relPlaylist}
+                pathname={pathname}
+                handleDeleteHistory={handleDeleteHistory}
               />
             </DropdownMenu>
           </div>
@@ -215,6 +238,8 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
         handleAddToPlaylist={handleAddToPlaylist}
         playlists={playlists}
         relationship={relPlaylist}
+        pathname={pathname}
+        handleDeleteHistory={handleDeleteHistory}
       />
     </ContextMenu>
   );

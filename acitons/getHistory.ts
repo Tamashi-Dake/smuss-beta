@@ -14,8 +14,7 @@ const getHistory = async (): Promise<Song[]> => {
     .from("history")
     .select("*, songs(*)")
     .eq("user_id", session?.user?.id)
-    .order("created_at", { ascending: false })
-    .limit(6);
+    .order("created_at", { ascending: false });
 
   if (!data) return [];
 

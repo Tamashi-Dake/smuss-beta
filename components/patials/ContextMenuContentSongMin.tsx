@@ -1,5 +1,5 @@
 "use client";
-import { PlusSquare, Share2Icon } from "lucide-react";
+import { PlusSquare, Share2Icon, Trash2 } from "lucide-react";
 import {
   ContextMenuContent,
   ContextMenuItem,
@@ -14,20 +14,24 @@ interface ContextMenuContentSongMinProps {
   user: User | null;
   authModal: any;
   addPlaylist: any;
-  handleShare: (event: any) => void;
-  handleAddToPlaylist: (playlistId: string) => void;
   playlists: any[];
   relationship: any[];
+  pathname: string;
+  handleAddToPlaylist: (playlistId: string) => void;
+  handleShare: (event: any) => void;
+  handleDeleteHistory: () => void;
 }
 
 const ContextMenuContentSongMin: React.FC<ContextMenuContentSongMinProps> = ({
   user,
   authModal,
   addPlaylist,
-  handleShare,
-  handleAddToPlaylist,
   playlists,
   relationship,
+  pathname,
+  handleAddToPlaylist,
+  handleShare,
+  handleDeleteHistory,
 }) => {
   return (
     <ContextMenuContent
@@ -78,6 +82,12 @@ const ContextMenuContentSongMin: React.FC<ContextMenuContentSongMinProps> = ({
         <Share2Icon className="w-4 h-4 mr-2" />
         Share
       </ContextMenuItem>
+      {pathname === "/library" && (
+        <ContextMenuItem onClick={handleDeleteHistory}>
+          <Trash2 className="w-4 h-4 mr-2" />
+          Delete from History
+        </ContextMenuItem>
+      )}
     </ContextMenuContent>
   );
 };

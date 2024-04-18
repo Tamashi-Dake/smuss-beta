@@ -1,5 +1,5 @@
 import getFavorite from "@/acitons/getFavorite";
-import PlaylistContent from "@/components/layout/PlaylistContent";
+import PlaylistContent from "@/components/patials/PlaylistContent";
 import PlayButton from "@/components/shared/PlayButton";
 import { formatTotalTime } from "@/utils/time";
 import { Dot } from "lucide-react";

@@ -2,20 +2,11 @@
 import Image from "next/image";
 import { Dot, MoreHorizontal, PlusSquare, Share2Icon } from "lucide-react";
 import useLoadImage from "@/hooks/useLoadImage";
-import React, { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useUser } from "@/hooks/useUser";
 import { useSessionContext } from "@supabase/auth-helpers-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useAddPlaylistModal, useAuthModal } from "@/hooks/useModal";
 import toast from "react-hot-toast";
 import { cn } from "@/libs/utils";
@@ -23,7 +14,7 @@ import useGetArtistBySongId from "@/hooks/useGetArtistsBySongId";
 import PlayButton from "../shared/PlayButton";
 import LikeButton from "../shared/LikeButton";
 import { useMediaQuery } from "usehooks-ts";
-import DropdownMenuContentSong from "../patials/DropdownMenuContentSong";
+import DropdownMenuContentSong from "./DropdownMenuContentSong";
 
 const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
   const songImage = useLoadImage(song);
@@ -155,7 +146,7 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
               </>
             ) : (
               artists.map((artist, index) => (
-                <React.Fragment key={artist.id}>
+                <div key={artist.id}>
                   <Link
                     href={`/artist/${artist.id}`}
                     className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none md:px-1"
@@ -168,7 +159,7 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
                   ) : (
                     <Dot size={20} className=" hidden md:block text-white" />
                   )}
-                </React.Fragment>
+                </div>
               ))
             )}
 

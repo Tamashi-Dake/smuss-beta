@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import useDebounce from "@/hooks/useDebounce";
 
-import Input from "../../shared/Input";
+import Input from "../shared/Input";
 
 const SearchInput = () => {
   const router = useRouter();

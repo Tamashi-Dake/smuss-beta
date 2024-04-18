@@ -1,10 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-
 import { Song } from "@/types";
-import { useUser } from "@/hooks/useUser";
 import SongListItem from "../shared/SongListItem";
 import useOnPlay from "@/hooks/useOnPlay";
 import { Eye, Music, PenSquare, Timer } from "lucide-react";
@@ -14,16 +10,34 @@ interface PlaylistContentProps {
 }
 
 const PlaylistContent: React.FC<PlaylistContentProps> = ({ songs }) => {
-  // const router = useRouter();
-  // const { isLoading, user } = useUser();
   const onPlay = useOnPlay(songs);
+  // const pathname = usePathname();
+  // const songsRef = useRef(songs); // Sử dụng useRef để lưu trữ giá trị songs
+  // const fetchHistory = async () => {
+  //   const { data } = await supabaseClient
+  //     .from("history")
+  //     .select("*, songs(*)")
+  //     .eq("user_id", user?.id)
+  //     .order("created_at", { ascending: false });
+  //   if (!data) return [];
+
+  //   return data.map((item) => ({
+  //     ...item.songs,
+  //   }));
+  // };
 
   // useEffect(() => {
-  //   if (!isLoading && !user) {
-  //     // TODO: Remove this to fix when user is not logged in
-  //     // router.replace("/");
+  //   if (pathname === "/library") {
+  //     const fetchData = async () => {
+  //       const historySongs = await fetchHistory();
+  //       // Gán kết quả lấy từ lịch sử vào biến songs
+  //       songsRef.current = historySongs;
+  //     };
+
+  //     fetchData();
   //   }
-  // }, [isLoading, user, router]);
+  //   console.log("pathname", pathname);
+  // }, [pathname, supabaseClient]);
 
   if (songs.length === 0) {
     return (
@@ -34,6 +48,8 @@ const PlaylistContent: React.FC<PlaylistContentProps> = ({ songs }) => {
           gap-y-2 
           w-full px-6 
           text-neutral-400
+          justify-center
+          items-center
         "
       >
         <h1 className="text-3xl font-bold">No songs found</h1>

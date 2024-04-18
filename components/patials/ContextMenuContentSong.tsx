@@ -21,10 +21,11 @@ interface ContextMenuContentSongProps {
 const ContextMenuContentSong: React.FC<ContextMenuContentSongProps> = ({
   songData,
 }) => {
+  const { supabaseClient } = useSessionContext();
   const authModal = useAuthModal();
   const addPlaylist = useAddPlaylistModal();
   const { user } = useUser();
-  const { supabaseClient } = useSessionContext();
+
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [relationship, setRelationship] = useState<any[]>([]);

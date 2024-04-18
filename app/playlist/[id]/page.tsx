@@ -1,7 +1,7 @@
 import getPlaylistInfo from "@/acitons/getPlaylistInfo";
 import getSongByPlaylistID from "@/acitons/getSongsByPlaylistID";
-import PlaylistContent from "@/components/layout/PlaylistContent";
-import PlaylistInfo from "@/components/layout/PlaylistInfo";
+import PlaylistContent from "@/components/patials/PlaylistContent";
+import PlaylistInfo from "@/components/patials/PlaylistInfo";
 import React from "react";
 
 // set revalidate to 0 can enable refresh data (when user add song in playlist) but also cause authentication error when pressing back button

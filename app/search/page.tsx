@@ -1,7 +1,7 @@
 import getSearchResult from "@/acitons/getSearchQuery";
 import getSongInPlaylist from "@/acitons/getSongInPlaylist";
-import SearchContent from "@/components/home/search/searchContent";
-import SearchInput from "@/components/home/search/searchInput";
+import SearchContent from "@/components/search/searchContent";
+import SearchInput from "@/components/search/searchInput";
 import React from "react";
 
 interface SearchProps {

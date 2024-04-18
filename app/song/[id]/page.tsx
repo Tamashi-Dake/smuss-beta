@@ -1,7 +1,7 @@
 import getRandomSongs from "@/acitons/getRandomSongs";
 import getSongInfo from "@/acitons/getSongInfo";
-import SongContent from "@/components/layout/SongContent";
-import SongInfo from "@/components/layout/SongInfo";
+import SongContent from "@/components/patials/SongContent";
+import SongInfo from "@/components/patials/SongInfo";
 
 const SongPage = async ({ params }: { params: { id: string } }) => {
   const song = await getSongInfo(params.id);

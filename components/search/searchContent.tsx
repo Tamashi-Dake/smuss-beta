@@ -4,8 +4,8 @@ import CategoryItem from "@/components/shared/CategoryItem";
 import SongListItem from "@/components/shared/SongListItem";
 import { Artist, Category, Playlist, Song } from "@/types";
 import { useRouter } from "next/navigation";
-import PlaylistWrapper from "../PlaylistWrapper";
-import ArtistsWrapper from "../ArtistWapper";
+import PlaylistWrapper from "../home/PlaylistWrapper";
+import ArtistsWrapper from "../home/ArtistWapper";
 import useOnPlay from "@/hooks/useOnPlay";
 
 interface SearchContentProps {

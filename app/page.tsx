@@ -23,6 +23,7 @@ export default async function Home() {
   const album = await getAlbums();
   const randomSongs = await getRandomSongs();
   const relatedSong = await getSongInPlaylist();
+  const sixRecentlyPlayed = recentlyPlayed.slice(0, 6);
 
   // console.log(album);
   return (
@@ -39,7 +40,7 @@ export default async function Home() {
           {recentlyPlayed.length > 0 && (
             <h1 className="text-2xl font-bold ">Recently Played</h1>
           )}
-          <SongsWrapper songs={recentlyPlayed} />
+          <SongsWrapper songs={sixRecentlyPlayed} />
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">New Albums</h1>

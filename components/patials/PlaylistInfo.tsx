@@ -12,7 +12,7 @@ import useLoadImage from "@/hooks/useLoadImage";
 import { useUser } from "@/hooks/useUser";
 
 import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import DropdownMenuContentPlaylist from "../patials/DropdownMenuContentPlaylist";
+import DropdownMenuContentPlaylist from "./DropdownMenuContentPlaylist";
 import PlayButton from "../shared/PlayButton";
 import { Dot, MoreHorizontal, Share2 } from "lucide-react";
 

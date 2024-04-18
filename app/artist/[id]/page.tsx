@@ -7,8 +7,8 @@ import getSongByArtistID from "@/acitons/getSongsbyArtistID";
 import ArtistsWrapper from "@/components/home/ArtistWapper";
 import PlaylistWrapper from "@/components/home/PlaylistWrapper";
 import SectionList from "@/components/home/SectionList";
-import ArtistInfo from "@/components/layout/ArtistInfo";
-import PlaylistContent from "@/components/layout/PlaylistContent";
+import ArtistInfo from "@/components/patials/ArtistInfo";
+import PlaylistContent from "@/components/patials/PlaylistContent";
 import Box from "@/components/shared/Box";
 
 const ArtistPage = async ({ params }: { params: { id: string } }) => {

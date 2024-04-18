@@ -11,8 +11,8 @@ import usePlayer from "@/hooks/usePlayer";
 import { Playlist } from "@/types";
 
 import Box from "../shared/Box";
-import SidebarItem from "./SidebarItem";
-import Library from "../home/library/Library";
+import SidebarItem from "../shared/SidebarItem";
+import Library from "../home/Library";
 
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
