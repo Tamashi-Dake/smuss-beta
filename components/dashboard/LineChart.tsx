@@ -125,12 +125,12 @@ interface LineChartState {
   }[];
 }
 
-const LineChart: React.FC = () => {
+const LineChart = ({ monthlyData }: any) => {
   const [state, setState] = useState<LineChartState>({
     series: [
       {
         name: "Premium Plan",
-        data: [0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+        data: monthlyData?.map((data: any) => data.length),
       },
     ],
   });

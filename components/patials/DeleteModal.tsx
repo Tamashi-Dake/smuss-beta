@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { useDeleteModal } from "@/hooks/useModal";
-import useCurrentUser from "@/hooks/useCurrentUser";
 import { useUser } from "@/hooks/useUser";
 import Modal from "../Modal";
 import HeaderButton from "../layout/HeaderButton";
@@ -18,7 +17,6 @@ const DeleteModal = ({}) => {
   const router = useRouter();
   const { onClose, isOpen, id, type } = useDeleteModal();
   const supabaseClient = useSupabaseClient();
-  const currentUser = useCurrentUser();
   const [isLoading, setIsLoading] = useState(false);
   const [recordData, setRecordData] = useState<any>(null);
   const { user } = useUser();
@@ -35,25 +33,41 @@ const DeleteModal = ({}) => {
     const fetchRecord = async () => {
       switch (type) {
         case "artist":
-          const data = await fetchRecordData(supabaseClient, "artist", id);
-          setRecordData(data);
+          const artistData = await fetchRecordData(
+            supabaseClient,
+            "artist",
+            id
+          );
+          setRecordData(artistData);
           break;
         case "category":
-          const data2 = await fetchRecordData(supabaseClient, "categories", id);
-          setRecordData(data2);
+          const categoryData = await fetchRecordData(
+            supabaseClient,
+            "categories",
+            id
+          );
+          setRecordData(categoryData);
           break;
         case "playlist":
-          const data3 = await fetchRecordData(supabaseClient, "playlist", id);
-          setRecordData(data3);
+          const playlistData = await fetchRecordData(
+            supabaseClient,
+            "playlist",
+            id
+          );
+          setRecordData(playlistData);
           break;
         case "song":
-          const data4 = await fetchRecordData(supabaseClient, "songs", id);
-          setRecordData(data4);
+          const songData = await fetchRecordData(supabaseClient, "songs", id);
+          setRecordData(songData);
           break;
+        case "user":
+          const userData = await fetchRecordData(supabaseClient, "users", id);
+          setRecordData(userData);
         default:
           break;
       }
     };
+
     if (isOpen) {
       fetchRecord();
 
@@ -70,11 +84,15 @@ const DeleteModal = ({}) => {
         case "song":
           setItem("song");
           break;
+        case "user":
+          setItem("user");
+          break;
         default:
           break;
       }
     }
   }, [isOpen, id, type]);
+
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     // upload to supabase
     try {
@@ -101,6 +119,9 @@ const DeleteModal = ({}) => {
           await deleteRecord(supabaseClient, "songs", id, setIsLoading);
           await deleteStogare(supabaseClient, "images", recordData?.image_path);
           await deleteStogare(supabaseClient, "songs", recordData?.song_path);
+          break;
+        case "user":
+          await deleteRecord(supabaseClient, "users", id, setIsLoading);
           break;
         default:
           break;
@@ -132,7 +153,7 @@ const DeleteModal = ({}) => {
         <div className=" flex flex-col space-y-2">
           <label htmlFor="title">
             You about to delete this {itemName}:{" "}
-            {recordData?.title ?? recordData?.name}
+            {recordData?.title ?? recordData?.username ?? recordData?.name}
           </label>
         </div>
         <HeaderButton

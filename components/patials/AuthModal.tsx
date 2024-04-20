@@ -56,14 +56,18 @@ const AuthModal = () => {
           variables: {
             sign_up: {
               email_label: "Your email address",
+              link_text: "Don't have an account?",
             },
             sign_in: {
               button_label: "Login",
               loading_button_label: "Logging in...",
-              link_text: "Already have an account? Login",
+              link_text: "Already have an account?",
             },
             magic_link: {
               link_text: "Use email instead",
+            },
+            forgotten_password: {
+              link_text: "",
             },
           },
         }}

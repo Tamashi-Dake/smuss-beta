@@ -195,6 +195,8 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
                 handleAddToPlaylist={handleAddToPlaylist}
                 playlists={playlists}
                 relationship={relPlaylist}
+                pathname="/song"
+                handleDeleteHistory={() => {}}
               />
             </DropdownMenu>
           </div>

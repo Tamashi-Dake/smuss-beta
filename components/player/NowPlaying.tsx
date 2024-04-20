@@ -201,6 +201,8 @@ const NowPlaying: React.FC<NowPlayingProps> = ({ song, artists }) => {
                     handleAddToPlaylist={handleAddToPlaylist}
                     playlists={playlists}
                     relationship={relationship}
+                    pathname="/song/[id]"
+                    handleDeleteHistory={() => {}}
                   />
                 </DropdownMenu>
               </div>
@@ -215,6 +217,8 @@ const NowPlaying: React.FC<NowPlayingProps> = ({ song, artists }) => {
           handleAddToPlaylist={handleAddToPlaylist}
           playlists={playlists}
           relationship={relationship}
+          pathname="/song/[id]"
+          handleDeleteHistory={() => {}}
         />
       </ContextMenu>
 

@@ -133,6 +133,7 @@ const SongListItem: React.FC<SongListItemProps> = ({ songData, onClick }) => {
     if (error) {
       toast.error(error.message);
     } else {
+      router.refresh();
       toast.success("Deleted from history!");
     }
   };

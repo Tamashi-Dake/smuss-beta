@@ -8,6 +8,7 @@ import {
   useAddCategoryModal,
   useAddSongModal,
   useAddPlaylistModal,
+  useAddUserModal,
 } from "@/hooks/useModal";
 
 type AddButtonProps = {
@@ -20,6 +21,7 @@ const AddButton: React.FC<AddButtonProps> = ({ pathname }) => {
     "/dashboard/categories": useAddCategoryModal(),
     "/dashboard/playlists": useAddPlaylistModal(),
     "/dashboard/songs": useAddSongModal(),
+    "/dashboard/users": useAddUserModal(),
   };
 
   const itemMapping: Record<string, string> = {
@@ -36,11 +38,8 @@ const AddButton: React.FC<AddButtonProps> = ({ pathname }) => {
   const handleClick = () => {
     if (modal) {
       modal.onOpen();
-    } else if (pathname === "/dashboard/users") {
-      window.open(
-        "https://supabase.com/dashboard/project/bikzxtxhkpzavgevuqmb/auth/users",
-        "_blank"
-      );
+    } else {
+      console.error("Modal not found");
     }
   };
 

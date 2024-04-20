@@ -2,8 +2,10 @@ import CardDataStats from "@/components/dashboard/CardDataStats";
 import LineChart from "@/components/dashboard/LineChart";
 import ColumnChart from "@/components/dashboard/ColumnChart";
 import getDashboardData from "@/acitons/getDashboardData";
+import getDashboardDataByMonth from "@/acitons/getDashboardDataByMonth";
 
 const DashboardPage: React.FC = async () => {
+  const monthlyData = await getDashboardDataByMonth();
   const data = await getDashboardData();
   // get total views from aray of views [{views: 1}, {views: 2}]
   const totalViews = data.views.reduce((acc, curr) => acc + curr.view, 0);
@@ -13,9 +15,13 @@ const DashboardPage: React.FC = async () => {
   const totalFreeUsers = data.usersFree.length;
   // get total premium users
   const totalPremiumUsers = data.usersPremium.length;
+
+  // const thisYear = new Date().getFullYear();
+  // const thisMonth = new Date(thisYear, new Date().getMonth() + 1).getMonth();
+  // console.log(thisMonth);
   return (
     <>
-      <div className=" flex flex-col m-auto gap-y-10 max-w-wide-screen px-4">
+      <div className=" flex flex-col m-auto gap-y-5 max-w-wide-screen px-4">
         <h1 className="text-white text-3xl font-semibold">Dashboard</h1>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
           <CardDataStats title="Total views" total={totalViews} rate="">
@@ -115,8 +121,8 @@ const DashboardPage: React.FC = async () => {
             </svg>
           </CardDataStats>
         </div>
-        <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-          <LineChart />
+        <div className="grid grid-cols-12 gap-4 mt-4 md:gap-6 2xl:gap-7.5">
+          <LineChart monthlyData={monthlyData} />
           <ColumnChart
             freeUsers={totalFreeUsers}
             premiumUsers={totalPremiumUsers}
