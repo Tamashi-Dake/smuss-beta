@@ -63,7 +63,6 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
 
   const pathname = usePathname();
-
   const table = useReactTable({
     data,
     columns,
@@ -83,20 +82,29 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center ">
         <Input
           placeholder="Search by name/title/username..."
-          value={
-            pathname === "/dashboard/songs"
-              ? (table.getColumn("title")?.getFilterValue() as string)
-              : pathname === "/dashboard/users"
-              ? (table.getColumn("full_name")?.getFilterValue() as string)
-              : (table.getColumn("name")?.getFilterValue() as string)
-          }
+          value={(() => {
+            switch (pathname) {
+              case "/dashboard/songs":
+                return table.getColumn("title")?.getFilterValue() as string;
+              case "/dashboard/users":
+                return table.getColumn("full_name")?.getFilterValue() as string;
+              default:
+                return table.getColumn("name")?.getFilterValue() as string;
+            }
+          })()}
           onChange={(event) => {
-            if (pathname === "/dashboard/songs") {
-              table.getColumn("title")?.setFilterValue(event.target.value);
-            } else if (pathname === "/dashboard/users") {
-              table.getColumn("full_name")?.setFilterValue(event.target.value);
-            } else {
-              table.getColumn("name")?.setFilterValue(event.target.value);
+            switch (pathname) {
+              case "/dashboard/songs":
+                table.getColumn("title")?.setFilterValue(event.target.value);
+                break;
+              case "/dashboard/users":
+                table
+                  .getColumn("full_name")
+                  ?.setFilterValue(event.target.value);
+                break;
+              default:
+                table.getColumn("name")?.setFilterValue(event.target.value);
+                break;
             }
           }}
           className="max-w-sm"

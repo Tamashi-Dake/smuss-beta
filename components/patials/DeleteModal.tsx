@@ -153,7 +153,7 @@ const DeleteModal = ({}) => {
         <div className=" flex flex-col space-y-2">
           <label htmlFor="title">
             You about to delete this {itemName}:{" "}
-            {recordData?.title ?? recordData?.username ?? recordData?.name}
+            {recordData?.title ?? recordData?.full_name ?? recordData?.name}
           </label>
         </div>
         <HeaderButton

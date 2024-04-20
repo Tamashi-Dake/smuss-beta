@@ -3,9 +3,12 @@ import { UserDetails } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
+  Check,
   ClipboardCopyIcon,
   DollarSignIcon,
   MoreHorizontal,
+  Trash2,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +21,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
+import { useSessionContext } from "@supabase/auth-helpers-react";
+import { useDeleteModal } from "@/hooks/useModal";
+import { useRouter } from "next/navigation";
 export const columnType: ColumnDef<UserDetails>[] = [
   {
     id: "select",
@@ -57,14 +63,14 @@ export const columnType: ColumnDef<UserDetails>[] = [
   },
   {
     accessorKey: "full_name",
-    id: "Username/Gmail",
+    id: "full_name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Username/Gmail
+          Username
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -95,31 +101,51 @@ export const columnType: ColumnDef<UserDetails>[] = [
       );
     },
   },
+  // {
+  //   accessorKey: "billing_address",
+  //   id: "Billing Address",
+  //   header: "Billing Address",
+  // },
+  // {
+  //   accessorKey: "payment_method",
+  //   id: "Payment Method",
+  //   header: "Payment Method",
+  // },
   {
-    accessorKey: "billing_address",
-    id: "Billing Address",
-    header: "Billing Address",
-  },
-  {
-    accessorKey: "payment_method",
-    id: "Payment Method",
-    header: "Payment Method",
+    accessorKey: "active",
+    id: "Active",
+    header: "Active",
+    cell: ({ row }) => {
+      const status = row.original.active ? "true" : "false";
+      return (
+        <div className="text-center">
+          <span
+            className={
+              "text-white p-1 rounded-xl " +
+              (status === "true" ? "bg-green-500" : "bg-red-400")
+            }
+          >
+            {status.toUpperCase()}
+          </span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "role",
     id: "Role",
     header: "Role",
     cell: ({ row }) => {
-      const userRole = row.original.role || "Unknown";
+      const status = row.original.role || "Unknown";
       return (
         <div className="text-center">
           <span
             className={
-              "text-white p-1 rounded-xl " +
-              (userRole === "admin" ? "bg-red-400" : "bg-green-500")
+              " p-1 rounded-xl " +
+              (status === "admin" ? "bg-green-400 text-white" : " text-black")
             }
           >
-            {userRole.toUpperCase()}
+            {status.toUpperCase()}
           </span>
         </div>
       );
@@ -135,8 +161,32 @@ export const columnType: ColumnDef<UserDetails>[] = [
       );
     },
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const router = useRouter();
       const user = row.original;
-
+      const status = user.active ? "true" : "false";
+      const role = user.role || "Unknown";
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { supabaseClient } = useSessionContext();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const deleteModal = useDeleteModal();
+      const handleUserStatus = (id: string) => async () => {
+        await supabaseClient
+          .from("users")
+          .update({ active: !user.active })
+          .eq("id", id);
+        router.refresh();
+      };
+      const handleUserRole = (id: string) => async () => {
+        await supabaseClient
+          .from("users")
+          .update({ role: user.role === "admin" ? "user" : "admin" })
+          .eq("id", id);
+        router.refresh();
+      };
+      const handleDeleteUser = () => {
+        deleteModal.onOpen(user.id, "user");
+      };
       return (
         <div className="text-center">
           <DropdownMenu>
@@ -148,16 +198,32 @@ export const columnType: ColumnDef<UserDetails>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(user.id)}
-              >
-                <ClipboardCopyIcon className="w-4 h-4 mr-2" />
-                Copy user ID
-              </DropdownMenuItem>
+              {status === "true" ? (
+                <DropdownMenuItem onClick={handleUserStatus(user.id)}>
+                  <X className="w-4 h-4 mr-2" />
+                  Deactivate user
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={handleUserStatus(user.id)}>
+                  <Check className="w-4 h-4 mr-2" />
+                  Activate user
+                </DropdownMenuItem>
+              )}
+              {role === "admin" ? (
+                <DropdownMenuItem onClick={handleUserRole(user.id)}>
+                  <X className="w-4 h-4 mr-2" />
+                  Revoke admin
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onClick={handleUserRole(user.id)}>
+                  <Check className="w-4 h-4 mr-2" />
+                  Make admin
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <DollarSignIcon className="w-4 h-4 mr-2" />
-                View payment details
+              <DropdownMenuItem onClick={handleDeleteUser}>
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete user
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
