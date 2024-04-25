@@ -15,7 +15,10 @@ import Script from "next/script";
 const font = Figtree({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Smuss",
+  title: {
+    default: "Smuss | Small Music Streaming Service",
+    template: `%s | Small Music Streaming Service`,
+  },
   description: "Music player for anyone, anytime, anywhere",
 };
 

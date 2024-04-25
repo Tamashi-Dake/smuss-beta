@@ -138,7 +138,7 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
           {song.title}
         </h1>
         <div className="flex flex-col">
-          <div className="flex items-center gap-y-2 sm:flex-row">
+          <div className="flex items-center gap-y-2 ">
             {artists.length === 0 ? (
               <>
                 <p className="text-neutral-400">Unknown Artist</p>
@@ -146,7 +146,7 @@ const SongInfo = ({ song, randomSongs }: { song: any; randomSongs: any[] }) => {
               </>
             ) : (
               artists.map((artist, index) => (
-                <div key={artist.id}>
+                <div className="flex" key={artist.id}>
                   <Link
                     href={`/artist/${artist.id}`}
                     className="text-neutral-400 hover:underline hover:text-neutral-200 transition select-none md:px-1"
