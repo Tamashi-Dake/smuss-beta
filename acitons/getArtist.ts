@@ -2,7 +2,7 @@ import { Artist } from "@/types";
 import { getSupabase } from "@/utils/supabaseSever";
 
 // Get top 6 artists for user (will change after we have user data)
-const getTopArtists = async (): Promise<Artist[]> => {
+const getArtists = async (): Promise<Artist[]> => {
   const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("artist")
@@ -13,4 +13,4 @@ const getTopArtists = async (): Promise<Artist[]> => {
   return (data as Artist[]) || [];
 };
 
-export default getTopArtists;
+export default getArtists;

@@ -8,7 +8,7 @@ const ArtistsWrapper: React.FC<ArtistsWrapperProps> = ({ artists }) => {
   return (
     <Wrapper>
       {artists.map((artist: Artist) => (
-        <ArtistItem key={artist.id} data={artist} />
+        <ArtistItem key={artist.id + artist.name} data={artist} />
       ))}
     </Wrapper>
   );

@@ -7,15 +7,14 @@ import getSongInPlaylist from "@/acitons/getSongInPlaylist";
 import getNewHits from "@/acitons/getNewHit";
 import NewHits from "@/components/home/NewHits";
 import getAlbums from "@/acitons/getAlbum";
-import getTopArtists from "@/acitons/getTopArtist";
 import ArtistsWrapper from "@/components/home/ArtistWapper";
 import getHistory from "@/acitons/getHistory";
 import Footer from "@/components/layout/Footer";
+import getTopArtists from "@/acitons/getTopArtists";
 
 // export const revalidate = 0;
 
 export default async function Home() {
-  // TODO: get all user playlists (for now, will change to get artists playlists later)
   const newHits = await getNewHits();
   const recentlyPlayed = await getHistory();
   const playlists = await getRandomPublicPlaylists();
@@ -23,6 +22,9 @@ export default async function Home() {
   const album = await getAlbums();
   const randomSongs = await getRandomSongs();
   const relatedSong = await getSongInPlaylist();
+
+  // topArtists: {id,total_views, artist: {...}}
+  const artistsData = topArtists.map((artist) => artist.artist);
   const sixRecentlyPlayed = recentlyPlayed.slice(0, 6);
 
   // console.log(album);
@@ -48,8 +50,8 @@ export default async function Home() {
           {/* animation section */}
         </SectionList>
         <SectionList>
-          <h1 className="text-2xl font-bold ">Your Top Artists</h1>
-          <ArtistsWrapper artists={topArtists} />
+          <h1 className="text-2xl font-bold ">Top Artists</h1>
+          <ArtistsWrapper artists={artistsData} />
         </SectionList>
         <SectionList>
           <h1 className="text-2xl font-bold ">Have you tried these?</h1>
