@@ -5,8 +5,8 @@ import {
   useSessionContext,
   useUser as useSupaUser,
 } from "@supabase/auth-helpers-react";
-import exp from "constants";
-import { get } from "http";
+// import exp from "constants";
+// import { get } from "http";
 import { createContext, use, useContext, useEffect, useState } from "react";
 
 type UserContextType = {
@@ -50,12 +50,15 @@ export const MyUserContextProvider = (props: Props) => {
   //   console.log("user id trung", user?.id);
 
   useEffect(() => {
+    // nếu user đã login và chưa load data
     if (user && !isLoadingData && !userDetails && !subscription) {
       setIsLoadingData(true);
+      // load data
       Promise.allSettled([getUserDetails(), getSubscription()]).then(
         (result) => {
           const userDetailsPromise = result[0];
           const subscriptionPromise = result[1];
+          // nếu load data thành công
           if (userDetailsPromise.status === "fulfilled") {
             setUserDetails(userDetailsPromise.value.data as UserDetails);
           }

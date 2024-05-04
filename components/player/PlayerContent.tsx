@@ -230,6 +230,8 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     if (!nextSong) {
       // Nếu đang bật chế độ repeatList thì quay lại bài hát đầu tiên
       if (repeatModeRef.current === "repeatList") {
+        setAdCount(adCount + 1);
+
         return player.setId(player.ids[0]);
       } else {
         return;
@@ -240,11 +242,14 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
       setProgress(0);
       soundRef.current?.seek(0);
       soundRef.current?.play();
+      setAdCount(adCount + 1);
+
       return;
     } else {
       player.setId(nextSong);
+      setAdCount(adCount + 1);
     }
-    setAdCount(adCount + 1);
+    console.log("adCount", adCount);
     if (subscription?.status !== "active" && adCount > 2) {
       adModal.onOpen();
       setAdCount(0);
