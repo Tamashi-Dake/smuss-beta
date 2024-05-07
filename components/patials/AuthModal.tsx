@@ -36,7 +36,12 @@ const AuthModal = () => {
   };
 
   return (
-    <Modal title="Welcome " description="" isOpen={isOpen} onChange={onChange}>
+    <Modal
+      title="Welcome "
+      description="Test Account: tebati9463@etopys.com | Password: 123456"
+      isOpen={isOpen}
+      onChange={onChange}
+    >
       <Auth
         supabaseClient={supabaseClient}
         providers={["google"]}
